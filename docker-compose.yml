@@ -1,0 +1,192 @@
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow 
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U Ascii{POSTGRES_USER:-airflow} || pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  airflow-webserver:
+    build: ./airflow
+    environment:
+      AIRFLOW__CORE__FERNET_KEY: voI23TfhGadbm73zYEmwDA-JI6vQ5ma5BoA_vPEFikM=
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: True
+      AIRFLOW__WEBSERVER__SECRET_KEY: airflow_secret_key_2024
+      AIRFLOW__CORE__LOAD_EXAMPLES: False
+      AIRFLOW__CORE__DEFAULT_UI_TIMEZONE: UTC
+      AIRFLOW__WEBSERVER__DEFAULT_UI_TIMEZONE: UTC
+      AIRFLOW__WEBSERVER__WEB_SERVER_PORT: 8080
+      AIRFLOW__WEBSERVER__BASE_URL: http://localhost:8080
+      AIRFLOW__WEBSERVER__WEB_SERVER_HOST: 0.0.0.0
+      AIRFLOW__CORE__PARALLELISM: 1
+      AIRFLOW__CORE__MAX_ACTIVE_TASKS_PER_DAG: 1
+      AIRFLOW__CORE__MAX_ACTIVE_RUNS_PER_DAG: 1
+      AIRFLOW__CORE__DAGBAG_IMPORT_TIMEOUT: 30.0
+      AIRFLOW__CORE__DAG_FILE_PROCESSOR_TIMEOUT: 50
+      AIRFLOW__CORE__TASK_RUNNER: StandardTaskRunner
+      AIRFLOW__CORE__DONOT_PICKLE: False
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: True
+      AIRFLOW__CORE__LOAD_DEFAULT_CONNECTIONS: True
+      AIRFLOW__CORE__LOAD_DEFAULT_VARIABLES: True
+      AIRFLOW__CORE__CHECK_SLAS: True
+      AIRFLOW__CORE__ALWAYS_EMAIL_ON_RETRY: False
+      AIRFLOW__CORE__ALWAYS_EMAIL_ON_FAILURE: False
+      AIRFLOW__CORE__DEFAULT_EMAIL_ON_RETRY: False
+      AIRFLOW__CORE__DEFAULT_EMAIL_ON_FAILURE: False
+      AIRFLOW__CORE__DEFAULT_EMAIL: admin@example.com
+      AIRFLOW__CORE__SMTP_HOST: localhost
+      AIRFLOW__CORE__SMTP_STARTTLS: True
+      AIRFLOW__CORE__SMTP_SSL: False
+      AIRFLOW__CORE__SMTP_USER: ""
+      AIRFLOW__CORE__SMTP_PASSWORD: ""
+      AIRFLOW__CORE__SMTP_PORT: 587
+      AIRFLOW__CORE__SMTP_MAIL_FROM: admin@example.com
+      AIRFLOW__CORE__HIDE_SENSITIVE_VAR_CONN_FIELDS: True
+      AIRFLOW__CORE__SENSITIVE_VAR_CONN_FIELD_NAMES: password,passwd,secret,api_key,apikey,access_token
+      AIRFLOW__CORE__SENSITIVE_VAR_CONN_FIELD_SECTION: password,passwd,secret,api_key,apikey,access_token
+    command: webserver
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  airflow-scheduler:
+    build: ./airflow
+    environment:
+      AIRFLOW__CORE__FERNET_KEY: voI23TfhGadbm73zYEmwDA-JI6vQ5ma5BoA_vPEFikM=
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: True
+      AIRFLOW__WEBSERVER__SECRET_KEY: airflow_secret_key_2024
+      AIRFLOW__CORE__LOAD_EXAMPLES: False
+      AIRFLOW__CORE__DEFAULT_UI_TIMEZONE: UTC
+      AIRFLOW__WEBSERVER__DEFAULT_UI_TIMEZONE: UTC
+      AIRFLOW__WEBSERVER__WEB_SERVER_PORT: 8080
+      AIRFLOW__WEBSERVER__BASE_URL: http://localhost:8080
+      AIRFLOW__WEBSERVER__WEB_SERVER_HOST: 0.0.0.0
+      AIRFLOW__CORE__PARALLELISM: 1
+      AIRFLOW__CORE__MAX_ACTIVE_TASKS_PER_DAG: 1
+      AIRFLOW__CORE__MAX_ACTIVE_RUNS_PER_DAG: 1
+      AIRFLOW__CORE__DAGBAG_IMPORT_TIMEOUT: 30.0
+      AIRFLOW__CORE__DAG_FILE_PROCESSOR_TIMEOUT: 50
+      AIRFLOW__CORE__TASK_RUNNER: StandardTaskRunner
+      AIRFLOW__CORE__DONOT_PICKLE: False
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: True
+      AIRFLOW__CORE__LOAD_DEFAULT_CONNECTIONS: True
+      AIRFLOW__CORE__LOAD_DEFAULT_VARIABLES: True
+      AIRFLOW__CORE__CHECK_SLAS: True
+      AIRFLOW__CORE__ALWAYS_EMAIL_ON_RETRY: False
+      AIRFLOW__CORE__ALWAYS_EMAIL_ON_FAILURE: False
+      AIRFLOW__CORE__DEFAULT_EMAIL_ON_RETRY: False
+      AIRFLOW__CORE__DEFAULT_EMAIL_ON_FAILURE: False
+      AIRFLOW__CORE__DEFAULT_EMAIL: admin@example.com
+      AIRFLOW__CORE__SMTP_HOST: localhost
+      AIRFLOW__CORE__SMTP_STARTTLS: True
+      AIRFLOW__CORE__SMTP_SSL: False
+      AIRFLOW__CORE__SMTP_USER: ""
+      AIRFLOW__CORE__SMTP_PASSWORD: ""
+      AIRFLOW__CORE__SMTP_PORT: 587
+      AIRFLOW__CORE__SMTP_MAIL_FROM: admin@example.com
+      AIRFLOW__CORE__HIDE_SENSITIVE_VAR_CONN_FIELDS: True
+      AIRFLOW__CORE__SENSITIVE_VAR_CONN_FIELD_NAMES: password,passwd,secret,api_key,apikey,access_token
+      AIRFLOW__CORE__SENSITIVE_VAR_CONN_FIELD_SECTION: password,passwd,secret,api_key,apikey,access_token
+    command: scheduler
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  airflow-init:
+    build: ./airflow
+    environment:
+      AIRFLOW__CORE__FERNET_KEY: voI23TfhGadbm73zYEmwDA-JI6vQ5ma5BoA_vPEFikM=
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: True
+      AIRFLOW__WEBSERVER__SECRET_KEY: airflow_secret_key_2024
+      AIRFLOW__CORE__LOAD_EXAMPLES: False
+      AIRFLOW__CORE__DEFAULT_UI_TIMEZONE: UTC
+      AIRFLOW__WEBSERVER__DEFAULT_UI_TIMEZONE: UTC
+      AIRFLOW__WEBSERVER__WEB_SERVER_PORT: 8080
+      AIRFLOW__WEBSERVER__BASE_URL: http://localhost:8080
+      AIRFLOW__WEBSERVER__WEB_SERVER_HOST: 0.0.0.0
+      AIRFLOW__CORE__PARALLELISM: 1
+      AIRFLOW__CORE__MAX_ACTIVE_TASKS_PER_DAG: 1
+      AIRFLOW__CORE__MAX_ACTIVE_RUNS_PER_DAG: 1
+      AIRFLOW__CORE__DAGBAG_IMPORT_TIMEOUT: 30.0
+      AIRFLOW__CORE__DAG_FILE_PROCESSOR_TIMEOUT: 50
+      AIRFLOW__CORE__TASK_RUNNER: StandardTaskRunner
+      AIRFLOW__CORE__DONOT_PICKLE: False
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: True
+      AIRFLOW__CORE__LOAD_DEFAULT_CONNECTIONS: True
+      AIRFLOW__CORE__LOAD_DEFAULT_VARIABLES: True
+      AIRFLOW__CORE__CHECK_SLAS: True
+      AIRFLOW__CORE__ALWAYS_EMAIL_ON_RETRY: False
+      AIRFLOW__CORE__ALWAYS_EMAIL_ON_FAILURE: False
+      AIRFLOW__CORE__DEFAULT_EMAIL_ON_RETRY: False
+      AIRFLOW__CORE__DEFAULT_EMAIL_ON_FAILURE: False
+      AIRFLOW__CORE__DEFAULT_EMAIL: admin@example.com
+      AIRFLOW__CORE__SMTP_HOST: localhost
+      AIRFLOW__CORE__SMTP_STARTTLS: True
+      AIRFLOW__CORE__SMTP_SSL: False
+      AIRFLOW__CORE__SMTP_USER: ""
+      AIRFLOW__CORE__SMTP_PASSWORD: ""
+      AIRFLOW__CORE__SMTP_PORT: 587
+      AIRFLOW__CORE__SMTP_MAIL_FROM: admin@example.com
+      AIRFLOW__CORE__HIDE_SENSITIVE_VAR_CONN_FIELDS: True
+      AIRFLOW__CORE__SENSITIVE_VAR_CONN_FIELD_NAMES: password,passwd,secret,api_key,apikey,access_token
+      AIRFLOW__CORE__SENSITIVE_VAR_CONN_FIELD_SECTION: password,passwd,secret,api_key,apikey,access_token
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        set -e
+        airflow db migrate
+        airflow users create \
+          --username "${_AIRFLOW_WWW_USER_USERNAME:-admin}" \
+          --password "${_AIRFLOW_WWW_USER_PASSWORD:-admin}" \
+          --firstname Admin \
+          --lastname User \
+          --role Admin \
+          --email admin@example.com
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
