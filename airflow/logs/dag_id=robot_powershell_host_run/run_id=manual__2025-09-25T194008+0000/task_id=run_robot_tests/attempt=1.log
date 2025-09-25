@@ -1,0 +1,85 @@
+[2025-09-25T19:40:09.617+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-09-25T19:40:09.693+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: robot_powershell_host_run.run_robot_tests manual__2025-09-25T19:40:08+00:00 [queued]>
+[2025-09-25T19:40:09.711+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: robot_powershell_host_run.run_robot_tests manual__2025-09-25T19:40:08+00:00 [queued]>
+[2025-09-25T19:40:09.712+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 1
+[2025-09-25T19:40:09.738+0000] {taskinstance.py:2330} INFO - Executing <Task(WinRMOperator): run_robot_tests> on 2025-09-25 19:40:08+00:00
+[2025-09-25T19:40:09.756+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:62 DeprecationWarning: This process (pid=182) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-09-25T19:40:09.759+0000] {standard_task_runner.py:64} INFO - Started process 183 to run task
+[2025-09-25T19:40:09.756+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'robot_powershell_host_run', 'run_robot_tests', 'manual__2025-09-25T19:40:08+00:00', '--job-id', '2', '--raw', '--subdir', 'DAGS_FOLDER/robot_powershell_winrm.py', '--cfg-path', '/tmp/tmpass502c4']
+[2025-09-25T19:40:09.761+0000] {standard_task_runner.py:91} INFO - Job 2: Subtask run_robot_tests
+[2025-09-25T19:40:09.883+0000] {task_command.py:426} INFO - Running <TaskInstance: robot_powershell_host_run.run_robot_tests manual__2025-09-25T19:40:08+00:00 [running]> on host 130ce1b07a6d
+[2025-09-25T19:40:10.099+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='robot_powershell_host_run' AIRFLOW_CTX_TASK_ID='run_robot_tests' AIRFLOW_CTX_EXECUTION_DATE='2025-09-25T19:40:08+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-09-25T19:40:08+00:00'
+[2025-09-25T19:40:10.101+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-09-25T19:40:10.183+0000] {winrm.py:80} INFO - Hook not found, creating...
+[2025-09-25T19:40:10.186+0000] {connection.py:513} ERROR - Unable to retrieve connection from secrets backend (EnvironmentVariablesBackend). Checking subsequent secrets backend.
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/crypto.py", line 86, in get_fernet
+    [Fernet(fernet_part.encode("utf-8")) for fernet_part in fernet_key.split(",")]
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/cryptography/fernet.py", line 40, in __init__
+    raise ValueError(
+ValueError: Fernet key must be 32 url-safe base64-encoded bytes.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/connection.py", line 508, in get_connection_from_secrets
+    conn = secrets_backend.get_connection(conn_id=conn_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/secrets/base_secrets.py", line 116, in get_connection
+    return self.deserialize_connection(conn_id=conn_id, value=value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/secrets/base_secrets.py", line 70, in deserialize_connection
+    return Connection(conn_id=conn_id, uri=value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 4, in __init__
+  File "/home/airflow/.local/lib/python3.12/site-packages/sqlalchemy/orm/state.py", line 481, in _initialize_instance
+    with util.safe_reraise():
+  File "/home/airflow/.local/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 70, in __exit__
+    compat.raise_(
+  File "/home/airflow/.local/lib/python3.12/site-packages/sqlalchemy/util/compat.py", line 211, in raise_
+    raise exception
+  File "/home/airflow/.local/lib/python3.12/site-packages/sqlalchemy/orm/state.py", line 479, in _initialize_instance
+    return manager.original_init(*mixed[1:], **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/connection.py", line 167, in __init__
+    self._parse_from_uri(uri)
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/connection.py", line 253, in _parse_from_uri
+    self.password = unquote(uri_parts.password) if uri_parts.password else uri_parts.password
+    ^^^^^^^^^^^^^
+  File "<string>", line 1, in __set__
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/connection.py", line 347, in set_password
+    fernet = get_fernet()
+             ^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/crypto.py", line 90, in get_fernet
+    raise AirflowException(f"Could not create Fernet object: {value_error}")
+airflow.exceptions.AirflowException: Could not create Fernet object: Fernet key must be 32 url-safe base64-encoded bytes.
+[2025-09-25T19:40:10.213+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-09-25T19:40:10.234+0000] {taskinstance.py:2905} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 465, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 432, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 401, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/microsoft/winrm/operators/winrm.py", line 92, in execute
+    winrm_client = self.winrm_hook.get_conn()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/microsoft/winrm/hooks/winrm.py", line 131, in get_conn
+    conn = self.get_connection(self.ssh_conn_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/hooks/base.py", line 83, in get_connection
+    conn = Connection.get_connection_from_secrets(conn_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/connection.py", line 519, in get_connection_from_secrets
+    raise AirflowNotFoundException(f"The conn_id `{conn_id}` isn't defined")
+airflow.exceptions.AirflowNotFoundException: The conn_id `winrm_localhost` isn't defined
+[2025-09-25T19:40:10.242+0000] {taskinstance.py:1206} INFO - Marking task as FAILED. dag_id=robot_powershell_host_run, task_id=run_robot_tests, run_id=manual__2025-09-25T19:40:08+00:00, execution_date=20250925T194008, start_date=20250925T194009, end_date=20250925T194010
+[2025-09-25T19:40:10.269+0000] {standard_task_runner.py:110} ERROR - Failed to execute job 2 for task run_robot_tests (The conn_id `winrm_localhost` isn't defined; 183)
+[2025-09-25T19:40:10.339+0000] {local_task_job_runner.py:243} INFO - Task exited with return code 1
+[2025-09-25T19:40:10.381+0000] {taskinstance.py:3503} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-09-25T19:40:10.385+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

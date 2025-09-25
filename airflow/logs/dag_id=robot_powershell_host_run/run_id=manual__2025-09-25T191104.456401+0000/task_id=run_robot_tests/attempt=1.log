@@ -1,0 +1,42 @@
+[2025-09-25T19:11:05.940+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-09-25T19:11:06.014+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: robot_powershell_host_run.run_robot_tests manual__2025-09-25T19:11:04.456401+00:00 [queued]>
+[2025-09-25T19:11:06.030+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: robot_powershell_host_run.run_robot_tests manual__2025-09-25T19:11:04.456401+00:00 [queued]>
+[2025-09-25T19:11:06.031+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 1
+[2025-09-25T19:11:06.055+0000] {taskinstance.py:2330} INFO - Executing <Task(WinRMOperator): run_robot_tests> on 2025-09-25 19:11:04.456401+00:00
+[2025-09-25T19:11:06.074+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:62 DeprecationWarning: This process (pid=315) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-09-25T19:11:06.073+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'robot_powershell_host_run', 'run_robot_tests', 'manual__2025-09-25T19:11:04.456401+00:00', '--job-id', '3', '--raw', '--subdir', 'DAGS_FOLDER/robot_powershell_winrm.py', '--cfg-path', '/tmp/tmphuxmzf9f']
+[2025-09-25T19:11:06.078+0000] {standard_task_runner.py:64} INFO - Started process 316 to run task
+[2025-09-25T19:11:06.079+0000] {standard_task_runner.py:91} INFO - Job 3: Subtask run_robot_tests
+[2025-09-25T19:11:06.205+0000] {task_command.py:426} INFO - Running <TaskInstance: robot_powershell_host_run.run_robot_tests manual__2025-09-25T19:11:04.456401+00:00 [running]> on host dc041d20e279
+[2025-09-25T19:11:06.388+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='robot_powershell_host_run' AIRFLOW_CTX_TASK_ID='run_robot_tests' AIRFLOW_CTX_EXECUTION_DATE='2025-09-25T19:11:04.456401+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-09-25T19:11:04.456401+00:00'
+[2025-09-25T19:11:06.390+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-09-25T19:11:06.421+0000] {winrm.py:80} INFO - Hook not found, creating...
+[2025-09-25T19:11:06.443+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-09-25T19:11:06.464+0000] {taskinstance.py:2905} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 465, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 432, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 401, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/microsoft/winrm/operators/winrm.py", line 92, in execute
+    winrm_client = self.winrm_hook.get_conn()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/microsoft/winrm/hooks/winrm.py", line 131, in get_conn
+    conn = self.get_connection(self.ssh_conn_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/hooks/base.py", line 83, in get_connection
+    conn = Connection.get_connection_from_secrets(conn_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/connection.py", line 519, in get_connection_from_secrets
+    raise AirflowNotFoundException(f"The conn_id `{conn_id}` isn't defined")
+airflow.exceptions.AirflowNotFoundException: The conn_id `winrm_localhost` isn't defined
+[2025-09-25T19:11:06.473+0000] {taskinstance.py:1206} INFO - Marking task as FAILED. dag_id=robot_powershell_host_run, task_id=run_robot_tests, run_id=manual__2025-09-25T19:11:04.456401+00:00, execution_date=20250925T191104, start_date=20250925T191106, end_date=20250925T191106
+[2025-09-25T19:11:06.490+0000] {standard_task_runner.py:110} ERROR - Failed to execute job 3 for task run_robot_tests (The conn_id `winrm_localhost` isn't defined; 316)
+[2025-09-25T19:11:06.539+0000] {local_task_job_runner.py:243} INFO - Task exited with return code 1
+[2025-09-25T19:11:06.574+0000] {taskinstance.py:3503} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-09-25T19:11:06.578+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

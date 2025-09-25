@@ -1,0 +1,3 @@
+robotframework==7.1.1
+robotframework-browser==19.8.0
+
