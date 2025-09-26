@@ -85,3 +85,11 @@ Thumbs.db
 # IDE
 *.sublime-project
 *.sublime-workspace
+
+# Root logs and caches
+/logs/
+/cache/
+/.cache/
+
+# Ensure all Python bytecode cache directories are ignored everywhere
+**/__pycache__/
