@@ -33,6 +33,10 @@ ENV/
 env.bak/
 venv.bak/
 
+# Playwright browser binaries (too large for GitHub)
+**/playwright-core/.local-browsers/
+**/node_modules/playwright-core/.local-browsers/
+
 # PyCharm
 .idea/
 
