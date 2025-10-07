@@ -18,6 +18,10 @@ Write-Host "Activating virtual environment..." -ForegroundColor Yellow
 Write-Host "Installing dependencies..." -ForegroundColor Yellow
 pip install -r requirements.txt
 
+# Initialize Robot Framework Browser (downloads Playwright/node deps if needed)
+Write-Host "Initializing Robot Framework Browser..." -ForegroundColor Yellow
+./venv/Scripts/rfbrowser.exe init
+
 # Create results directory if it doesn't exist
 if (-not (Test-Path "results")) {
     Write-Host "Creating results directory..." -ForegroundColor Yellow
