@@ -2,9 +2,9 @@ services:
   postgres:
     image: postgres:15
     environment:
-      POSTGRES_USER: airflow
-      POSTGRES_PASSWORD: airflow
-      POSTGRES_DB: airflow 
+      POSTGRES_USER: ${POSTGRES_USER:-airflow}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-airflow}
+      POSTGRES_DB: ${POSTGRES_DB:-airflow}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -17,13 +17,20 @@ services:
 
   airflow-webserver:
     build: ./airflow
+    env_file:
+      - .env
     environment:
-      AIRFLOW__CORE__FERNET_KEY: voI23TfhGadbm73zYEmwDA-JI6vQ5ma5BoA_vPEFikM=
+      AZURE_KEYVAULT_URL: ${AZURE_KEYVAULT_URL}
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_CORE_FERNET_KEY}
       AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
+      AIRFLOW_CONN_PUBLISH_API: ${AIRFLOW_CONN_PUBLISH_API:-http://rpa-api:3000}
+      AIRFLOW__SECRETS__BACKEND: airflow.secrets.environment_variables.EnvironmentVariablesBackend
       AIRFLOW__WEBSERVER__EXPOSE_CONFIG: True
-      AIRFLOW__WEBSERVER__SECRET_KEY: airflow_secret_key_2024
+      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW__WEBSERVER__SECRET_KEY}
+      AIRFLOW_WWW_USER_USERNAME: ${AIRFLOW_WWW_USER_USERNAME}
+      AIRFLOW_WWW_USER_PASSWORD: ${AIRFLOW_WWW_USER_PASSWORD}
       AIRFLOW__CORE__LOAD_EXAMPLES: False
       AIRFLOW__CORE__DEFAULT_UI_TIMEZONE: UTC
       AIRFLOW__WEBSERVER__DEFAULT_UI_TIMEZONE: UTC
@@ -77,13 +84,18 @@ services:
 
   airflow-scheduler:
     build: ./airflow
+    env_file:
+      - .env
     environment:
-      AIRFLOW__CORE__FERNET_KEY: voI23TfhGadbm73zYEmwDA-JI6vQ5ma5BoA_vPEFikM=
+      AZURE_KEYVAULT_URL: ${AZURE_KEYVAULT_URL}
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_CORE_FERNET_KEY}
       AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
+      AIRFLOW_CONN_PUBLISH_API: ${AIRFLOW_CONN_PUBLISH_API:-http://rpa-api:3000}
+      AIRFLOW__SECRETS__BACKEND: airflow.secrets.environment_variables.EnvironmentVariablesBackend
       AIRFLOW__WEBSERVER__EXPOSE_CONFIG: True
-      AIRFLOW__WEBSERVER__SECRET_KEY: airflow_secret_key_2024
+      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW__WEBSERVER__SECRET_KEY}
       AIRFLOW__CORE__LOAD_EXAMPLES: False
       AIRFLOW__CORE__DEFAULT_UI_TIMEZONE: UTC
       AIRFLOW__WEBSERVER__DEFAULT_UI_TIMEZONE: UTC
@@ -129,13 +141,18 @@ services:
 
   airflow-init:
     build: ./airflow
+    env_file:
+      - .env
     environment:
-      AIRFLOW__CORE__FERNET_KEY: voI23TfhGadbm73zYEmwDA-JI6vQ5ma5BoA_vPEFikM=
+      AZURE_KEYVAULT_URL: ${AZURE_KEYVAULT_URL}
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_CORE_FERNET_KEY}
       AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
+      AIRFLOW_CONN_PUBLISH_API: ${AIRFLOW_CONN_PUBLISH_API:-http://rpa-api:3000}
+      AIRFLOW__SECRETS__BACKEND: airflow.secrets.environment_variables.EnvironmentVariablesBackend
       AIRFLOW__WEBSERVER__EXPOSE_CONFIG: True
-      AIRFLOW__WEBSERVER__SECRET_KEY: airflow_secret_key_2024
+      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW__WEBSERVER__SECRET_KEY}
       AIRFLOW__CORE__LOAD_EXAMPLES: False
       AIRFLOW__CORE__DEFAULT_UI_TIMEZONE: UTC
       AIRFLOW__WEBSERVER__DEFAULT_UI_TIMEZONE: UTC
@@ -175,8 +192,8 @@ services:
         set -e
         airflow db migrate
         airflow users create \
-          --username "${_AIRFLOW_WWW_USER_USERNAME:-admin}" \
-          --password "${_AIRFLOW_WWW_USER_PASSWORD:-admin}" \
+          --username "${AIRFLOW_WWW_USER_USERNAME:-admin}" \
+          --password "${AIRFLOW_WWW_USER_PASSWORD:-admin}" \
           --firstname Admin \
           --lastname User \
           --role Admin \
@@ -188,14 +205,47 @@ services:
       postgres:
         condition: service_healthy
 
+  rpa-api:
+    build: ./rpa-api
+    ports:
+      - "3000:3000"
+    environment:
+      AZURE_KEYVAULT_URL: ${AZURE_KEYVAULT_URL}
+      RABBITMQ_HOST: ${RABBITMQ_HOST:-rabbitmq}
+      RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
+      RABBITMQ_USER: ${RABBITMQ_DEFAULT_USER:-admin}
+      RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS:-admin}
+      RABBITMQ_VHOST: ${RABBITMQ_DEFAULT_VHOST:-/}
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
   rabbitmq:
     image: rabbitmq:3.13-management
     ports:
       - "5672:5672"
       - "15672:15672"
     environment:
-      RABBITMQ_DEFAULT_USER: admin
-      RABBITMQ_DEFAULT_PASS: pass
+      RABBITMQ_LOAD_DEFINITIONS: /etc/rabbitmq/definitions.json
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-admin}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-admin}
+      RABBITMQ_DEFAULT_VHOST: /
+    volumes:
+      - ./config/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
 
 volumes:
   postgres_data:

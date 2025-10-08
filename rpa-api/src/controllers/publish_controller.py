@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/publish", tags=["publish"])
 
 
-@router.post("/", status_code=202)
+@router.post("/", status_code=200)
 async def publish_message(request: Request) -> Dict[str, str]:
     """
     Publish a message to the RabbitMQ queue.
@@ -27,26 +27,18 @@ async def publish_message(request: Request) -> Dict[str, str]:
     try:
         # Get the raw JSON payload
         raw_payload: Dict[str, Any] = await request.json()
-        
-        # Validate the payload using Pydantic model
-        validated_payload = PublishPayload(**raw_payload)
-        
-        # Extract the rpa-id for response
-        rpa_id = validated_payload.rpa_id
-        
-        # Create payload with only validated fields (rpa-id only)
-        payload = {"rpa-id": rpa_id}
-        
-        # Publish to queue
+
+        # Validate the payload minimally (ensures required fields exist)
+        _ = PublishPayload(**raw_payload)
+
+        # Publish the original payload as-is
         queue_service = QueueService()
-        queue_service.publish(payload)
-        
-        logger.info(f"Successfully queued message with rpa-id: {rpa_id}")
-        
-        return {
-            "status": "queued",
-            "rpa-id": rpa_id
-        }
+        queue_service.publish(raw_payload)
+
+        logger.info("Successfully queued message")
+
+        # Return the original payload
+        return raw_payload
         
     except ValueError as e:
         # Pydantic validation error

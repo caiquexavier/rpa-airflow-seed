@@ -1,4 +1,4 @@
-# rpa-api
+# RPA API
 
 Minimal FastAPI service for RPA operations with RabbitMQ queue publishing.
 
@@ -9,59 +9,69 @@ Minimal FastAPI service for RPA operations with RabbitMQ queue publishing.
 - **Pydantic Validation** - Type-safe request validation
 - **Environment Configuration** - Configurable RabbitMQ settings
 
-## Requirements
-- Python 3.10+
-- RabbitMQ server
+## Prerequisites
+- Python 3.11+
+- Virtual environment (venv)
+- Dependencies installed
+- RabbitMQ server running
 
-## Setup
+## Quick Start
 
-### Environment Configuration
-Copy `.env.example` to `.env` and configure your RabbitMQ settings:
+### 1. Navigate to rpa-api directory
 ```bash
-cp .env.example .env
+cd rpa-api
 ```
 
-### Manual virtual environment
+### 2. Create and activate virtual environment
 ```bash
+# Create virtual environment (if not exists)
 python -m venv venv
-# On Windows (PowerShell):
-.\venv\Scripts\Activate.ps1
-# On POSIX:
-source venv/bin/activate
 
+# Activate virtual environment
+# Windows:
+venv\Scripts\activate
+# Linux/Mac:
+source venv/bin/activate
+```
+
+### 3. Install dependencies
+```bash
 pip install -r requirements.txt
 ```
 
-## Quick start
-
-### Development server
+### 4. Set environment variables
 ```bash
-# POSIX:
-uvicorn src.main:app --reload --host 0.0.0.0 --port 8080
+# Windows PowerShell:
+$env:AZURE_KEYVAULT_URL = "https://rpaidentity.vault.azure.net/"
+$env:RABBITMQ_HOST = "localhost"
+$env:RABBITMQ_PORT = "5672"
+$env:RABBITMQ_VHOST = "/"
+$env:RABBITMQ_QUEUE = "rpa_events"
 
-# Windows (PowerShell):
-uvicorn src.main:app --reload --host 0.0.0.0 --port 8080
+# Windows CMD:
+set AZURE_KEYVAULT_URL=https://rpaidentity.vault.azure.net/
+set RABBITMQ_HOST=localhost
+set RABBITMQ_PORT=5672
+set RABBITMQ_VHOST=/
+set RABBITMQ_QUEUE=rpa_events
+
+# Linux/Mac:
+export AZURE_KEYVAULT_URL=https://rpaidentity.vault.azure.net/
+export RABBITMQ_HOST=localhost
+export RABBITMQ_PORT=5672
+export RABBITMQ_VHOST=/
+export RABBITMQ_QUEUE=rpa_events
 ```
 
-### Quick Start Scripts
-Use the provided scripts to run the API locally:
-
-**Windows (PowerShell):**
-```powershell
-.\run_rpa_api.ps1
-```
-
-**Windows (Command Prompt):**
-```cmd
-run_rpa_api.bat
-```
-
-**Linux/macOS:**
+### 5. Start the API server
 ```bash
-./run_rpa_api.sh
+uvicorn src.main:app --reload --host 0.0.0.0 --port 3000
 ```
 
-The API will be available at `http://localhost:3000`.
+## Service Endpoints
+- **API**: http://localhost:3000
+- **Health Check**: http://localhost:3000/health
+- **API Documentation**: http://localhost:3000/docs
 
 ## API Endpoints
 
@@ -121,18 +131,30 @@ rpa-api/
 └── .env.example
 ```
 
+## Docker Alternative
+```bash
+# Build and run with Docker
+docker build -t rpa-api .
+docker run -p 3000:3000 -e AZURE_KEYVAULT_URL=https://rpaidentity.vault.azure.net/ rpa-api
+```
+
+## Troubleshooting
+- Ensure RabbitMQ is running and accessible
+- Check Azure Key Vault credentials
+- Verify all environment variables are set
+- Check logs for detailed error messages
+
 ## Configuration
 
 The service uses environment variables for RabbitMQ configuration:
 
+- `AZURE_KEYVAULT_URL` - Azure Key Vault URL (required)
 - `RABBITMQ_HOST` - RabbitMQ host (default: localhost)
 - `RABBITMQ_PORT` - RabbitMQ port (default: 5672)
-- `RABBITMQ_USER` - Username (default: guest)
-- `RABBITMQ_PASSWORD` - Password (default: guest)
 - `RABBITMQ_VHOST` - Virtual host (default: /)
 - `RABBITMQ_EXCHANGE` - Exchange name (empty for direct queue)
 - `RABBITMQ_ROUTING_KEY` - Routing key (required if exchange is set)
 - `RABBITMQ_QUEUE` - Queue name (default: rpa_events)
 - `RABBITMQ_PUBLISH_CONFIRM` - Enable publisher confirms (default: true)
 
-**Note:** This project was refactored from "earthquakes" to "rpa" for minimal FastAPI implementation.
+**Note:** `RABBITMQ_USER` and `RABBITMQ_PASSWORD` are now retrieved from Azure Key Vault using the secret names `rabbitmq-user` and `rabbitmq-password`.

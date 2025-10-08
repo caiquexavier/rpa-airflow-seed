@@ -1,3 +1,4 @@
+.env
 # Environment variables
 .env
 .env.local
@@ -97,3 +98,12 @@ Thumbs.db
 
 # Ensure all Python bytecode cache directories are ignored everywhere
 **/__pycache__/
+
+# Node / PM2
+node_modules/
+npm-debug.log*
+yarn.lock
+package-lock.json
+.pnpm-store/
+.pm2/
+logs/

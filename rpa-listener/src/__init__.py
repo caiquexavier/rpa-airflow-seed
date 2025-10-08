@@ -1,3 +1,0 @@
-"""rpa-listener application package."""
-
-

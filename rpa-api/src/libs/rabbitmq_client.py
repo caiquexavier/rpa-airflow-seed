@@ -2,8 +2,12 @@
 import json
 import logging
 import os
+import time
+from typing import Optional
 
 import pika
+from ..config.azure_config import AzureConfig
+ 
 
 logger = logging.getLogger(__name__)
 
@@ -40,38 +44,58 @@ def publish_json(payload: dict) -> bool:
         bool: True if published successfully, False otherwise
     """
     try:
-        # Get configuration from environment
-        host = os.getenv("RABBITMQ_HOST", "localhost")
-        port = int(os.getenv("RABBITMQ_PORT", "5672"))
-        user = os.getenv("RABBITMQ_USER", "guest")
-        password = os.getenv("RABBITMQ_PASSWORD", "guest")
-        vhost = os.getenv("RABBITMQ_VHOST", "/")
-        queue = os.getenv("RABBITMQ_QUEUE", "rpa_events")
+        # Validate Azure credentials are loaded
+        if not AzureConfig.validate_credentials():
+            logger.error("Azure Key Vault credentials not loaded. Run load-azure-keys.py first.")
+            return False
         
-        # Create connection
+        # Get credentials from Azure Key Vault
+        host = AzureConfig.get_rabbitmq_host()
+        port = AzureConfig.get_rabbitmq_port()
+        user = AzureConfig.get_rabbitmq_user()
+        password = AzureConfig.get_rabbitmq_password()
+        vhost = os.getenv("RABBITMQ_VHOST", "/")
+        queue = AzureConfig.get_rabbitmq_queue()
+
+        heartbeat = int(os.getenv("RABBITMQ_HEARTBEAT", "30"))
+        blocked_connection_timeout = float(os.getenv("RABBITMQ_BLOCKED_TIMEOUT", "30"))
+        socket_timeout = float(os.getenv("RABBITMQ_SOCKET_TIMEOUT", "10"))
+        connection_attempts = int(os.getenv("RABBITMQ_CONN_ATTEMPTS", "3"))
+        retry_delay_seconds = float(os.getenv("RABBITMQ_RETRY_DELAY", "2"))
+
         credentials = pika.PlainCredentials(user, password)
         parameters = pika.ConnectionParameters(
             host=host,
             port=port,
             virtual_host=vhost,
-            credentials=credentials
+            credentials=credentials,
+            heartbeat=heartbeat,
+            blocked_connection_timeout=blocked_connection_timeout,
+            socket_timeout=socket_timeout,
+            connection_attempts=connection_attempts,
+            retry_delay=0,
         )
-        
-        connection = pika.BlockingConnection(parameters)
-        channel = connection.channel()
-        
-        # Declare queue
-        channel.queue_declare(queue=queue, durable=True)
-        
-        # Publish message
-        publish(channel, queue, payload)
-        
-        # Close connection
-        connection.close()
-        
-        logger.info(f"Message published successfully to queue: {queue}")
-        return True
-            
+
+        last_error: Optional[Exception] = None
+        for attempt in range(1, connection_attempts + 1):
+            try:
+                connection = pika.BlockingConnection(parameters)
+                channel = connection.channel()
+                channel.queue_declare(queue=queue, durable=True)
+                publish(channel, queue, payload)
+                connection.close()
+                return True
+            except Exception as connect_error:  # retryable
+                last_error = connect_error
+                logger.warning(
+                    f"RabbitMQ publish attempt {attempt}/{connection_attempts} failed: {connect_error}"
+                )
+                if attempt < connection_attempts:
+                    time.sleep(retry_delay_seconds)
+
+        if last_error:
+            raise last_error
+        return False
     except Exception as e:
         logger.error(f"Failed to publish message: {e}")
         return False
