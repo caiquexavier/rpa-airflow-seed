@@ -1,39 +1,93 @@
-## Robot Framework Minimal Project
+# RPA Robots
 
-Prerequisites
+Robot Framework automation tests for RPA operations.
 
-- Windows 11
-- Python 3.10+ on PATH (`python --version`)
+## Prerequisites
+- Python 3.11+
+- Virtual environment (venv)
+- Dependencies installed
+- Robot Framework Browser initialized
 
-Setup
+## Quick Start
 
-1. Create virtual environment
-   - `python -m venv venv`
-   - Optional activation (if available on your system):
-     - PowerShell: `.\venv\Scripts\Activate.ps1`
-     - CMD: `.\venv\Scripts\activate.bat`
-2. Install dependencies
-   - If activated: `pip install -r requirements.txt`
-   - Without activation: `.\venv\Scripts\pip.exe install -r requirements.txt`
+### 1. Navigate to rpa-robots directory
+```bash
+cd rpa-robots
+```
 
-Run Tests
+### 2. Create and activate virtual environment
+```bash
+# Create virtual environment (if not exists)
+python -m venv venv
 
-- From the project root (`rpa-robots/`), choose one of:
-  - Using the venv executable (no activation required):
-    - `.\venv\Scripts\robot.exe -d results tests`
-  - Using Python module form (also works without activation):
-    - `.\venv\Scripts\python.exe -m robot -d results tests`
-  - If your PATH is set and venv is activated:
-    - `robot -d results tests`
+# Activate virtual environment
+# Windows:
+venv\Scripts\activate
+# Linux/Mac:
+source venv/bin/activate
+```
 
-Browser (RF Browser) first-time setup:
-- After installing requirements into a fresh venv, run once:
-  - `.\venv\Scripts\rfbrowser.exe init`
+### 3. Install dependencies
+```bash
+pip install -r requirements.txt
+```
 
-Project Structure
+### 4. Initialize Robot Framework Browser
+```bash
+# This downloads Playwright and browser dependencies
+rfbrowser init
+```
 
-- `tests/` — test suites
-- `resources/` — reusable keywords
-- `variables/` — shared variables (Python)
-- `results/` — output: `report.html`, `log.html`, `output.xml`
+### 5. Create results directory (if needed)
+```bash
+# Windows:
+mkdir results
+# Linux/Mac:
+mkdir -p results
+```
+
+### 6. Run Robot Framework tests
+```bash
+# Run all tests
+robot -d results tests/
+
+# Run specific test
+robot -d results tests/ecargo_pod_download.robot
+
+# Run with specific browser
+robot -d results --variable BROWSER:chrome tests/
+```
+
+## Test Structure
+- **Tests Directory**: `tests/`
+- **Resources**: `resources/`
+  - `browser/` - Browser automation resources
+  - `pod_download/` - Pod download specific resources
+- **Results**: `results/` - Test execution results
+
+## Available Tests
+- `ecargo_pod_download.robot` - e-Cargo pod download automation
+
+## Test Results
+After execution, check the `results/` directory for:
+- `log.html` - Detailed test execution log
+- `report.html` - Test execution report
+- `output.xml` - Machine-readable test results
+
+## Docker Alternative
+```bash
+# Build and run with Docker
+docker build -t rpa-robots .
+docker run -v $(pwd)/results:/app/results rpa-robots
+```
+
+## Troubleshooting
+- Ensure all dependencies are installed
+- Run `rfbrowser init` if browser initialization fails
+- Check that test files exist in `tests/` directory
+- Verify browser resources are properly configured
+- Check logs in `results/` directory for detailed error information
+
+## Manual Test Execution
+You can also run individual test steps by examining the robot files and running them manually through the Robot Framework IDE or command line with specific options.
 

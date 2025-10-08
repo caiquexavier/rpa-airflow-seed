@@ -1,7 +1,12 @@
 """FastAPI application entrypoint for rpa-api."""
+import os
 from typing import Dict
 
+from dotenv import load_dotenv
 from fastapi import FastAPI
+
+# Load environment variables from .env file
+load_dotenv()
 
 from .controllers.publish_controller import router as publish_router
 

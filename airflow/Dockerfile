@@ -1,6 +1,7 @@
 FROM apache/airflow:2.9.3
 
-# Base Airflow image with standard providers
+# Install Azure SDK dependencies as airflow user
 USER airflow
+RUN pip install azure-identity azure-keyvault-secrets
 
 
