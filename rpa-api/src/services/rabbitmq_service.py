@@ -6,7 +6,7 @@ import time
 from typing import Optional
 
 import pika
-from ..config.azure_config import AzureConfig
+from ..config.config import get_rabbitmq_config
  
 
 logger = logging.getLogger(__name__)
@@ -44,18 +44,14 @@ def publish_json(payload: dict) -> bool:
         bool: True if published successfully, False otherwise
     """
     try:
-        # Validate Azure credentials are loaded
-        if not AzureConfig.validate_credentials():
-            logger.error("Azure Key Vault credentials not loaded. Run load-azure-keys.py first.")
-            return False
-        
-        # Get credentials from Azure Key Vault
-        host = AzureConfig.get_rabbitmq_host()
-        port = AzureConfig.get_rabbitmq_port()
-        user = AzureConfig.get_rabbitmq_user()
-        password = AzureConfig.get_rabbitmq_password()
-        vhost = os.getenv("RABBITMQ_VHOST", "/")
-        queue = AzureConfig.get_rabbitmq_queue()
+        # Get credentials from config
+        config = get_rabbitmq_config()
+        host = config["RABBITMQ_HOST"]
+        port = int(config["RABBITMQ_PORT"])
+        user = config["RABBITMQ_USER"]
+        password = config["RABBITMQ_PASSWORD"]
+        vhost = config["RABBITMQ_VHOST"]
+        queue = config["RABBITMQ_ROUTING_KEY"]
 
         heartbeat = int(os.getenv("RABBITMQ_HEARTBEAT", "30"))
         blocked_connection_timeout = float(os.getenv("RABBITMQ_BLOCKED_TIMEOUT", "30"))

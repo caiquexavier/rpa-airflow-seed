@@ -1,12 +1,15 @@
 services:
   postgres:
     image: postgres:15
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-airflow}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-airflow}
       POSTGRES_DB: ${POSTGRES_DB:-airflow}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./src/config/postgres/10_create_rpa_db.sql:/docker-entrypoint-initdb.d/10_create_rpa_db.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-airflow} || pg_isready"]
       interval: 10s
@@ -17,6 +20,7 @@ services:
 
   airflow-webserver:
     build: ./airflow
+    user: "0:0"
     env_file:
       - .env
     environment:
@@ -69,6 +73,9 @@ services:
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/libs:/opt/airflow/libs
+      - ./src:/opt/airflow/src
+      - ./airflow/data:/opt/airflow/data
     depends_on:
       postgres:
         condition: service_healthy
@@ -84,6 +91,7 @@ services:
 
   airflow-scheduler:
     build: ./airflow
+    user: "0:0"
     env_file:
       - .env
     environment:
@@ -132,6 +140,9 @@ services:
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/libs:/opt/airflow/libs
+      - ./src:/opt/airflow/src
+      - ./airflow/data:/opt/airflow/data
     depends_on:
       postgres:
         condition: service_healthy
@@ -141,6 +152,7 @@ services:
 
   airflow-init:
     build: ./airflow
+    user: "0:0"
     env_file:
       - .env
     environment:
@@ -201,6 +213,9 @@ services:
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/libs:/opt/airflow/libs
+      - ./src:/opt/airflow/src
+      - ./airflow/data:/opt/airflow/data
     depends_on:
       postgres:
         condition: service_healthy
@@ -210,17 +225,25 @@ services:
     ports:
       - "3000:3000"
     environment:
-      AZURE_KEYVAULT_URL: ${AZURE_KEYVAULT_URL}
       RABBITMQ_HOST: ${RABBITMQ_HOST:-rabbitmq}
       RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
+      RABBITMQ_VHOST: ${RABBITMQ_DEFAULT_VHOST:-/}
       RABBITMQ_USER: ${RABBITMQ_DEFAULT_USER:-admin}
       RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS:-admin}
-      RABBITMQ_VHOST: ${RABBITMQ_DEFAULT_VHOST:-/}
+      RABBITMQ_EXCHANGE: ${RABBITMQ_EXCHANGE:-}
+      RABBITMQ_ROUTING_KEY: ${RABBITMQ_ROUTING_KEY:-rpa_events}
+      RPA_DB_HOST: ${RPA_DB_HOST:-postgres}
+      RPA_DB_PORT: ${RPA_DB_PORT:-5432}
+      RPA_DB_USER: ${RPA_DB_USER:-airflow}
+      RPA_DB_PASSWORD: ${RPA_DB_PASSWORD:-airflow}
+      RPA_DB_NAME: ${RPA_DB_NAME:-rpa_db}
     depends_on:
+      postgres:
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:3000/request_rpa_exec", "-X", "POST", "-H", "Content-Type: application/json", "-d", "{\"rpa_id\":\"health_check\"}"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -238,7 +261,7 @@ services:
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-admin}
       RABBITMQ_DEFAULT_VHOST: /
     volumes:
-      - ./config/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+      - ./src/config/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "ping"]
       interval: 30s
