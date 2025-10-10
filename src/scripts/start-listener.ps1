@@ -5,7 +5,7 @@ Write-Host "Starting RPA Listener..." -ForegroundColor Green
 
 # Get the script directory and navigate to project root
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$ProjectRoot = Split-Path -Parent $ScriptDir
+$ProjectRoot = (Resolve-Path (Join-Path $ScriptDir "..\..")).Path
 $ListenerDir = Join-Path $ProjectRoot "rpa-listener"
 
 Write-Host "Project root: $ProjectRoot" -ForegroundColor Cyan

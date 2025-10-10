@@ -1,1 +1,1 @@
-"""Validations package for rpa-api."""
+"""Validation package for rpa-api."""

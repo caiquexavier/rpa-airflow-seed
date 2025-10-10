@@ -58,7 +58,7 @@ npm -v
 ### 3) Environment Setup
 ```powershell
 # Run the setup script to configure environment and install dependencies
-powershell -ExecutionPolicy Bypass -File scripts/setup-env.ps1
+powershell -ExecutionPolicy Bypass -File src/scripts/setup-env.ps1
 ```
 
 This script will:
@@ -87,13 +87,27 @@ npm run logs
 npm run start:listener
 ```
 
-### 5) Access Services
+### 5) Configure Airflow Variables and Connections
+```powershell
+# Set Airflow Variable for XLSX file path
+# In Airflow UI: Admin > Variables > Add Variable
+# Key: ECARGO_XLSX_PATH
+# Value: /opt/airflow/data/Controle_Unilever_Personalizado.xlsx
+
+# Create HTTP Connection for RPA API
+# In Airflow UI: Admin > Connections > Add Connection
+# Conn Id: rpa_api
+# Conn Type: HTTP
+# Host: http://rpa-api:3000
+```
+
+### 6) Access Services
 - **Airflow UI**: http://localhost:8080 (admin/admin)
 - **RPA API**: http://localhost:3000
 - **RabbitMQ Management**: http://localhost:15672 (credentials from Key Vault)
 - **API Health Check**: http://localhost:3000/health
 
-### 6) Development Mode (Optional)
+### 7) Development Mode (Optional)
 ```powershell
 # For development, you can run services individually:
 
@@ -121,14 +135,23 @@ rpa-airflow-seed/
 ├── package.json              # Helper scripts for Docker and PowerShell
 ├── docker-compose.yml        # Docker orchestration
 ├── .env                      # Environment variables (secrets)
-├── scripts/                  # PowerShell setup and management scripts
-│   ├── setup-env.ps1         # Environment setup and dependency installation
-│   └── start-listener.ps1    # PowerShell script to start RPA Listener
+├── src/                      # Source code and configuration
+│   ├── scripts/              # PowerShell setup and management scripts
+│   │   ├── setup-env.ps1     # Environment setup and dependency installation
+│   │   └── start-listener.ps1 # PowerShell script to start RPA Listener
+│   ├── config/               # Configuration files
+│   │   └── rabbitmq/
+│   │       └── definitions.json # RabbitMQ queue definitions
+│   ├── data/                 # Data files
+│   └── database/             # Database migrations
 ├── airflow/                   # Airflow orchestration
 │   ├── Dockerfile             # Custom Airflow image
 │   ├── dags/                  # Workflow definitions
-│   │   ├── call_publish_api_dag.py
-│   │   └── example_dag.py
+│   │   └── dag_ecargo_pod_download.py
+│   ├── libs/                  # Shared utilities
+│   │   └── converter.py       # Excel to RPA request converter
+│   ├── data/                  # Data files
+│   │   └── Controle_Unilever_Personalizado.xlsx
 │   └── logs/                  # Airflow logs
 ├── rpa-api/                   # FastAPI service
 │   ├── Dockerfile             # Docker image for RPA API
@@ -145,9 +168,6 @@ rpa-airflow-seed/
 │   ├── tests/                # Test suites
 │   ├── resources/            # Reusable keywords
 │   └── results/              # Test outputs
-└── config/                   # Configuration files
-    └── rabbitmq/
-        └── definitions.json  # RabbitMQ queue definitions
 ```
 
 ## 🔧 Features
@@ -159,7 +179,7 @@ rpa-airflow-seed/
 - **DAG Management**: Visual workflow management at http://localhost:8080
 
 ### RPA API (FastAPI) - Docker Container
-- **RESTful Endpoints**: `/publish`, `/health`
+- **RESTful Endpoints**: `/request_rpa_exec`, `/health`
 - **RabbitMQ Integration**: Message queue publishing
 - **Pydantic Validation**: Type-safe request handling
 - **MVC Architecture**: Clean separation of concerns
@@ -249,7 +269,7 @@ docker-compose up -d --scale rpa-api=2
 curl http://localhost:3000/health
 
 # Test RPA API publish endpoint
-curl -X POST http://localhost:3000/publish -H "Content-Type: application/json" -d '{"rpa-id":"test-001"}'
+curl -X POST http://localhost:3000/request_rpa_exec -H "Content-Type: application/json" -d '{"rpa-id":"test-001"}'
 
 # Test Airflow health endpoint
 curl http://localhost:8080/health
@@ -299,7 +319,7 @@ curl http://localhost:3000/health
 # Expected: {"status": "ok"}
 
 # Test RPA API publish endpoint
-curl -X POST http://localhost:3000/publish -H "Content-Type: application/json" -d '{"rpa-id":"docker-test-001"}'
+curl -X POST http://localhost:3000/request_rpa_exec -H "Content-Type: application/json" -d '{"rpa-id":"docker-test-001"}'
 # Expected: {"rpa-id":"docker-test-001"}
 
 # Test Airflow health endpoint
@@ -362,8 +382,20 @@ docker-compose logs rpa-api
 
 ## 📋 Workflow Example
 
+### New DAG: ecargo_pod_download
+1. **Set Airflow Variable** `ECARGO_XLSX_PATH` with absolute path to `.xlsx` file
+2. **Create HTTP Connection** `rpa_api` pointing to `http://rpa-api:3000`
+3. **Trigger DAG** `ecargo_pod_download` manually in Airflow UI
+4. **Task 1**: `convert_xls_to_json` - extracts NOTA FISCAL values from Excel
+5. **Task 2**: `post_to_rpa_api` - POSTs payload to RPA API `/request_rpa_exec`
+6. **API publishes** message to RabbitMQ queue
+7. **RPA Listener** consumes message from queue
+8. **Listener executes** Robot Framework test
+9. **Results** saved to `rpa-robots/results/`
+
+### Legacy Workflow (Deprecated)
 1. **Create DAG** in Airflow UI or trigger manually
-2. **DAG calls** RPA API `/publish` endpoint
+2. **DAG calls** RPA API `/request_rpa_exec` endpoint
 3. **API publishes** message to RabbitMQ queue
 4. **RPA Listener** consumes message from queue
 5. **Listener executes** Robot Framework test

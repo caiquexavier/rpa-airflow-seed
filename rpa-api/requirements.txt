@@ -1,9 +1,6 @@
 fastapi
 uvicorn[standard]
-pytest
-httpx
 pydantic
 pika
 python-dotenv
-azure-identity
-azure-keyvault-secrets
+psycopg2-binary
