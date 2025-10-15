@@ -40,7 +40,7 @@ def xls_to_rpa_request(xlsx_path: Union[str, Path]) -> Dict[str, Any]:
     
     # Return exact dict that matches rpa-api model
     return {
-        "rpa_id": "ecargo_pod_download",
+        "rpa_key_id": "ecargo_pod_download",
         "rpa_request": {
             "notas_fiscais": notas_fiscais
         }

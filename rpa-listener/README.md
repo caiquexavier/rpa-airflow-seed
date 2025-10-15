@@ -67,7 +67,7 @@ python main.py
 
 Send a message to the `rpa_events` queue with this JSON payload:
 ```json
-{ "rpa-id": "job-001" }
+{ "rpa_id": "job-001" }
 ```
 
 ## Docker Alternative
@@ -93,7 +93,7 @@ docker run -e AZURE_KEYVAULT_URL=https://rpaidentity.vault.azure.net/ -e RABBITM
 ## Features
 
 - Connects to RabbitMQ and declares a durable queue
-- Parses JSON messages with `rpa-id` field
+- Parses JSON messages with `rpa_id` field
 - Runs Robot Framework tests via PowerShell
 - Acknowledges messages on success, nacks on failure (no requeue)
 - Graceful shutdown on Ctrl+C
