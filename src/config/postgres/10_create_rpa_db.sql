@@ -1,8 +1,6 @@
-DO $$
-BEGIN
-	IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'rpa_db') THEN
-		PERFORM pg_catalog.pg_sleep(0);
-		EXECUTE 'CREATE DATABASE rpa_db';
-	END IF;
-END
-$$;
+-- Create database if it does not exist using psql's \gexec (runs outside function context)
+SELECT 'CREATE DATABASE rpa_db'
+WHERE NOT EXISTS (
+    SELECT FROM pg_database WHERE datname = 'rpa_db'
+);
+\gexec

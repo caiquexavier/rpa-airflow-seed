@@ -15,10 +15,10 @@ def create_validation_error_response(validation_error: ValidationError) -> JSONR
         error_msg = error["msg"]
         
         # Map specific error types to user-friendly messages
-        if field == "rpa_id" and error_type == "missing":
-            error_msg = "rpa_id is required and must be a non-empty string"
-        elif field == "rpa_id" and error_type == "string_too_short":
-            error_msg = "rpa_id is required and must be a non-empty string"
+        if field == "rpa_key_id" and error_type == "missing":
+            error_msg = "rpa_key_id is required and must be a non-empty string"
+        elif field == "rpa_key_id" and error_type == "string_too_short":
+            error_msg = "rpa_key_id is required and must be a non-empty string"
         elif field == "callback_url" and error_type in ["url_parsing", "url_scheme"]:
             error_msg = "Invalid URL"
         elif field == "rpa_request" and error_type == "dict_type":
