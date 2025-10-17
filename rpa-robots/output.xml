@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.1.1 (Python 3.11.9 on win32)" generated="2025-10-17T18:30:55.512659" rpa="false" schemaversion="5">
+<suite id="s1" name="Ecargo Pod Download" source="C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\tests\ecargo_pod_download.robot">
+<test id="s1-t1" name="Pod Download" line="6">
+<kw name="Start Browser" owner="browser">
+<kw name="Open Browser" owner="SeleniumLibrary">
+<msg time="2025-10-17T18:30:55.882294" level="INFO">Opening browser 'chrome' to base url 'about:blank'.</msg>
+<arg>about:blank</arg>
+<arg>chrome</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2025-10-17T18:30:55.880164" elapsed="2.273168"/>
+</kw>
+<kw name="Maximize Browser Window" owner="SeleniumLibrary">
+<doc>Maximizes current browser window.</doc>
+<status status="PASS" start="2025-10-17T18:30:58.153964" elapsed="0.070054"/>
+</kw>
+<status status="PASS" start="2025-10-17T18:30:55.880164" elapsed="2.343854"/>
+</kw>
+<kw name="Login To e-Cargo" owner="pod_download">
+<kw name="Go To" owner="SeleniumLibrary">
+<msg time="2025-10-17T18:30:58.225027" level="INFO">Opening url 'https://mrc-hml.signa.net.br/'</msg>
+<arg>${base_url}</arg>
+<doc>Navigates the current browser window to the provided ``url``.</doc>
+<status status="PASS" start="2025-10-17T18:30:58.225027" elapsed="4.374024"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>css=#email</arg>
+<arg>timeout=15s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-10-17T18:31:02.599051" elapsed="0.024379"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-10-17T18:31:02.624428" level="INFO">Typing text 'RPA001' into text field 'css=#email'.</msg>
+<arg>css=#email</arg>
+<arg>${USUARIO}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-10-17T18:31:02.623430" elapsed="0.130347"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>css=#password</arg>
+<arg>timeout=15s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-10-17T18:31:02.753777" elapsed="0.020543"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-10-17T18:31:02.774320" level="INFO">Typing text 'GL@balti@2025' into text field 'css=#password'.</msg>
+<arg>css=#password</arg>
+<arg>${SENHA}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-10-17T18:31:02.774320" elapsed="0.172838"/>
+</kw>
+<kw name="Wait Until Element Is Enabled" owner="SeleniumLibrary">
+<arg>css=#login</arg>
+<arg>timeout=15s</arg>
+<doc>Waits until the element ``locator`` is enabled.</doc>
+<status status="PASS" start="2025-10-17T18:31:02.947664" elapsed="0.034053"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-10-17T18:31:02.983229" level="INFO">Clicking element 'css=#login'.</msg>
+<arg>css=#login</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-10-17T18:31:02.981717" elapsed="0.094826"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-10-17T18:31:05.077671" level="INFO">Slept 2 seconds.</msg>
+<arg>2s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-10-17T18:31:03.076543" elapsed="2.001128"/>
+</kw>
+<status status="PASS" start="2025-10-17T18:30:58.224018" elapsed="6.853653"/>
+</kw>
+<kw name="Open Operacional Menu" owner="pod_download">
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//*[contains(text(),'Operacional')]</arg>
+<arg>timeout=10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-10-17T18:31:05.080370" elapsed="0.041126"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-10-17T18:31:05.121496" level="INFO">Clicking element 'xpath=//*[contains(text(),'Operacional')]'.</msg>
+<arg>xpath=//*[contains(text(),'Operacional')]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-10-17T18:31:05.121496" elapsed="0.107482"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-10-17T18:31:08.230654" level="INFO">Slept 3 seconds.</msg>
+<arg>3s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-10-17T18:31:05.230488" elapsed="3.000166"/>
+</kw>
+<status status="PASS" start="2025-10-17T18:31:05.077671" elapsed="3.152983"/>
+</kw>
+<kw name="Open Registro De Canhotos Submenu" owner="pod_download">
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//div[@class='v-list__tile__title' and text()='Registro de Canhotos']</arg>
+<arg>timeout=10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-10-17T18:31:08.231660" elapsed="0.019274"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-10-17T18:31:08.252048" level="INFO">Clicking element 'xpath=//div[@class='v-list__tile__title' and text()='Registro de Canhotos']'.</msg>
+<arg>xpath=//div[@class='v-list__tile__title' and text()='Registro de Canhotos']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-10-17T18:31:08.252048" elapsed="0.125100"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-10-17T18:31:13.377401" level="INFO">Slept 5 seconds.</msg>
+<arg>5s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-10-17T18:31:08.377148" elapsed="5.000253"/>
+</kw>
+<status status="PASS" start="2025-10-17T18:31:08.231660" elapsed="5.145741"/>
+</kw>
+<kw name="Input Nota Fiscal And Search" owner="pod_download">
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>css=iframe#frame</arg>
+<arg>timeout=15s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-10-17T18:31:13.378413" elapsed="0.018211"/>
+</kw>
+<kw name="Select Frame" owner="SeleniumLibrary">
+<msg time="2025-10-17T18:31:13.397634" level="INFO">Selecting frame 'css=iframe#frame'.</msg>
+<arg>css=iframe#frame</arg>
+<doc>Sets frame identified by ``locator`` as the current frame.</doc>
+<status status="PASS" start="2025-10-17T18:31:13.397634" elapsed="0.028181"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>css=input[name="txtNotaFiscal"]</arg>
+<arg>timeout=15s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-10-17T18:31:13.425815" elapsed="0.018251"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-10-17T18:31:13.444588" level="INFO">Clicking element 'css=input[name="txtNotaFiscal"]'.</msg>
+<arg>css=input[name="txtNotaFiscal"]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-10-17T18:31:13.444588" elapsed="0.164200"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-10-17T18:31:13.609788" level="INFO">Typing text '1234' into text field 'css=input[name="txtNotaFiscal"]'.</msg>
+<arg>css=input[name="txtNotaFiscal"]</arg>
+<arg>${NOTA_FISCAL}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-10-17T18:31:13.608788" elapsed="0.104941"/>
+</kw>
+<kw name="Unselect Frame" owner="SeleniumLibrary">
+<doc>Sets the main frame as the current frame.</doc>
+<status status="PASS" start="2025-10-17T18:31:13.713729" elapsed="0.003608"/>
+</kw>
+<status status="PASS" start="2025-10-17T18:31:13.378413" elapsed="0.338924"/>
+</kw>
+<kw name="Close Browser" owner="browser">
+<kw name="Close All Browsers" owner="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="PASS" start="2025-10-17T18:31:13.718394" elapsed="6.386015"/>
+</kw>
+<status status="PASS" start="2025-10-17T18:31:13.718394" elapsed="6.386015"/>
+</kw>
+<status status="PASS" start="2025-10-17T18:30:55.879159" elapsed="24.225250"/>
+</test>
+<status status="PASS" start="2025-10-17T18:30:55.515932" elapsed="24.589477"/>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="1" fail="0" skip="0" id="s1" name="Ecargo Pod Download">Ecargo Pod Download</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

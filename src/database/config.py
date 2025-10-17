@@ -17,7 +17,7 @@ def get_env(name: str, default: str | None = None) -> str:
 
 
 def build_database_url() -> str:
-	host = get_env("RPA_DB_HOST", "postgres")
+	host = get_env("RPA_DB_HOST", "localhost")
 	port = get_env("RPA_DB_PORT", "5432")
 	user = get_env("RPA_DB_USER", "airflow")
 	password = get_env("RPA_DB_PASSWORD", "airflow")

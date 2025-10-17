@@ -1,37 +1,40 @@
 *** Settings ***
-Library           Browser
+Library           SeleniumLibrary
 
 *** Variables ***
 ${BASE_URL}    https://mrc-hml.signa.net.br/
 ${USUARIO}     RPA001
 ${SENHA}       GL@balti@2025
+${NOTA_FISCAL}    1234
 
 *** Keywords ***
 Login To e-Cargo
     [Arguments]    ${base_url}=${BASE_URL}
-    New Page            ${base_url}
-    Wait For Elements State    css=#email         visible    timeout=15s
-    Fill Text                  css=#email         ${USUARIO}
-    Wait For Elements State    css=#password     visible    timeout=15s
-    Fill Text                  css=#password     ${SENHA}
-    Wait For Elements State    css=#login        enabled    timeout=15s
-    Click                      css=#login
-    Sleep                     2s
+    Go To    ${base_url}
+    Wait Until Element Is Visible    css=#email    timeout=15s
+    Input Text    css=#email    ${USUARIO}
+    Wait Until Element Is Visible    css=#password    timeout=15s
+    Input Text    css=#password    ${SENHA}
+    Wait Until Element Is Enabled    css=#login    timeout=15s
+    Click Element    css=#login
+    Sleep    2s
 
 Open Operacional Menu
-    Wait For Elements State    text=Operacional    visible    timeout=10s
-    Click    text=Operacional
+    Wait Until Element Is Visible    xpath=//*[contains(text(),'Operacional')]    timeout=10s
+    Click Element    xpath=//*[contains(text(),'Operacional')]
     Sleep    3s
-    Take Screenshot    filename=after_operacional_click.png
 
 Open Registro De Canhotos Submenu
-    Wait For Elements State    xpath=//div[@class='v-list__tile__title' and text()='Registro de Canhotos']    visible    timeout=10s
-    Click    xpath=//div[@class='v-list__tile__title' and text()='Registro de Canhotos']
+    Wait Until Element Is Visible    xpath=//div[@class='v-list__tile__title' and text()='Registro de Canhotos']    timeout=10s
+    Click Element    xpath=//div[@class='v-list__tile__title' and text()='Registro de Canhotos']
     Sleep    5s
-    Take Screenshot    filename=after_registro_click.png
 
 Input Nota Fiscal And Search
-    Sleep    5s
-    Fill Text                  css=input[type="text"]    5043156
-    Wait For Elements State    css=button[ng-click="viewModel.pesquisar()"]    enabled    timeout=10s
-    Click                      css=button[ng-click="viewModel.pesquisar()"]
+    Wait Until Element Is Visible    css=iframe#frame    timeout=15s
+    Select Frame    css=iframe#frame
+    Wait Until Element Is Visible    css=input[name="txtNotaFiscal"]    timeout=15s
+    # Click to focus on the text input before entering value
+    Click Element    css=input[name="txtNotaFiscal"]
+    Input Text    css=input[name="txtNotaFiscal"]    ${NOTA_FISCAL}
+    Sleep    10s
+    Unselect Frame

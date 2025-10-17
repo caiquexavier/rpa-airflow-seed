@@ -1,10 +1,10 @@
 *** Settings ***
-Library           Browser
+Library           SeleniumLibrary
 
 *** Keywords ***
 Start Browser
-    New Browser         browser=chromium    headless=${False}
-    New Context         acceptDownloads=${True}
+    Open Browser    about:blank    chrome
+    Maximize Browser Window
 
 Close Browser
-    Close Context
+    Close All Browsers
