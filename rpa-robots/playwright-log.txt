@@ -1,0 +1,83 @@
+{"level":30,"time":"2025-10-16T21:59:14.888Z","pid":20948,"hostname":"caiquepc","msg":"Listening on 127.0.0.1:62600"}
+(node:20948) DeprecationWarning: Calling start() is no longer necessary. It can be safely omitted.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"level":30,"time":"2025-10-16T21:59:15.228Z","pid":20948,"hostname":"caiquepc","msg":"Start of node method newBrowser"}
+{"level":30,"time":"2025-10-16T21:59:15.545Z","pid":20948,"hostname":"caiquepc","msg":"Adding browser to stack: chromium, version: 140.0.7339.186"}
+{"level":30,"time":"2025-10-16T21:59:15.546Z","pid":20948,"hostname":"caiquepc","msg":"Adding 0 contexts to browser"}
+{"level":30,"time":"2025-10-16T21:59:15.546Z","pid":20948,"hostname":"caiquepc","msg":"End of node method newBrowser"}
+{"level":30,"time":"2025-10-16T21:59:15.559Z","pid":20948,"hostname":"caiquepc","msg":"Start of node method newContext"}
+{"level":30,"time":"2025-10-16T21:59:15.559Z","pid":20948,"hostname":"caiquepc","msg":"Creating new context with options: {\"acceptDownloads\":true,\"bypassCSP\":false,\"forcedColors\":\"none\",\"ignoreHTTPSErrors\":false,\"javaScriptEnabled\":true,\"offline\":false,\"reducedMotion\":\"no-preference\",\"serviceWorkers\":\"allow\",\"viewport\":{\"height\":720,\"width\":1280}}"}
+{"level":30,"time":"2025-10-16T21:59:15.560Z","pid":20948,"hostname":"caiquepc","msg":"currentBrowser: {\"name\":\"chromium\",\"browser\":{\"_type\":\"Browser\",\"_guid\":\"browser@de2aa9fc4f0ea7d32ea6ff178a570754\"},\"headless\":false,\"_contextStack\":[],\"id\":\"browser=9d1b404d-4a6c-49c4-81be-7df2bb91cdac\"}"}
+{"level":30,"time":"2025-10-16T21:59:15.560Z","pid":20948,"hostname":"caiquepc","msg":"Trace file: "}
+{"level":30,"time":"2025-10-16T21:59:15.579Z","pid":20948,"hostname":"caiquepc","msg":"Setting default timeout for context context=f34ca17a-09e3-415c-a536-e5ce41bed496 to 10000"}
+{"level":30,"time":"2025-10-16T21:59:15.580Z","pid":20948,"hostname":"caiquepc","msg":"Changed active context: context=f34ca17a-09e3-415c-a536-e5ce41bed496"}
+{"level":30,"time":"2025-10-16T21:59:15.580Z","pid":20948,"hostname":"caiquepc","msg":"End of node method newContext"}
+{"level":30,"time":"2025-10-16T21:59:15.590Z","pid":20948,"hostname":"caiquepc","msg":"Start of node method newPage"}
+{"level":30,"time":"2025-10-16T21:59:15.591Z","pid":20948,"hostname":"caiquepc","msg":"currentBrowser: {\"name\":\"chromium\",\"browser\":{\"_type\":\"Browser\",\"_guid\":\"browser@de2aa9fc4f0ea7d32ea6ff178a570754\"},\"headless\":false,\"_contextStack\":[{\"id\":\"context=f34ca17a-09e3-415c-a536-e5ce41bed496\",\"c\":{\"_type\":\"BrowserContext\",\"_guid\":\"browser-context@08e4517b1c57368f6c6eb288f0bb99fa\"},\"pageStack\":[],\"options\":{\"acceptDownloads\":true,\"bypassCSP\":false,\"forcedColors\":\"none\",\"ignoreHTTPSErrors\":false,\"javaScriptEnabled\":true,\"offline\":false,\"reducedMotion\":\"no-preference\",\"serviceWorkers\":\"allow\",\"viewport\":{\"height\":720,\"width\":1280}},\"traceFile\":\"\"}],\"id\":\"browser=9d1b404d-4a6c-49c4-81be-7df2bb91cdac\"}"}
+{"level":30,"time":"2025-10-16T21:59:15.803Z","pid":20948,"hostname":"caiquepc","msg":"Video path: undefined"}
+{"level":30,"time":"2025-10-16T21:59:15.803Z","pid":20948,"hostname":"caiquepc","msg":"Changed active page"}
+{"level":30,"time":"2025-10-16T21:59:20.865Z","pid":20948,"hostname":"caiquepc","msg":"End of node method newPage"}
+{"level":30,"time":"2025-10-16T21:59:20.870Z","pid":20948,"hostname":"caiquepc","msg":"Start of node method waitForElementState"}
+{"level":30,"time":"2025-10-16T21:59:20.870Z","pid":20948,"hostname":"caiquepc","msg":"Strict mode is enabled, find Locator with css=#email in page."}
+{"level":30,"time":"2025-10-16T21:59:20.900Z","pid":20948,"hostname":"caiquepc","msg":"End of node method waitForElementState"}
+{"level":30,"time":"2025-10-16T21:59:20.921Z","pid":20948,"hostname":"caiquepc","msg":"Start of node method fillText"}
+{"level":30,"time":"2025-10-16T21:59:20.921Z","pid":20948,"hostname":"caiquepc","msg":"Strict mode is enabled, find Locator with css=#email in page."}
+{"level":30,"time":"2025-10-16T21:59:20.942Z","pid":20948,"hostname":"caiquepc","msg":"End of node method fillText"}
+{"level":30,"time":"2025-10-16T21:59:20.947Z","pid":20948,"hostname":"caiquepc","msg":"Start of node method waitForElementState"}
+{"level":30,"time":"2025-10-16T21:59:20.947Z","pid":20948,"hostname":"caiquepc","msg":"Strict mode is enabled, find Locator with css=#password in page."}
+{"level":30,"time":"2025-10-16T21:59:20.951Z","pid":20948,"hostname":"caiquepc","msg":"End of node method waitForElementState"}
+{"level":30,"time":"2025-10-16T21:59:20.955Z","pid":20948,"hostname":"caiquepc","msg":"Start of node method fillText"}
+{"level":30,"time":"2025-10-16T21:59:20.955Z","pid":20948,"hostname":"caiquepc","msg":"Strict mode is enabled, find Locator with css=#password in page."}
+{"level":30,"time":"2025-10-16T21:59:20.975Z","pid":20948,"hostname":"caiquepc","msg":"End of node method fillText"}
+{"level":30,"time":"2025-10-16T21:59:20.979Z","pid":20948,"hostname":"caiquepc","msg":"Start of node method waitForElementState"}
+{"level":30,"time":"2025-10-16T21:59:20.979Z","pid":20948,"hostname":"caiquepc","msg":"Strict mode is enabled, find Locator with css=#login in page."}
+{"level":30,"time":"2025-10-16T21:59:20.998Z","pid":20948,"hostname":"caiquepc","msg":"End of node method waitForElementState"}
+{"level":30,"time":"2025-10-16T21:59:21.002Z","pid":20948,"hostname":"caiquepc","msg":"Start of node method click"}
+{"level":30,"time":"2025-10-16T21:59:21.003Z","pid":20948,"hostname":"caiquepc","msg":"Strict mode is enabled, find Locator with css=#login in page."}
+{"level":30,"time":"2025-10-16T21:59:21.069Z","pid":20948,"hostname":"caiquepc","msg":"End of node method click"}
+{"level":30,"time":"2025-10-16T21:59:23.077Z","pid":20948,"hostname":"caiquepc","msg":"Start of node method waitForElementState"}
+{"level":30,"time":"2025-10-16T21:59:23.077Z","pid":20948,"hostname":"caiquepc","msg":"Strict mode is enabled, find Locator with text=Operacional in page."}
+{"level":30,"time":"2025-10-16T21:59:23.084Z","pid":20948,"hostname":"caiquepc","msg":"End of node method waitForElementState"}
+{"level":30,"time":"2025-10-16T21:59:23.089Z","pid":20948,"hostname":"caiquepc","msg":"Start of node method click"}
+{"level":30,"time":"2025-10-16T21:59:23.089Z","pid":20948,"hostname":"caiquepc","msg":"Strict mode is enabled, find Locator with text=Operacional in page."}
+{"level":30,"time":"2025-10-16T21:59:23.117Z","pid":20948,"hostname":"caiquepc","msg":"End of node method click"}
+{"level":30,"time":"2025-10-16T21:59:26.123Z","pid":20948,"hostname":"caiquepc","msg":"Start of node method waitForElementState"}
+{"level":30,"time":"2025-10-16T21:59:26.123Z","pid":20948,"hostname":"caiquepc","msg":"Strict mode is enabled, find Locator with xpath=//div[@class='v-list__tile__title' and text()='Registro de Canhotos'] in page."}
+{"level":30,"time":"2025-10-16T21:59:26.127Z","pid":20948,"hostname":"caiquepc","msg":"End of node method waitForElementState"}
+{"level":30,"time":"2025-10-16T21:59:26.131Z","pid":20948,"hostname":"caiquepc","msg":"Start of node method click"}
+{"level":30,"time":"2025-10-16T21:59:26.131Z","pid":20948,"hostname":"caiquepc","msg":"Strict mode is enabled, find Locator with xpath=//div[@class='v-list__tile__title' and text()='Registro de Canhotos'] in page."}
+{"level":30,"time":"2025-10-16T21:59:26.153Z","pid":20948,"hostname":"caiquepc","msg":"End of node method click"}
+{"level":30,"time":"2025-10-16T21:59:33.160Z","pid":20948,"hostname":"caiquepc","msg":"Start of node method waitForElementState"}
+{"level":30,"time":"2025-10-16T21:59:33.160Z","pid":20948,"hostname":"caiquepc","msg":"Strict mode is enabled, find Locator with xpath=/html/body/div/div/div[3]/form/div[1]/div[1]/div[2]/div[2]/input in page."}
+{"level":30,"time":"2025-10-16T21:59:36.175Z","pid":20948,"hostname":"caiquepc","msg":"Error of node method  waitForElementState"}
+================= Original suppressed error =================
+locator.waitFor: Timeout 3000ms exceeded.
+Call log:
+[2m  - waiting for locator('xpath=/html/body/div/div/div[3]/form/div[1]/div[1]/div[2]/div[2]/input') to be visible[22m
+
+    at waitForElementState (C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\venv\Lib\site-packages\Browser\wrapper\index.js:11480:19)
+    at async PlaywrightServer.waitForElementsState (C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\venv\Lib\site-packages\Browser\wrapper\index.js:13381:28) {
+  name: 'TimeoutError'
+}
+=============================================================
+{"level":30,"time":"2025-10-16T21:59:36.179Z","pid":20948,"hostname":"caiquepc","msg":"Start of node method takeScreenshot"}
+{"level":30,"time":"2025-10-16T21:59:36.179Z","pid":20948,"hostname":"caiquepc","Take screenshot with options: ":{"path":"C:\\Users\\caiqu\\Documents\\workspace\\rpa-airflow-seed\\rpa-robots\\browser\\screenshot\\fail-screenshot-1.png","fileType":"png","fullPage":false,"timeout":10000,"omitBackground":false}}
+{"level":30,"time":"2025-10-16T21:59:36.379Z","pid":20948,"hostname":"caiquepc","msg":"End of node method takeScreenshot"}
+{"level":30,"time":"2025-10-16T21:59:36.390Z","pid":20948,"hostname":"caiquepc","msg":"Start of node method getBrowserCatalog"}
+{"level":30,"time":"2025-10-16T21:59:36.393Z","pid":20948,"hostname":"caiquepc","msg":"End of node method getBrowserCatalog"}
+{"level":30,"time":"2025-10-16T21:59:36.395Z","pid":20948,"hostname":"caiquepc","msg":"Start of node method getBrowserCatalog"}
+{"level":30,"time":"2025-10-16T21:59:36.396Z","pid":20948,"hostname":"caiquepc","msg":"End of node method getBrowserCatalog"}
+{"level":30,"time":"2025-10-16T21:59:36.397Z","pid":20948,"hostname":"caiquepc","msg":"Start of node method getBrowserCatalog"}
+{"level":30,"time":"2025-10-16T21:59:36.398Z","pid":20948,"hostname":"caiquepc","msg":"End of node method getBrowserCatalog"}
+{"level":30,"time":"2025-10-16T21:59:36.399Z","pid":20948,"hostname":"caiquepc","msg":"Start of node method getBrowserCatalog"}
+{"level":30,"time":"2025-10-16T21:59:36.400Z","pid":20948,"hostname":"caiquepc","msg":"End of node method getBrowserCatalog"}
+{"level":30,"time":"2025-10-16T21:59:36.402Z","pid":20948,"hostname":"caiquepc","msg":"Changed active context: context=f34ca17a-09e3-415c-a536-e5ce41bed496"}
+{"level":30,"time":"2025-10-16T21:59:36.402Z","pid":20948,"hostname":"caiquepc","msg":"Changing current active page: page=e3f586f8-1c7f-44ce-a533-d70fb03cecd9"}
+{"level":30,"time":"2025-10-16T21:59:36.402Z","pid":20948,"hostname":"caiquepc","msg":"Changed active page"}
+{"level":30,"time":"2025-10-16T21:59:36.406Z","pid":20948,"hostname":"caiquepc","msg":"Start of node method closeContext"}
+{"level":30,"time":"2025-10-16T21:59:36.416Z","pid":20948,"hostname":"caiquepc","msg":"Removed page=49c9771f-e2c4-44e6-a597-655c9994e78f from context=f34ca17a-09e3-415c-a536-e5ce41bed496 page stack"}
+{"level":30,"time":"2025-10-16T21:59:36.454Z","pid":20948,"hostname":"caiquepc","msg":"End of node method closeContext"}
+{"level":30,"time":"2025-10-16T21:59:36.464Z","pid":20948,"hostname":"caiquepc","msg":"Start of node method getBrowserCatalog"}
+{"level":30,"time":"2025-10-16T21:59:36.465Z","pid":20948,"hostname":"caiquepc","msg":"End of node method getBrowserCatalog"}
+{"level":30,"time":"2025-10-16T21:59:36.869Z","pid":20948,"hostname":"caiquepc","msg":"Start of node method closeAllBrowsers"}
+{"level":30,"time":"2025-10-16T21:59:37.183Z","pid":20948,"hostname":"caiquepc","msg":"End of node method closeAllBrowsers"}

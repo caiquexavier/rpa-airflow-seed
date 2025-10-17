@@ -1,4 +1,4 @@
-"""RabbitMQ client library for rpa-api."""
+"""RabbitMQ service for publishing execution messages."""
 import json
 import logging
 import os
@@ -7,44 +7,21 @@ from typing import Optional
 
 import pika
 from ..config.config import get_rabbitmq_config
- 
 
 logger = logging.getLogger(__name__)
 
 
-def publish(channel, queue: str, payload: dict) -> None:
+def publish_execution_message(payload: dict) -> bool:
     """
-    Publish a JSON payload to a queue.
+    Publish an execution message to RabbitMQ queue.
     
     Args:
-        channel: RabbitMQ channel
-        queue: Queue name
-        payload: Dictionary to serialize and publish
-    """
-    json_payload = json.dumps(payload, separators=(',', ':'), ensure_ascii=False)
-    channel.basic_publish(
-        exchange='',
-        routing_key=queue,
-        body=json_payload,
-        properties=pika.BasicProperties(
-            content_type='application/json',
-            delivery_mode=2  # Persistent message
-        )
-    )
-
-
-def publish_json(payload: dict) -> bool:
-    """
-    Publish a JSON payload to RabbitMQ queue.
-    
-    Args:
-        payload: Dictionary to serialize and publish
+        payload: Dictionary containing exec_id, rpa_key_id, callback_url, rpa_request
         
     Returns:
         bool: True if published successfully, False otherwise
     """
     try:
-        # Get credentials from config
         config = get_rabbitmq_config()
         host = config["RABBITMQ_HOST"]
         port = int(config["RABBITMQ_PORT"])
@@ -78,10 +55,24 @@ def publish_json(payload: dict) -> bool:
                 connection = pika.BlockingConnection(parameters)
                 channel = connection.channel()
                 channel.queue_declare(queue=queue, durable=True)
-                publish(channel, queue, payload)
+                
+                # Publish message
+                json_payload = json.dumps(payload, separators=(',', ':'), ensure_ascii=False)
+                channel.basic_publish(
+                    exchange='',
+                    routing_key=queue,
+                    body=json_payload,
+                    properties=pika.BasicProperties(
+                        content_type='application/json',
+                        delivery_mode=2  # Persistent message
+                    )
+                )
+                
                 connection.close()
+                logger.info(f"Published execution message for exec_id={payload.get('exec_id')}")
                 return True
-            except Exception as connect_error:  # retryable
+                
+            except Exception as connect_error:
                 last_error = connect_error
                 logger.warning(
                     f"RabbitMQ publish attempt {attempt}/{connection_attempts} failed: {connect_error}"
@@ -92,6 +83,7 @@ def publish_json(payload: dict) -> bool:
         if last_error:
             raise last_error
         return False
+        
     except Exception as e:
-        logger.error(f"Failed to publish message: {e}")
+        logger.error(f"Failed to publish execution message: {e}")
         return False

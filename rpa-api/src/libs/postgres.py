@@ -34,7 +34,59 @@ def execute_insert(sql: str, params: tuple) -> Optional[int]:
                 cursor.execute(sql, params)
                 result = cursor.fetchone()
                 conn.commit()
-                return result[0] if result else None
+                if not result:
+                    return None
+                # RealDictCursor returns a mapping; prefer explicit key then fallback to first value
+                if isinstance(result, dict):
+                    return result.get("exec_id") or next(iter(result.values()))
+                # Fallback for non-dict row types (tuple-like)
+                try:
+                    return result[0]
+                except Exception:
+                    return None
     except Exception as e:
         logger.error(f"Failed to execute insert: {e}")
         raise Exception(f"Database insert failed: {str(e)}")
+
+
+def execute_query(sql: str, params: tuple) -> list:
+    """
+    Execute a SELECT statement and return results.
+    
+    Args:
+        sql: SQL SELECT statement
+        params: Parameters for the SQL statement
+        
+    Returns:
+        List of query results
+    """
+    try:
+        with get_connection() as conn:
+            with conn.cursor(cursor_factory=RealDictCursor) as cursor:
+                cursor.execute(sql, params)
+                return cursor.fetchall()
+    except Exception as e:
+        logger.error(f"Failed to execute query: {e}")
+        raise Exception(f"Database query failed: {str(e)}")
+
+
+def execute_update(sql: str, params: tuple) -> int:
+    """
+    Execute an UPDATE/DELETE statement and return affected rows.
+    
+    Args:
+        sql: SQL UPDATE/DELETE statement
+        params: Parameters for the SQL statement
+        
+    Returns:
+        Number of affected rows
+    """
+    try:
+        with get_connection() as conn:
+            with conn.cursor(cursor_factory=RealDictCursor) as cursor:
+                cursor.execute(sql, params)
+                conn.commit()
+                return cursor.rowcount
+    except Exception as e:
+        logger.error(f"Failed to execute update: {e}")
+        raise Exception(f"Database update failed: {str(e)}")

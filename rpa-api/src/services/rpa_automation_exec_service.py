@@ -11,20 +11,19 @@ logger = logging.getLogger(__name__)
 def insert(payload: Dict[str, any]) -> Optional[int]:
     """Insert a new RPA automation execution record."""
     try:
-        # Use default definition_id since rpa_id is a string and definition_id expects bigint
-        definition_id = 1  # Default definition ID
+        rpa_key_id = payload.get("rpa_key_id") or payload.get("rpa_id")
         callback_url = payload.get("callback_url")
         request_json = json.dumps(payload)  # Store full input JSON
         
         sql = """
             INSERT INTO rpa_automation_exec 
-            (definition_id, exec_status, current_step, request, callback_url)
+            (rpa_key_id, exec_status, current_step, request, callback_url)
             VALUES (%s, %s, %s, %s, %s)
             RETURNING exec_id
         """
         
         params = (
-            definition_id,
+            rpa_key_id,
             "RECEIVED",  # exec_status
             "REQUESTED",  # current_step
             request_json,  # request (full JSON)
