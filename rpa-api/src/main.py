@@ -53,7 +53,9 @@ async def update_rpa_execution(payload: UpdateExecutionRequestModel) -> Dict[str
         return result.dict()
     except ValueError as e:
         logger.warning(f"Validation error in update_rpa_execution: {e}")
-        raise HTTPException(status_code=404, detail=str(e))
+        # Return clean error message without ctx
+        error_msg = str(e).split("ctx")[0].strip() if "ctx" in str(e) else str(e)
+        raise HTTPException(status_code=422, detail=error_msg)
     except Exception as e:
         logger.error(f"Error in update_rpa_execution: {e}")
         raise HTTPException(status_code=500, detail="Internal error")

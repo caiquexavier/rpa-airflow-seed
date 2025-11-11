@@ -65,17 +65,19 @@ class UpdateExecutionRequestModel(BaseModel):
 
     @model_validator(mode='after')
     def validate_rpa_response_structure(self):
-        """Enforce exact rpa_response shape depending on status.
-        - SUCCESS: rpa_response must be {"success": "OK"} and error_message must be None
+        """Enforce rpa_response shape depending on status.
+        - SUCCESS: rpa_response must have "notas_fiscais" array with status for each
         - FAIL: rpa_response must be {"error": <non-empty string>} and error_message must equal that string
         """
         if self.status == ExecutionStatus.SUCCESS:
             if self.error_message is not None:
                 raise ValueError('error_message must be null when status is SUCCESS')
-            if not isinstance(self.rpa_response, dict) or set(self.rpa_response.keys()) != {"success"}:
-                raise ValueError('rpa_response must be {"success":"OK"} when status is SUCCESS')
-            if self.rpa_response.get("success") != "OK":
-                raise ValueError('rpa_response.success must be "OK" when status is SUCCESS')
+            if not isinstance(self.rpa_response, dict):
+                raise ValueError('rpa_response must be a dict when status is SUCCESS')
+            if "notas_fiscais" not in self.rpa_response:
+                raise ValueError('rpa_response must have "notas_fiscais" array when status is SUCCESS')
+            if not isinstance(self.rpa_response.get("notas_fiscais"), list):
+                raise ValueError('rpa_response.notas_fiscais must be an array when status is SUCCESS')
         elif self.status == ExecutionStatus.FAIL:
             if not isinstance(self.rpa_response, dict) or set(self.rpa_response.keys()) != {"error"}:
                 raise ValueError('rpa_response must be {"error":"<message>"} when status is FAIL')

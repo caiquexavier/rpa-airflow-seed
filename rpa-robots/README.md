@@ -60,9 +60,11 @@ robot -d results --variable BROWSER:chrome tests/
 
 ## Test Structure
 - **Tests Directory**: `tests/`
-- **Resources**: `resources/`
-  - `browser/` - Browser automation resources
-  - `pod_download/` - Pod download specific resources
+- **Source Code**: `src/`
+  - `resources/` - Robot Framework resources
+    - `browser/` - Browser automation resources
+    - `pod_download/` - Pod download specific resources
+  - `browser/` - Browser traces and screenshots
 - **Results**: `results/` - Test execution results
 
 ## Available Tests
@@ -82,6 +84,8 @@ docker run -v $(pwd)/results:/app/results rpa-robots
 ```
 
 ## Troubleshooting
+
+### General Issues
 - Ensure all dependencies are installed
 - Run `rfbrowser init` if browser initialization fails
 - Check that test files exist in `tests/` directory

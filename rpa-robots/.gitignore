@@ -4,4 +4,7 @@ __pycache__/
 *.pyc
 /.idea/
 /.vscode/
+/assets/download/*
+/src/browser/traces/*
+/src/browser/screenshot/*
 

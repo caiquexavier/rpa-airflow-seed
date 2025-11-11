@@ -21,8 +21,6 @@ services:
   airflow-webserver:
     build: ./airflow
     user: "0:0"
-    env_file:
-      - .env
     environment:
       AZURE_KEYVAULT_URL: ${AZURE_KEYVAULT_URL}
       AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_CORE_FERNET_KEY}
@@ -92,8 +90,6 @@ services:
   airflow-scheduler:
     build: ./airflow
     user: "0:0"
-    env_file:
-      - .env
     environment:
       AZURE_KEYVAULT_URL: ${AZURE_KEYVAULT_URL}
       AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_CORE_FERNET_KEY}
@@ -153,8 +149,6 @@ services:
   airflow-init:
     build: ./airflow
     user: "0:0"
-    env_file:
-      - .env
     environment:
       AZURE_KEYVAULT_URL: ${AZURE_KEYVAULT_URL}
       AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_CORE_FERNET_KEY}
@@ -209,7 +203,15 @@ services:
           --firstname Admin \
           --lastname User \
           --role Admin \
-          --email admin@example.com
+          --email admin@example.com || true
+        # Set required Airflow Variables
+        airflow variables set ECARGO_XLSX_PATH /opt/airflow/data/Controle_Unilever_Personalizado.xlsx || true
+        # Create required Airflow Connections
+        airflow connections delete rpa_api || true
+        airflow connections add rpa_api \
+          --conn-type http \
+          --conn-host rpa-api \
+          --conn-port 3000 || true
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
@@ -220,12 +222,36 @@ services:
       postgres:
         condition: service_healthy
 
+  rpa-db-init:
+    image: python:3.11-slim
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        set -e
+        pip install --quiet --no-cache-dir alembic psycopg2-binary python-dotenv
+        cd /app/database
+        alembic upgrade head
+    environment:
+      RPA_DB_HOST: ${RPA_DB_HOST:-postgres}
+      RPA_DB_PORT: ${RPA_DB_PORT:-5432}
+      RPA_DB_USER: ${RPA_DB_USER:-airflow}
+      RPA_DB_PASSWORD: ${RPA_DB_PASSWORD:-airflow}
+      RPA_DB_NAME: ${RPA_DB_NAME:-rpa_db}
+    volumes:
+      - ./src:/app
+    working_dir: /app/database
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
   rpa-api:
     build: ./rpa-api
     ports:
-      - "3000:3000"
+      - "${RPA_API_PORT:-3000}:3000"
     environment:
-      RABBITMQ_HOST: ${RABBITMQ_HOST:-rabbitmq}
+      RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
       RABBITMQ_VHOST: ${RABBITMQ_DEFAULT_VHOST:-/}
       RABBITMQ_USER: ${RABBITMQ_DEFAULT_USER:-admin}
@@ -242,6 +268,8 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+      rpa-db-init:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/request_rpa_exec", "-X", "POST", "-H", "Content-Type: application/json", "-d", "{\"rpa_id\":\"health_check\"}"]
       interval: 30s

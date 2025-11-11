@@ -1,164 +1,533 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generator="Robot 7.1.1 (Python 3.11.9 on win32)" generated="2025-10-17T18:30:55.512659" rpa="false" schemaversion="5">
+<robot generator="Robot 7.1.1 (Python 3.11.9 on win32)" generated="2025-10-17T22:24:23.027786" rpa="false" schemaversion="5">
 <suite id="s1" name="Ecargo Pod Download" source="C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\tests\ecargo_pod_download.robot">
 <test id="s1-t1" name="Pod Download" line="6">
 <kw name="Start Browser" owner="browser">
 <kw name="Open Browser" owner="SeleniumLibrary">
-<msg time="2025-10-17T18:30:55.882294" level="INFO">Opening browser 'chrome' to base url 'about:blank'.</msg>
 <arg>about:blank</arg>
 <arg>chrome</arg>
 <doc>Opens a new browser instance to the optional ``url``.</doc>
-<status status="PASS" start="2025-10-17T18:30:55.880164" elapsed="2.273168"/>
+<status status="NOT RUN" start="2025-10-17T22:24:23.400392" elapsed="0.000000"/>
 </kw>
 <kw name="Maximize Browser Window" owner="SeleniumLibrary">
 <doc>Maximizes current browser window.</doc>
-<status status="PASS" start="2025-10-17T18:30:58.153964" elapsed="0.070054"/>
+<status status="NOT RUN" start="2025-10-17T22:24:23.402411" elapsed="0.000000"/>
 </kw>
-<status status="PASS" start="2025-10-17T18:30:55.880164" elapsed="2.343854"/>
+<status status="PASS" start="2025-10-17T22:24:23.400392" elapsed="0.002019"/>
 </kw>
 <kw name="Login To e-Cargo" owner="pod_download">
 <kw name="Go To" owner="SeleniumLibrary">
-<msg time="2025-10-17T18:30:58.225027" level="INFO">Opening url 'https://mrc-hml.signa.net.br/'</msg>
 <arg>${base_url}</arg>
 <doc>Navigates the current browser window to the provided ``url``.</doc>
-<status status="PASS" start="2025-10-17T18:30:58.225027" elapsed="4.374024"/>
+<status status="NOT RUN" start="2025-10-17T22:24:23.402411" elapsed="0.000000"/>
 </kw>
 <kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
 <arg>css=#email</arg>
 <arg>timeout=15s</arg>
 <doc>Waits until the element ``locator`` is visible.</doc>
-<status status="PASS" start="2025-10-17T18:31:02.599051" elapsed="0.024379"/>
+<status status="NOT RUN" start="2025-10-17T22:24:23.402411" elapsed="0.000000"/>
 </kw>
 <kw name="Input Text" owner="SeleniumLibrary">
-<msg time="2025-10-17T18:31:02.624428" level="INFO">Typing text 'RPA001' into text field 'css=#email'.</msg>
 <arg>css=#email</arg>
 <arg>${USUARIO}</arg>
 <doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
-<status status="PASS" start="2025-10-17T18:31:02.623430" elapsed="0.130347"/>
+<status status="NOT RUN" start="2025-10-17T22:24:23.402411" elapsed="0.000000"/>
 </kw>
 <kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
 <arg>css=#password</arg>
 <arg>timeout=15s</arg>
 <doc>Waits until the element ``locator`` is visible.</doc>
-<status status="PASS" start="2025-10-17T18:31:02.753777" elapsed="0.020543"/>
+<status status="NOT RUN" start="2025-10-17T22:24:23.404486" elapsed="0.000000"/>
 </kw>
 <kw name="Input Text" owner="SeleniumLibrary">
-<msg time="2025-10-17T18:31:02.774320" level="INFO">Typing text 'GL@balti@2025' into text field 'css=#password'.</msg>
 <arg>css=#password</arg>
 <arg>${SENHA}</arg>
 <doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
-<status status="PASS" start="2025-10-17T18:31:02.774320" elapsed="0.172838"/>
+<status status="NOT RUN" start="2025-10-17T22:24:23.404486" elapsed="0.000000"/>
 </kw>
 <kw name="Wait Until Element Is Enabled" owner="SeleniumLibrary">
 <arg>css=#login</arg>
 <arg>timeout=15s</arg>
 <doc>Waits until the element ``locator`` is enabled.</doc>
-<status status="PASS" start="2025-10-17T18:31:02.947664" elapsed="0.034053"/>
+<status status="NOT RUN" start="2025-10-17T22:24:23.404486" elapsed="0.000000"/>
 </kw>
 <kw name="Click Element" owner="SeleniumLibrary">
-<msg time="2025-10-17T18:31:02.983229" level="INFO">Clicking element 'css=#login'.</msg>
 <arg>css=#login</arg>
 <doc>Click the element identified by ``locator``.</doc>
-<status status="PASS" start="2025-10-17T18:31:02.981717" elapsed="0.094826"/>
+<status status="NOT RUN" start="2025-10-17T22:24:23.404486" elapsed="0.000000"/>
 </kw>
 <kw name="Sleep" owner="BuiltIn">
-<msg time="2025-10-17T18:31:05.077671" level="INFO">Slept 2 seconds.</msg>
 <arg>2s</arg>
 <doc>Pauses the test executed for the given time.</doc>
-<status status="PASS" start="2025-10-17T18:31:03.076543" elapsed="2.001128"/>
+<status status="NOT RUN" start="2025-10-17T22:24:23.404486" elapsed="0.000000"/>
 </kw>
-<status status="PASS" start="2025-10-17T18:30:58.224018" elapsed="6.853653"/>
+<status status="PASS" start="2025-10-17T22:24:23.402411" elapsed="0.002075"/>
 </kw>
 <kw name="Open Operacional Menu" owner="pod_download">
 <kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
 <arg>xpath=//*[contains(text(),'Operacional')]</arg>
 <arg>timeout=10s</arg>
 <doc>Waits until the element ``locator`` is visible.</doc>
-<status status="PASS" start="2025-10-17T18:31:05.080370" elapsed="0.041126"/>
+<status status="NOT RUN" start="2025-10-17T22:24:23.404486" elapsed="0.000000"/>
 </kw>
 <kw name="Click Element" owner="SeleniumLibrary">
-<msg time="2025-10-17T18:31:05.121496" level="INFO">Clicking element 'xpath=//*[contains(text(),'Operacional')]'.</msg>
 <arg>xpath=//*[contains(text(),'Operacional')]</arg>
 <doc>Click the element identified by ``locator``.</doc>
-<status status="PASS" start="2025-10-17T18:31:05.121496" elapsed="0.107482"/>
+<status status="NOT RUN" start="2025-10-17T22:24:23.404486" elapsed="0.000000"/>
 </kw>
 <kw name="Sleep" owner="BuiltIn">
-<msg time="2025-10-17T18:31:08.230654" level="INFO">Slept 3 seconds.</msg>
 <arg>3s</arg>
 <doc>Pauses the test executed for the given time.</doc>
-<status status="PASS" start="2025-10-17T18:31:05.230488" elapsed="3.000166"/>
+<status status="NOT RUN" start="2025-10-17T22:24:23.406497" elapsed="0.000000"/>
 </kw>
-<status status="PASS" start="2025-10-17T18:31:05.077671" elapsed="3.152983"/>
+<status status="PASS" start="2025-10-17T22:24:23.404486" elapsed="0.002011"/>
 </kw>
 <kw name="Open Registro De Canhotos Submenu" owner="pod_download">
 <kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
 <arg>xpath=//div[@class='v-list__tile__title' and text()='Registro de Canhotos']</arg>
 <arg>timeout=10s</arg>
 <doc>Waits until the element ``locator`` is visible.</doc>
-<status status="PASS" start="2025-10-17T18:31:08.231660" elapsed="0.019274"/>
+<status status="NOT RUN" start="2025-10-17T22:24:23.406497" elapsed="0.000000"/>
 </kw>
 <kw name="Click Element" owner="SeleniumLibrary">
-<msg time="2025-10-17T18:31:08.252048" level="INFO">Clicking element 'xpath=//div[@class='v-list__tile__title' and text()='Registro de Canhotos']'.</msg>
 <arg>xpath=//div[@class='v-list__tile__title' and text()='Registro de Canhotos']</arg>
 <doc>Click the element identified by ``locator``.</doc>
-<status status="PASS" start="2025-10-17T18:31:08.252048" elapsed="0.125100"/>
+<status status="NOT RUN" start="2025-10-17T22:24:23.406497" elapsed="0.001146"/>
 </kw>
 <kw name="Sleep" owner="BuiltIn">
-<msg time="2025-10-17T18:31:13.377401" level="INFO">Slept 5 seconds.</msg>
 <arg>5s</arg>
 <doc>Pauses the test executed for the given time.</doc>
-<status status="PASS" start="2025-10-17T18:31:08.377148" elapsed="5.000253"/>
+<status status="NOT RUN" start="2025-10-17T22:24:23.407643" elapsed="0.000000"/>
 </kw>
-<status status="PASS" start="2025-10-17T18:31:08.231660" elapsed="5.145741"/>
+<status status="PASS" start="2025-10-17T22:24:23.406497" elapsed="0.001146"/>
+</kw>
+<kw name="Process Nota Fiscal Array From Variables" owner="pod_download">
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
+<kw name="Variable Should Exist" owner="BuiltIn">
+<arg>${rpa_request}</arg>
+<doc>Fails unless the given variable exists within the current scope.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.408347" elapsed="0.000000"/>
+</kw>
+<var>${has_rpa_request}</var>
+<arg>Variable Should Exist</arg>
+<arg>${rpa_request}</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.408347" elapsed="0.000000"/>
+</kw>
+<if>
+<branch type="IF" condition="${has_rpa_request}">
+<kw name="Log" owner="BuiltIn">
+<arg>Processing Nota Fiscal array from rpa_request variable</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.408347" elapsed="0.000000"/>
+</kw>
+<kw name="Get Value From Json" owner="JSONLibrary">
+<var>${nota_fiscal_array}</var>
+<arg>${rpa_request}</arg>
+<arg>$.nota_fiscal</arg>
+<doc>Get Value From JSON using JSONPath</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.408347" elapsed="0.001387"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>Raw nota_fiscal_array: ${nota_fiscal_array}</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.409734" elapsed="0.000000"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<var>${actual_array}</var>
+<arg>${nota_fiscal_array[0]}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.409734" elapsed="0.000000"/>
+</kw>
+<kw name="Get Length" owner="BuiltIn">
+<var>${array_length}</var>
+<arg>${actual_array}</arg>
+<doc>Returns and logs the length of the given item as an integer.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.409734" elapsed="0.000000"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>Processing ${array_length} Nota Fiscal values</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.409734" elapsed="0.000000"/>
+</kw>
+<for flavor="IN RANGE">
+<iter>
+<kw name="Get Value From Json" owner="JSONLibrary">
+<var>${current_nota_fiscal}</var>
+<arg>${rpa_request}</arg>
+<arg>$.nota_fiscal[${index}]</arg>
+<doc>Get Value From JSON using JSONPath</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.409734" elapsed="0.000000"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>Processing Nota Fiscal: ${current_nota_fiscal[0]}</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.409734" elapsed="0.000000"/>
+</kw>
+<kw name="Process Single Nota Fiscal" owner="pod_download">
+<kw name="Log" owner="BuiltIn">
+<arg>Processing Nota Fiscal: ${nota_fiscal}</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.411150" elapsed="0.000000"/>
 </kw>
 <kw name="Input Nota Fiscal And Search" owner="pod_download">
 <kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
 <arg>css=iframe#frame</arg>
 <arg>timeout=15s</arg>
 <doc>Waits until the element ``locator`` is visible.</doc>
-<status status="PASS" start="2025-10-17T18:31:13.378413" elapsed="0.018211"/>
+<status status="NOT RUN" start="2025-10-17T22:24:23.411150" elapsed="0.000000"/>
 </kw>
 <kw name="Select Frame" owner="SeleniumLibrary">
-<msg time="2025-10-17T18:31:13.397634" level="INFO">Selecting frame 'css=iframe#frame'.</msg>
 <arg>css=iframe#frame</arg>
 <doc>Sets frame identified by ``locator`` as the current frame.</doc>
-<status status="PASS" start="2025-10-17T18:31:13.397634" elapsed="0.028181"/>
+<status status="NOT RUN" start="2025-10-17T22:24:23.411150" elapsed="0.000000"/>
 </kw>
 <kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
 <arg>css=input[name="txtNotaFiscal"]</arg>
 <arg>timeout=15s</arg>
 <doc>Waits until the element ``locator`` is visible.</doc>
-<status status="PASS" start="2025-10-17T18:31:13.425815" elapsed="0.018251"/>
+<status status="NOT RUN" start="2025-10-17T22:24:23.411150" elapsed="0.000000"/>
 </kw>
 <kw name="Click Element" owner="SeleniumLibrary">
-<msg time="2025-10-17T18:31:13.444588" level="INFO">Clicking element 'css=input[name="txtNotaFiscal"]'.</msg>
 <arg>css=input[name="txtNotaFiscal"]</arg>
 <doc>Click the element identified by ``locator``.</doc>
-<status status="PASS" start="2025-10-17T18:31:13.444588" elapsed="0.164200"/>
+<status status="NOT RUN" start="2025-10-17T22:24:23.411150" elapsed="0.000000"/>
 </kw>
 <kw name="Input Text" owner="SeleniumLibrary">
-<msg time="2025-10-17T18:31:13.609788" level="INFO">Typing text '1234' into text field 'css=input[name="txtNotaFiscal"]'.</msg>
 <arg>css=input[name="txtNotaFiscal"]</arg>
-<arg>${NOTA_FISCAL}</arg>
+<arg>${nota_fiscal}</arg>
 <doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
-<status status="PASS" start="2025-10-17T18:31:13.608788" elapsed="0.104941"/>
+<status status="NOT RUN" start="2025-10-17T22:24:23.411150" elapsed="0.000000"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=/html/body/div/div/div[3]/form/div[1]/div[6]/div/div[1]/button</arg>
+<arg>timeout=10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.411150" elapsed="0.000000"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<arg>xpath=/html/body/div/div/div[3]/form/div[1]/div[6]/div/div[1]/button</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.412656" elapsed="0.000000"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=/html/body/div/div/div[3]/form/div[2]/div[2]/table/tbody/tr[1]/td[10]/i</arg>
+<arg>timeout=10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.412656" elapsed="0.000000"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<arg>xpath=/html/body/div/div/div[3]/form/div[2]/div[2]/table/tbody/tr[1]/td[10]/i</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.412656" elapsed="0.000000"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=/html/body/div/div/div[3]/form/div[2]/div[2]/table/tbody/tr[2]/td/div/div[2]/div[3]/button</arg>
+<arg>timeout=10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.412656" elapsed="0.000000"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<arg>xpath=/html/body/div/div/div[3]/form/div[2]/div[2]/table/tbody/tr[2]/td/div/div[2]/div[3]/button</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.412656" elapsed="0.000000"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//*[@id="ModalCanhotoNf"]</arg>
+<arg>timeout=10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.412656" elapsed="0.000000"/>
+</kw>
+<kw name="Download All PDF Files" owner="pod_download">
+<kw name="Get Element Count" owner="SeleniumLibrary">
+<var>${pdf_buttons_count}</var>
+<arg>xpath=//*[@id="ModalCanhotoNf"]//button[contains(@ng-click, 'buscarArquivo') and contains(., 'Pdf')]</arg>
+<doc>Returns the number of elements matching ``locator``.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.413961" elapsed="0.000000"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>Found ${pdf_buttons_count} PDF download buttons</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.413961" elapsed="0.000000"/>
+</kw>
+<for flavor="IN RANGE">
+<iter>
+<kw name="Set Variable" owner="BuiltIn">
+<var>${button_xpath}</var>
+<arg>(//*[@id="ModalCanhotoNf"]//button[contains(@ng-click, 'buscarArquivo') and contains(., 'Pdf')])[${index}]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.413961" elapsed="0.000000"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=${button_xpath}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.413961" elapsed="0.001023"/>
+</kw>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
+<kw name="Element Should Be Enabled" owner="SeleniumLibrary">
+<arg>xpath=${button_xpath}</arg>
+<doc>Verifies that element identified by ``locator`` is enabled.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.414984" elapsed="0.000000"/>
+</kw>
+<var>${is_enabled}</var>
+<arg>Element Should Be Enabled</arg>
+<arg>xpath=${button_xpath}</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.414984" elapsed="0.000000"/>
+</kw>
+<if>
+<branch type="IF" condition="${is_enabled}">
+<kw name="Log" owner="BuiltIn">
+<arg>Clicking PDF download button ${index}</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.415486" elapsed="0.000000"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<arg>xpath=${button_xpath}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.415486" elapsed="0.000000"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<arg>2s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-10-17T22:24:23.415486" elapsed="0.000605"/>
+</branch>
+<branch type="ELSE">
+<kw name="Log" owner="BuiltIn">
+<arg>PDF download button ${index} is disabled, skipping</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-10-17T22:24:23.415486" elapsed="0.000605"/>
+</if>
+<var name="${index}"/>
+<status status="PASS" start="2025-10-17T22:24:23.413961" elapsed="0.002130"/>
+</iter>
+<var>${index}</var>
+<value>1</value>
+<value>${pdf_buttons_count} + 1</value>
+<status status="PASS" start="2025-10-17T22:24:23.413961" elapsed="0.002130"/>
+</for>
+<status status="PASS" start="2025-10-17T22:24:23.412656" elapsed="0.003435"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<arg>10s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
 </kw>
 <kw name="Unselect Frame" owner="SeleniumLibrary">
 <doc>Sets the main frame as the current frame.</doc>
-<status status="PASS" start="2025-10-17T18:31:13.713729" elapsed="0.003608"/>
+<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
 </kw>
-<status status="PASS" start="2025-10-17T18:31:13.378413" elapsed="0.338924"/>
+<arg>${nota_fiscal}</arg>
+<status status="PASS" start="2025-10-17T22:24:23.411150" elapsed="0.004941"/>
+</kw>
+<arg>${current_nota_fiscal[0]}</arg>
+<status status="PASS" start="2025-10-17T22:24:23.409734" elapsed="0.006357"/>
+</kw>
+<var name="${index}"/>
+<status status="PASS" start="2025-10-17T22:24:23.409734" elapsed="0.006357"/>
+</iter>
+<var>${index}</var>
+<value>0</value>
+<value>${array_length}</value>
+<status status="PASS" start="2025-10-17T22:24:23.409734" elapsed="0.006357"/>
+</for>
+<status status="PASS" start="2025-10-17T22:24:23.408347" elapsed="0.007744"/>
+</branch>
+<branch type="ELSE">
+<kw name="Log" owner="BuiltIn">
+<arg>No rpa_request variable found, using default Nota Fiscal</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+</kw>
+<kw name="Process Single Nota Fiscal" owner="pod_download">
+<kw name="Log" owner="BuiltIn">
+<arg>Processing Nota Fiscal: ${nota_fiscal}</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+</kw>
+<kw name="Input Nota Fiscal And Search" owner="pod_download">
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>css=iframe#frame</arg>
+<arg>timeout=15s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+</kw>
+<kw name="Select Frame" owner="SeleniumLibrary">
+<arg>css=iframe#frame</arg>
+<doc>Sets frame identified by ``locator`` as the current frame.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>css=input[name="txtNotaFiscal"]</arg>
+<arg>timeout=15s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<arg>css=input[name="txtNotaFiscal"]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<arg>css=input[name="txtNotaFiscal"]</arg>
+<arg>${nota_fiscal}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=/html/body/div/div/div[3]/form/div[1]/div[6]/div/div[1]/button</arg>
+<arg>timeout=10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<arg>xpath=/html/body/div/div/div[3]/form/div[1]/div[6]/div/div[1]/button</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=/html/body/div/div/div[3]/form/div[2]/div[2]/table/tbody/tr[1]/td[10]/i</arg>
+<arg>timeout=10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<arg>xpath=/html/body/div/div/div[3]/form/div[2]/div[2]/table/tbody/tr[1]/td[10]/i</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=/html/body/div/div/div[3]/form/div[2]/div[2]/table/tbody/tr[2]/td/div/div[2]/div[3]/button</arg>
+<arg>timeout=10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<arg>xpath=/html/body/div/div/div[3]/form/div[2]/div[2]/table/tbody/tr[2]/td/div/div[2]/div[3]/button</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//*[@id="ModalCanhotoNf"]</arg>
+<arg>timeout=10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+</kw>
+<kw name="Download All PDF Files" owner="pod_download">
+<kw name="Get Element Count" owner="SeleniumLibrary">
+<var>${pdf_buttons_count}</var>
+<arg>xpath=//*[@id="ModalCanhotoNf"]//button[contains(@ng-click, 'buscarArquivo') and contains(., 'Pdf')]</arg>
+<doc>Returns the number of elements matching ``locator``.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<arg>Found ${pdf_buttons_count} PDF download buttons</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+</kw>
+<for flavor="IN RANGE">
+<iter>
+<kw name="Set Variable" owner="BuiltIn">
+<var>${button_xpath}</var>
+<arg>(//*[@id="ModalCanhotoNf"]//button[contains(@ng-click, 'buscarArquivo') and contains(., 'Pdf')])[${index}]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=${button_xpath}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+</kw>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
+<kw name="Element Should Be Enabled" owner="SeleniumLibrary">
+<arg>xpath=${button_xpath}</arg>
+<doc>Verifies that element identified by ``locator`` is enabled.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.422793" elapsed="0.000000"/>
+</kw>
+<var>${is_enabled}</var>
+<arg>Element Should Be Enabled</arg>
+<arg>xpath=${button_xpath}</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.006702"/>
+</kw>
+<if>
+<branch type="IF" condition="${is_enabled}">
+<kw name="Log" owner="BuiltIn">
+<arg>Clicking PDF download button ${index}</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.422793" elapsed="0.000000"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<arg>xpath=${button_xpath}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.422793" elapsed="0.000000"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<arg>2s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.423314" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-10-17T22:24:23.422793" elapsed="0.000521"/>
+</branch>
+<branch type="ELSE">
+<kw name="Log" owner="BuiltIn">
+<arg>PDF download button ${index} is disabled, skipping</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.423314" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-10-17T22:24:23.423314" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-10-17T22:24:23.422793" elapsed="0.000521"/>
+</if>
+<var name="${index}"/>
+<status status="PASS" start="2025-10-17T22:24:23.416091" elapsed="0.007223"/>
+</iter>
+<var>${index}</var>
+<value>1</value>
+<value>${pdf_buttons_count} + 1</value>
+<status status="PASS" start="2025-10-17T22:24:23.416091" elapsed="0.007223"/>
+</for>
+<status status="PASS" start="2025-10-17T22:24:23.416091" elapsed="0.007223"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<arg>10s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.423314" elapsed="0.000510"/>
+</kw>
+<kw name="Unselect Frame" owner="SeleniumLibrary">
+<doc>Sets the main frame as the current frame.</doc>
+<status status="NOT RUN" start="2025-10-17T22:24:23.423824" elapsed="0.000000"/>
+</kw>
+<arg>${nota_fiscal}</arg>
+<status status="PASS" start="2025-10-17T22:24:23.416091" elapsed="0.007733"/>
+</kw>
+<arg>${NOTA_FISCAL}</arg>
+<status status="PASS" start="2025-10-17T22:24:23.416091" elapsed="0.007733"/>
+</kw>
+<status status="PASS" start="2025-10-17T22:24:23.416091" elapsed="0.007733"/>
+</branch>
+<status status="PASS" start="2025-10-17T22:24:23.408347" elapsed="0.015477"/>
+</if>
+<status status="PASS" start="2025-10-17T22:24:23.408347" elapsed="0.015477"/>
 </kw>
 <kw name="Close Browser" owner="browser">
 <kw name="Close All Browsers" owner="SeleniumLibrary">
 <doc>Closes all open browsers and resets the browser cache.</doc>
-<status status="PASS" start="2025-10-17T18:31:13.718394" elapsed="6.386015"/>
+<status status="NOT RUN" start="2025-10-17T22:24:23.424911" elapsed="0.000000"/>
 </kw>
-<status status="PASS" start="2025-10-17T18:31:13.718394" elapsed="6.386015"/>
+<status status="PASS" start="2025-10-17T22:24:23.424911" elapsed="0.000000"/>
 </kw>
-<status status="PASS" start="2025-10-17T18:30:55.879159" elapsed="24.225250"/>
+<status status="PASS" start="2025-10-17T22:24:23.399372" elapsed="0.025539"/>
 </test>
-<status status="PASS" start="2025-10-17T18:30:55.515932" elapsed="24.589477"/>
+<status status="PASS" start="2025-10-17T22:24:23.027786" elapsed="0.398134"/>
 </suite>
 <statistics>
 <total>

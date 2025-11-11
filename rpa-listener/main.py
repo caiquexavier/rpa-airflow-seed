@@ -12,7 +12,7 @@ sys.path.insert(0, str(CURRENT_DIR))
 
 from src.config.rabbitmq import load_rabbitmq_config  # noqa: E402
 from src.services.consumer import RpaConsumer  # noqa: E402
-from src.controllers.handler import handle_message  # noqa: E402
+from src.controllers.listener_controller import handle_message  # noqa: E402
 
 
 def get_robot_paths():
@@ -55,9 +55,13 @@ def main():
         consumer.start(_on_message)
 
     except KeyboardInterrupt:
-        pass
+        if 'consumer' in locals() and consumer._connection and not consumer._connection.is_closed:
+            try:
+                consumer._connection.close()
+            except Exception:
+                pass
     except Exception as exc:
-        sys.stderr.write(f"Fatal error: {exc}\n")
+        sys.stderr.write(f"{exc}\n")
         sys.exit(1)
 
 

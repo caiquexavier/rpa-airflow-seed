@@ -1,5 +1,5 @@
 """DAG to convert XLSX to RPA request and POST to API."""
-from datetime import datetime
+from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.models import Variable
 from airflow.operators.python import PythonOperator
@@ -10,14 +10,22 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'libs'))
 from converter import xls_to_rpa_request
 
-default_args = {"owner": "airflow"}
+default_args = {
+    "owner": "airflow",
+    "depends_on_past": False,
+    "email_on_failure": False,
+    "email_on_retry": False,
+    "retries": 0,
+}
 
 dag = DAG(
     dag_id="ecargo_pod_download",
     start_date=datetime(2024, 1, 1),
-    schedule_interval=None,
+    schedule_interval=None,  # Manual trigger only
     default_args=default_args,
     catchup=False,
+    max_active_runs=1,
+    tags=["ecargo", "rpa", "manual"],
 )
 
 def convert_xls_to_json_task(**context):
