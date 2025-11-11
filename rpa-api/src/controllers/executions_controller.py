@@ -72,17 +72,12 @@ def handle_update_rpa_execution(payload: UpdateExecutionRequestModel) -> UpdateE
         current_status = execution["exec_status"]
         if current_status in [ExecutionStatus.SUCCESS.value, ExecutionStatus.FAIL.value]:
             if current_status == payload.status.value:
-                # Idempotent update - same status
-                simple_response: Dict[str, Any]
-                if payload.status == ExecutionStatus.FAIL and payload.error_message:
-                    simple_response = {"error": payload.error_message}
-                else:
-                    simple_response = {"success": "OK"}
+                # Idempotent update - same status, use payload rpa_response
                 return UpdateExecutionResponseModel(
                     exec_id=payload.exec_id,
                     rpa_key_id=payload.rpa_key_id,
                     status=payload.status.value,
-                    rpa_response=simple_response,
+                    rpa_response=payload.rpa_response,
                     error_message=payload.error_message,
                     updated=True
                 )
@@ -109,18 +104,12 @@ def handle_update_rpa_execution(payload: UpdateExecutionRequestModel) -> UpdateE
         if not updated:
             raise Exception("Failed to update execution")
         
-        # Build simplified response object (success or error text only)
-        simple_response: Dict[str, Any]
-        if payload.status == ExecutionStatus.FAIL and payload.error_message:
-            simple_response = {"error": payload.error_message}
-        else:
-            simple_response = {"success": "OK"}
-
+        # Return response with payload rpa_response (contains notas_fiscais array)
         return UpdateExecutionResponseModel(
             exec_id=payload.exec_id,
             rpa_key_id=payload.rpa_key_id,
             status=payload.status.value,
-            rpa_response=simple_response,
+            rpa_response=payload.rpa_response,
             error_message=payload.error_message,
             updated=True
         )

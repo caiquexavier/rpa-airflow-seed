@@ -55,19 +55,57 @@ node -v
 npm -v
 ```
 
-### 3) Environment Setup
+### 3) AWS Secrets Manager Setup
+
+#### Prerequisites
+- **AWS CLI** must be installed and configured
+- AWS credentials configured via `aws configure` or environment variables
+- Permission to access the secret `dev/rpa-airflow` in region `eu-north-1`
+
+#### Install AWS CLI (if not already installed)
 ```powershell
-# Run the setup script to configure environment and install dependencies
+# Download and install AWS CLI from https://aws.amazon.com/cli/
+# Or use winget:
+winget install Amazon.AWSCLI
+
+# Verify installation
+aws --version
+```
+
+#### Configure AWS Credentials
+```powershell
+# Configure AWS credentials
+aws configure
+
+# Or set environment variables:
+$env:AWS_ACCESS_KEY_ID = "your-access-key"
+$env:AWS_SECRET_ACCESS_KEY = "your-secret-key"
+$env:AWS_DEFAULT_REGION = "eu-north-1"
+```
+
+#### Load Secrets from AWS Secrets Manager
+```powershell
+# Load secrets from AWS Secrets Manager and export to environment
+. .\src\scripts\load-aws-secrets.ps1
+
+# Verify secrets are loaded (optional)
+aws secretsmanager get-secret-value --secret-id dev/rpa-airflow --region eu-north-1
+```
+
+**Note:** The `load-aws-secrets.ps1` script must be run before starting Docker Compose. It fetches all environment variables from AWS Secrets Manager secret `dev/rpa-airflow` and exports them to the current PowerShell session.
+
+#### Local Development (Optional)
+For local testing, you can still use `.env` files (excluded from production). However, the bootstrap script will override any local `.env` values when run in production mode.
+
+### 4) Environment Setup (Legacy - Optional for Local Development)
+```powershell
+# Run the setup script to configure environment and install dependencies (local development only)
 powershell -ExecutionPolicy Bypass -File src/scripts/setup-env.ps1
 ```
 
-This script will:
-- Load secrets from Azure Key Vault
-- Create `.env` file with required configuration
-- Set up Python virtual environments for both services
-- Install all required dependencies
+**Note:** This script is for local development only. In production, use AWS Secrets Manager as described above.
 
-### 4) Start Services
+### 5) Start Services
 
 #### Start Docker Services (Airflow, RPA API, RabbitMQ, PostgreSQL)
 ```powershell
@@ -87,27 +125,26 @@ npm run logs
 npm run start:listener
 ```
 
-### 5) Configure Airflow Variables and Connections
-```powershell
-# Set Airflow Variable for XLSX file path
-# In Airflow UI: Admin > Variables > Add Variable
-# Key: ECARGO_XLSX_PATH
-# Value: /opt/airflow/data/Controle_Unilever_Personalizado.xlsx
+### 6) Configure Airflow Variables and Connections
 
-# Create HTTP Connection for RPA API
-# In Airflow UI: Admin > Connections > Add Connection
-# Conn Id: rpa_api
-# Conn Type: HTTP
-# Host: http://rpa-api:3000
-```
+**Note:** The following Airflow configuration is automatically set during container initialization:
 
-### 6) Access Services
+- **Variable:** `ECARGO_XLSX_PATH` = `/opt/airflow/data/Controle_Unilever_Personalizado.xlsx`
+- **Connection:** `rpa_api` = `http://rpa-api:3000`
+
+These are configured automatically by the `airflow-init` service, so no manual configuration is required.
+
+If you need to modify these values, you can:
+- Update them in the Airflow UI (Admin > Variables / Connections)
+- Or modify the `airflow-init` service configuration in `docker-compose.yml`
+
+### 7) Access Services
 - **Airflow UI**: http://localhost:8080 (admin/admin)
 - **RPA API**: http://localhost:3000
 - **RabbitMQ Management**: http://localhost:15672 (credentials from Key Vault)
 - **API Health Check**: http://localhost:3000/health
 
-### 7) Development Mode (Optional)
+### 8) Development Mode (Optional)
 ```powershell
 # For development, you can run services individually:
 
@@ -363,22 +400,70 @@ docker-compose logs rpa-api
 
 ## 🔐 Configuration
 
-### Environment Variables
-- **RPA_API_PORT**: API port (default 3000)
-- **RABBITMQ_HOST**: RabbitMQ host (default rabbitmq for Docker, localhost for listener)
-- **RABBITMQ_PORT**: RabbitMQ port (default 5672)
-- **RABBITMQ_DEFAULT_USER**: RabbitMQ username (default admin)
-- **RABBITMQ_DEFAULT_PASS**: RabbitMQ password (default admin)
-- **RABBITMQ_QUEUE**: Queue name (default rpa_events)
-- **AZURE_KEYVAULT_URL**: Azure Key Vault URL (required)
-- **AZURE_TENANT_ID**, **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET**: Azure credentials
+### AWS Secrets Manager
 
-### Security Notes
-- Change default credentials before production use
-- Azure Key Vault integration for secure credential storage
-- Environment variables for service configuration
-- Keep credentials in `KEY=VALUE` format (no quotes)
-- Docker containers use internal networking for service communication
+All sensitive configuration values are stored in **AWS Secrets Manager** secret `dev/rpa-airflow` (region: `eu-north-1`).
+
+**Secret ARN:** `arn:aws:secretsmanager:eu-north-1:275666881463:secret:dev/rpa-airflow-GQ7oUH`
+
+#### Required Environment Variables
+
+The following environment variables must be present in the AWS secret:
+
+**PostgreSQL:**
+- `POSTGRES_USER`
+- `POSTGRES_PASSWORD`
+- `POSTGRES_DB`
+
+**Airflow:**
+- `AIRFLOW__DATABASE__SQL_ALCHEMY_CONN`
+- `AIRFLOW_CORE_FERNET_KEY`
+- `AIRFLOW__WEBSERVER__SECRET_KEY`
+- `AIRFLOW_WWW_USER_USERNAME`
+- `AIRFLOW_WWW_USER_PASSWORD`
+- `AZURE_KEYVAULT_URL` (optional)
+
+**RabbitMQ:**
+- `RABBITMQ_DEFAULT_USER`
+- `RABBITMQ_DEFAULT_PASS`
+- `RABBITMQ_DEFAULT_VHOST`
+- `RABBITMQ_HOST`
+- `RABBITMQ_PORT`
+- `RABBITMQ_VHOST`
+- `RABBITMQ_USER`
+- `RABBITMQ_PASSWORD`
+- `RABBITMQ_EXCHANGE` (optional)
+- `RABBITMQ_ROUTING_KEY` (optional, default: rpa_events)
+
+**RPA Database:**
+- `RPA_DB_HOST`
+- `RPA_DB_PORT`
+- `RPA_DB_USER`
+- `RPA_DB_PASSWORD`
+- `RPA_DB_NAME`
+
+**RPA API:**
+- `RPA_API_PORT` (optional, default: 3000)
+
+#### Loading Secrets
+
+Before starting Docker Compose, run:
+```powershell
+. .\src\scripts\load-aws-secrets.ps1
+```
+
+This script:
+- Fetches all secrets from AWS Secrets Manager
+- Exports them as environment variables to the current PowerShell session
+- Validates that critical variables are present
+- Fails immediately if AWS authentication or secret retrieval fails
+
+#### Security Notes
+- **No `.env` files in production:** All secrets come from AWS Secrets Manager
+- **Fast failure:** Services will not start if required secrets are missing
+- **No secret caching:** Secrets are loaded fresh on each startup
+- **AWS authentication required:** Ensure AWS CLI is configured before running
+- **Local development:** `.env` files can still be used for local testing (excluded from production)
 
 ## 📋 Workflow Example
 
@@ -438,10 +523,12 @@ taskkill /PID <PID> /F
 ```
 
 #### Environment Variables Not Loading
-- Ensure `.env` file is in repository root
-- Check file encoding (should be UTF-8)
-- Verify no spaces around `=` in `.env` file
-- Restart Docker services after `.env` changes
+- Ensure AWS Secrets Manager script was run: `. .\src\scripts\load-aws-secrets.ps1`
+- Verify AWS CLI is installed and configured: `aws --version`
+- Check AWS credentials are valid: `aws sts get-caller-identity`
+- Verify you have permission to access secret `dev/rpa-airflow` in region `eu-north-1`
+- Ensure secrets are loaded in the same PowerShell session where Docker Compose runs
+- For local development: Ensure `.env` file is in repository root (UTF-8 encoding, no spaces around `=`)
 
 #### RPA Listener Not Connecting to RabbitMQ
 ```powershell

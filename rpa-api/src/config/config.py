@@ -3,14 +3,22 @@ import os
 from typing import Dict
 
 
+def _get_required_env(name: str) -> str:
+    """Get required environment variable or raise error."""
+    value = os.getenv(name)
+    if value is None or value == "":
+        raise RuntimeError(f"Missing required environment variable: {name}")
+    return value
+
+
 def get_rabbitmq_config() -> Dict[str, str]:
     """Get RabbitMQ configuration from environment variables."""
     return {
-        "RABBITMQ_HOST": os.getenv("RABBITMQ_HOST", "localhost"),
-        "RABBITMQ_PORT": os.getenv("RABBITMQ_PORT", "5672"),
-        "RABBITMQ_VHOST": os.getenv("RABBITMQ_VHOST", "/"),
-        "RABBITMQ_USER": os.getenv("RABBITMQ_USER", ""),
-        "RABBITMQ_PASSWORD": os.getenv("RABBITMQ_PASSWORD", ""),
+        "RABBITMQ_HOST": _get_required_env("RABBITMQ_HOST"),
+        "RABBITMQ_PORT": _get_required_env("RABBITMQ_PORT"),
+        "RABBITMQ_VHOST": _get_required_env("RABBITMQ_VHOST"),
+        "RABBITMQ_USER": _get_required_env("RABBITMQ_USER"),
+        "RABBITMQ_PASSWORD": _get_required_env("RABBITMQ_PASSWORD"),
         "RABBITMQ_EXCHANGE": os.getenv("RABBITMQ_EXCHANGE", ""),
         "RABBITMQ_ROUTING_KEY": os.getenv("RABBITMQ_ROUTING_KEY", "rpa_events"),
     }
@@ -18,9 +26,9 @@ def get_rabbitmq_config() -> Dict[str, str]:
 
 def get_postgres_dsn() -> str:
     """Get Postgres DSN from environment variables."""
-    host = os.getenv("RPA_DB_HOST", "postgres")
-    port = os.getenv("RPA_DB_PORT", "5432")
-    user = os.getenv("RPA_DB_USER", "airflow")
-    password = os.getenv("RPA_DB_PASSWORD", "airflow")
-    dbname = os.getenv("RPA_DB_NAME", "rpa_db")
+    host = _get_required_env("RPA_DB_HOST")
+    port = _get_required_env("RPA_DB_PORT")
+    user = _get_required_env("RPA_DB_USER")
+    password = _get_required_env("RPA_DB_PASSWORD")
+    dbname = _get_required_env("RPA_DB_NAME")
     return f"postgresql://{user}:{password}@{host}:{port}/{dbname}"

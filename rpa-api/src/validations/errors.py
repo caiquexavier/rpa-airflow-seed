@@ -14,6 +14,10 @@ def create_validation_error_response(validation_error: ValidationError) -> JSONR
         error_type = error["type"]
         error_msg = error["msg"]
         
+        # Clean error message - remove ctx object references
+        if "ctx" in str(error_msg):
+            error_msg = str(error_msg).split(", ctx")[0].strip()
+        
         # Map specific error types to user-friendly messages
         if field == "rpa_key_id" and error_type == "missing":
             error_msg = "rpa_key_id is required and must be a non-empty string"
@@ -24,7 +28,10 @@ def create_validation_error_response(validation_error: ValidationError) -> JSONR
         elif field == "rpa_request" and error_type == "dict_type":
             error_msg = "rpa_request must be a JSON object"
         elif error_type == "extra_forbidden":
-            error_msg = f"unexpected field '{error['input']}'"
+            error_msg = f"unexpected field '{error.get('input', 'unknown')}'"
+        elif error_type == "value_error":
+            # Clean value_error messages
+            error_msg = str(error_msg).split(", ctx")[0].strip()
         
         errors.append({
             "field": field,
@@ -32,9 +39,9 @@ def create_validation_error_response(validation_error: ValidationError) -> JSONR
         })
     
     return JSONResponse(
-        status_code=400,
+        status_code=422,
         content={
-            "message": "Invalid request",
+            "message": "Validation error",
             "errors": errors
         }
     )

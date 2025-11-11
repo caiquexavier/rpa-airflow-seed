@@ -58,10 +58,34 @@ export PROJECT_DIR=/path/to/rpa-robots
 python main.py
 ```
 
+## AWS Secrets Manager Integration
+
+The listener automatically loads AWS credentials from AWS Secrets Manager before running Robot Framework tests. This ensures S3 uploads work without manual environment variable setup.
+
+**See [README_AWS_SECRETS.md](README_AWS_SECRETS.md) for detailed configuration.**
+
+### Quick Setup
+
+1. Ensure AWS credentials are configured (for accessing Secrets Manager):
+   ```powershell
+   aws configure
+   # or
+   $env:AWS_ACCESS_KEY_ID = "your-key"
+   $env:AWS_SECRET_ACCESS_KEY = "your-secret"
+   ```
+
+2. The secret `dev/rpa-airflow` (or value of `AWS_SECRET_NAME`) must contain:
+   - `AWS_ACCESS_KEY_ID`
+   - `AWS_SECRET_ACCESS_KEY`
+   - `AWS_DEFAULT_REGION` (or `AWS_REGION`)
+   - `AWS_S3_BUCKET`
+
+3. The listener will automatically load these secrets when processing messages.
+
 ## Service Information
 - **Purpose**: Listens for RabbitMQ messages and triggers RPA robot execution
 - **Queue**: rpa_events
-- **Dependencies**: RabbitMQ server, Azure Key Vault access
+- **Dependencies**: RabbitMQ server, AWS Secrets Manager access (for S3 credentials)
 
 ## Testing
 

@@ -1,6 +1,6 @@
 *** Settings ***
-Resource    ${CURDIR}/../resources/browser/browser.resource
-Resource    ${CURDIR}/../resources/pod_download/pod_download.resource
+Resource    ${CURDIR}/../src/resources/browser/browser.resource
+Resource    ${CURDIR}/../src/resources/pod_download/pod_download.resource
 
 *** Test Cases ***
 Pod Download
@@ -8,5 +8,5 @@ Pod Download
     Login To e-Cargo
     Open Operacional Menu
     Open Registro De Canhotos Submenu
-    Input Nota Fiscal And Search
+    Process Nota Fiscal Array From Variables
     Close Browser
