@@ -1,186 +1,63 @@
-"""Webhook-based task activation utilities for Airflow.
-
-This module provides a generic way to implement webhook-activated tasks in Airflow DAGs.
-Tasks can wait for external HTTP webhooks to trigger their execution.
-"""
+"""Webhook-based task activation utilities for Airflow."""
 from typing import Optional, Any
+import json
+import logging
 from airflow.models import XCom, DagRun
 from airflow.utils.session import provide_session
 from airflow.sensors.base import BaseSensorOperator
 from airflow.utils.context import Context
+from airflow.exceptions import AirflowException
 from sqlalchemy import desc
+
+logger = logging.getLogger(__name__)
 
 
 @provide_session
 def get_latest_dag_run(dag_id: str, session=None) -> str:
-    """Get the latest DAG run ID for a given DAG.
-    
-    Args:
-        dag_id: The DAG ID to get the latest run for
-        session: SQLAlchemy session (provided by @provide_session decorator)
-    
-    Returns:
-        The run_id of the latest DAG run
-    
-    Raises:
-        ValueError: If no DAG run is found
-    """
-    # Get the latest DAG run
-    dag_run = (
-        session.query(DagRun)
-        .filter(DagRun.dag_id == dag_id)
-        .order_by(desc(DagRun.execution_date))
-        .first()
-    )
-    
+    """Get the latest DAG run ID."""
+    dag_run = session.query(DagRun).filter(DagRun.dag_id == dag_id).order_by(desc(DagRun.execution_date)).first()
     if not dag_run:
         raise ValueError("No active DAG run found. Please trigger the DAG first.")
-    
     return dag_run.run_id
 
 
-def set_webhook_signal(
-    dag_id: str,
-    task_id: str,
-    run_id: str,
-    data: Optional[Any] = None,
-    signal_key: str = "webhook_triggered",
-    data_key: str = "webhook_data"
-) -> None:
-    """Set a webhook signal in XCom to activate a waiting task.
-    
-    Args:
-        dag_id: The DAG ID
-        task_id: The task ID that is waiting for the webhook
-        run_id: The DAG run ID
-        data: Optional data to pass to the task (will be stored in XCom)
-        signal_key: XCom key for the webhook trigger signal (default: "webhook_triggered")
-        data_key: XCom key for the webhook data (default: "webhook_data")
-    """
-    @provide_session
-    def _set_signal(session=None):
-        # Set webhook_triggered flag
-        XCom.set(
-            key=signal_key,
-            value=True,
-            dag_id=dag_id,
-            task_id=task_id,
-            run_id=run_id,
-            session=session
-        )
-        
-        # Set webhook data if provided
-        if data is not None:
-            XCom.set(
-                key=data_key,
-                value=data,
-                dag_id=dag_id,
-                task_id=task_id,
-                run_id=run_id,
-                session=session
-            )
-        
-        session.commit()
-    
-    _set_signal()
+@provide_session
+def set_webhook_signal(dag_id: str, task_id: str, run_id: str, data: Optional[Any] = None, signal_key: str = "webhook_triggered", data_key: str = "webhook_data", session=None) -> None:
+    """Set webhook signal in XCom to activate a waiting task."""
+    XCom.set(key=signal_key, value=True, dag_id=dag_id, task_id=task_id, run_id=run_id, session=session)
+    if data is not None:
+        # Serialize to JSON string to ensure XCom can store it properly
+        if isinstance(data, (dict, list)):
+            data_value = json.dumps(data)
+        else:
+            data_value = data
+        XCom.set(key=data_key, value=data_value, dag_id=dag_id, task_id=task_id, run_id=run_id, session=session)
+    session.commit()
 
 
-def check_webhook_signal(
-    dag_id: str,
-    task_id: str,
-    run_id: str,
-    signal_key: str = "webhook_triggered"
-) -> bool:
-    """Check if a webhook signal exists in XCom.
-    
-    Args:
-        dag_id: The DAG ID
-        task_id: The task ID to check
-        run_id: The DAG run ID
-        signal_key: XCom key for the webhook trigger signal (default: "webhook_triggered")
-    
-    Returns:
-        True if webhook signal exists, False otherwise
-    """
-    @provide_session
-    def _check_signal(session=None):
-        xcom_entry = session.query(XCom).filter(
-            XCom.dag_id == dag_id,
-            XCom.run_id == run_id,
-            XCom.task_id == task_id,
-            XCom.key == signal_key
-        ).first()
-        return xcom_entry is not None
-    
-    return _check_signal()
+@provide_session
+def check_webhook_signal(dag_id: str, task_id: str, run_id: str, signal_key: str = "webhook_triggered", session=None) -> bool:
+    """Check if webhook signal exists in XCom."""
+    xcom_entry = session.query(XCom).filter(XCom.dag_id == dag_id, XCom.run_id == run_id, XCom.task_id == task_id, XCom.key == signal_key).first()
+    return xcom_entry is not None
 
 
-def get_webhook_data(
-    task_instance,
-    target_task_id: str,
-    dag_id: str,
-    data_key: str = "webhook_data"
-) -> Optional[Any]:
-    """Get webhook data from XCom.
-    
-    Args:
-        task_instance: The current task instance
-        target_task_id: The task ID that received the webhook
-        dag_id: The DAG ID
-        data_key: XCom key for the webhook data (default: "webhook_data")
-    
-    Returns:
-        The webhook data if available, None otherwise
-    """
-    return task_instance.xcom_pull(
-        key=data_key,
-        task_ids=target_task_id,
-        dag_id=dag_id,
-        include_prior_dates=True
-    )
+def get_webhook_data(task_instance, target_task_id: str, dag_id: str, data_key: str = "webhook_data") -> Optional[Any]:
+    """Get webhook data from XCom."""
+    data = task_instance.xcom_pull(key=data_key, task_ids=target_task_id, dag_id=dag_id, include_prior_dates=True)
+    # If data is a JSON string, parse it; otherwise return as-is
+    if isinstance(data, str):
+        try:
+            return json.loads(data)
+        except (json.JSONDecodeError, TypeError):
+            return data
+    return data
 
 
 class WebhookSensor(BaseSensorOperator):
-    """Generic sensor that waits for an HTTP webhook to trigger a task.
+    """Sensor that waits for HTTP webhook to trigger a task."""
     
-    This sensor polls XCom for a webhook signal. When the signal is detected,
-    it retrieves any associated data and passes it to downstream tasks.
-    
-    Example:
-        ```python
-        wait_for_webhook = WebhookSensor(
-            task_id="wait_for_webhook",
-            target_task_id="my_task",
-            poke_interval=5,
-            timeout=3600,
-            dag=dag
-        )
-        ```
-    
-    Attributes:
-        target_task_id: The task ID that will receive the webhook signal
-        signal_key: XCom key for the webhook trigger signal (default: "webhook_triggered")
-        data_key: XCom key for the webhook data (default: "webhook_data")
-        output_key: XCom key to store the webhook data for downstream tasks (default: "webhook_data")
-    """
-    
-    def __init__(
-        self,
-        target_task_id: str,
-        signal_key: str = "webhook_triggered",
-        data_key: str = "webhook_data",
-        output_key: str = "webhook_data",
-        **kwargs
-    ):
-        """Initialize the WebhookSensor.
-        
-        Args:
-            target_task_id: The task ID that will receive the webhook signal
-            signal_key: XCom key for the webhook trigger signal
-            data_key: XCom key for the webhook data
-            output_key: XCom key to store the webhook data for downstream tasks
-            **kwargs: Additional arguments passed to BaseSensorOperator
-        """
+    def __init__(self, target_task_id: str, signal_key: str = "webhook_triggered", data_key: str = "webhook_data", output_key: str = "webhook_data", **kwargs):
         super().__init__(**kwargs)
         self.target_task_id = target_task_id
         self.signal_key = signal_key
@@ -188,37 +65,56 @@ class WebhookSensor(BaseSensorOperator):
         self.output_key = output_key
     
     def poke(self, context: Context) -> bool:
-        """Check if webhook has been triggered.
-        
-        Args:
-            context: Airflow task context
-            
-        Returns:
-            True if webhook signal is detected, False otherwise
-        """
+        """Check if webhook has been triggered. Returns True when webhook signal is detected."""
         task_instance = context['task_instance']
         dag_run = context['dag_run']
         
-        # Check if webhook signal exists in XCom
-        webhook_triggered = check_webhook_signal(
-            dag_id=dag_run.dag_id,
-            task_id=self.target_task_id,
-            run_id=dag_run.run_id,
-            signal_key=self.signal_key
-        )
+        # Only check if webhook signal exists - don't validate status here
+        return check_webhook_signal(dag_id=dag_run.dag_id, task_id=self.target_task_id, run_id=dag_run.run_id, signal_key=self.signal_key)
+    
+    def execute(self, context: Context) -> Any:
+        """Execute sensor and validate webhook status. Raises AirflowException if status is FAIL."""
+        # First, run the sensor's normal execute (which calls poke() until it returns True)
+        result = super().execute(context)
         
-        if webhook_triggered:
-            # Get webhook data if available
-            webhook_data = get_webhook_data(
-                task_instance=task_instance,
-                target_task_id=self.target_task_id,
-                dag_id=dag_run.dag_id,
-                data_key=self.data_key
+        # After sensor detects webhook, validate the status
+        task_instance = context['task_instance']
+        dag_run = context['dag_run']
+        
+        # Get webhook data
+        webhook_data = get_webhook_data(task_instance=task_instance, target_task_id=self.target_task_id, dag_id=dag_run.dag_id, data_key=self.data_key)
+        logger.info(f"[WebhookSensor] Retrieved webhook data: {type(webhook_data)}")
+        
+        # Validate status - THIS WILL FAIL THE TASK IF STATUS IS NOT SUCCESS
+        if webhook_data is None:
+            logger.warning("[WebhookSensor] Webhook data is None - skipping validation")
+            return result
+        
+        if not isinstance(webhook_data, dict):
+            logger.warning(f"[WebhookSensor] Webhook data is not a dict: {type(webhook_data)} - skipping validation")
+            return result
+        
+        status = webhook_data.get("status")
+        if status is None:
+            logger.warning("[WebhookSensor] Webhook data missing 'status' field - skipping validation")
+            return result
+        
+        # Convert to uppercase for comparison
+        status_upper = str(status).upper()
+        logger.info(f"[WebhookSensor] Validating webhook status: {status_upper}")
+        
+        # FAIL THE TASK if status is not SUCCESS
+        if status_upper != "SUCCESS":
+            error_msg = (
+                webhook_data.get("error_message") or
+                (webhook_data.get("rpa_response", {}).get("error") if isinstance(webhook_data.get("rpa_response"), dict) else None) or
+                f"RPA execution failed with status: {status_upper}"
             )
-            
-            # Pass the data to downstream tasks
-            context['ti'].xcom_push(key=self.output_key, value=webhook_data)
-            return True
+            logger.error(f"[WebhookSensor] FAILURE DETECTED - Status: {status_upper}, Error: {error_msg}")
+            # Raise exception in execute() method - this will definitely fail the task
+            raise AirflowException(f"Webhook response indicates failure. Status: {status_upper}. Error message: {error_msg}")
         
-        return False
-
+        # Status is SUCCESS - store data and continue
+        logger.info("[WebhookSensor] Status is SUCCESS - proceeding")
+        context['ti'].xcom_push(key=self.output_key, value=webhook_data)
+        return result
