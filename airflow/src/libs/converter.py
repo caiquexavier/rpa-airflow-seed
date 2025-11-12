@@ -85,7 +85,7 @@ def xls_to_rpa_request(xlsx_path: Union[str, Path]) -> Dict[str, Any]:
     # Return exact dict that matches rpa-api model
     # rpa_request must be a Dict[str, Any] per API validation, so wrap array in dict
     return {
-        "rpa_key_id": "ecargo_pod_download",
+        "rpa_key_id": "rpa_protocolo_devolucao",
         "rpa_request": {
             "dt_list": dt_list
         }

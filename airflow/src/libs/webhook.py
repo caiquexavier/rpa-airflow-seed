@@ -42,9 +42,26 @@ def check_webhook_signal(dag_id: str, task_id: str, run_id: str, signal_key: str
     return xcom_entry is not None
 
 
-def get_webhook_data(task_instance, target_task_id: str, dag_id: str, data_key: str = "webhook_data") -> Optional[Any]:
-    """Get webhook data from XCom."""
-    data = task_instance.xcom_pull(key=data_key, task_ids=target_task_id, dag_id=dag_id, include_prior_dates=True)
+@provide_session
+def get_webhook_data(task_instance, target_task_id: str, dag_id: str, data_key: str = "webhook_data", session=None) -> Optional[Any]:
+    """Get webhook data from XCom using direct query."""
+    dag_run = task_instance.get_dagrun()
+    run_id = dag_run.run_id
+    
+    # Query XCom directly to get webhook data
+    xcom_entry = session.query(XCom).filter(
+        XCom.dag_id == dag_id,
+        XCom.run_id == run_id,
+        XCom.task_id == target_task_id,
+        XCom.key == data_key
+    ).first()
+    
+    if xcom_entry is None:
+        return None
+    
+    # Get the value from XCom
+    data = xcom_entry.value
+    
     # If data is a JSON string, parse it; otherwise return as-is
     if isinstance(data, str):
         try:
@@ -74,32 +91,37 @@ class WebhookSensor(BaseSensorOperator):
     
     def execute(self, context: Context) -> Any:
         """Execute sensor and validate webhook status. Raises AirflowException if status is FAIL."""
-        # First, run the sensor's normal execute (which calls poke() until it returns True)
+        # Run the sensor's normal execute (which calls poke() until it returns True)
         result = super().execute(context)
         
         # After sensor detects webhook, validate the status
         task_instance = context['task_instance']
         dag_run = context['dag_run']
         
-        # Get webhook data
+        # Get webhook data using direct XCom query
         webhook_data = get_webhook_data(task_instance=task_instance, target_task_id=self.target_task_id, dag_id=dag_run.dag_id, data_key=self.data_key)
         logger.info(f"[WebhookSensor] Retrieved webhook data: {type(webhook_data)}")
         
-        # Validate status - THIS WILL FAIL THE TASK IF STATUS IS NOT SUCCESS
+        if isinstance(webhook_data, dict):
+            logger.info(f"[WebhookSensor] Webhook data keys: {list(webhook_data.keys())}")
+        
+        # Validate status - fail task if data is missing or status is not SUCCESS
         if webhook_data is None:
-            logger.warning("[WebhookSensor] Webhook data is None - skipping validation")
-            return result
+            error_msg = "Webhook data is None - cannot validate status"
+            logger.error(f"[WebhookSensor] ERROR: {error_msg}")
+            raise AirflowException(error_msg)
         
         if not isinstance(webhook_data, dict):
-            logger.warning(f"[WebhookSensor] Webhook data is not a dict: {type(webhook_data)} - skipping validation")
-            return result
+            error_msg = f"Webhook data is not a dict: {type(webhook_data)} - cannot validate status"
+            logger.error(f"[WebhookSensor] ERROR: {error_msg}")
+            raise AirflowException(error_msg)
         
         status = webhook_data.get("status")
         if status is None:
-            logger.warning("[WebhookSensor] Webhook data missing 'status' field - skipping validation")
-            return result
+            error_msg = f"Webhook data missing 'status' field. Available keys: {list(webhook_data.keys())}"
+            logger.error(f"[WebhookSensor] ERROR: {error_msg}")
+            raise AirflowException(error_msg)
         
-        # Convert to uppercase for comparison
         status_upper = str(status).upper()
         logger.info(f"[WebhookSensor] Validating webhook status: {status_upper}")
         
@@ -111,7 +133,6 @@ class WebhookSensor(BaseSensorOperator):
                 f"RPA execution failed with status: {status_upper}"
             )
             logger.error(f"[WebhookSensor] FAILURE DETECTED - Status: {status_upper}, Error: {error_msg}")
-            # Raise exception in execute() method - this will definitely fail the task
             raise AirflowException(f"Webhook response indicates failure. Status: {status_upper}. Error message: {error_msg}")
         
         # Status is SUCCESS - store data and continue
