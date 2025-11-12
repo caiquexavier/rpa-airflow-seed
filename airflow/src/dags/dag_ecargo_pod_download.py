@@ -47,7 +47,7 @@ post_task = HttpOperator(
     dag=dag,
 )
 
-# Sensor that waits for webhook
+# Sensor that waits for webhook and validates status
 wait_for_webhook = WebhookSensor(
     task_id="wait_for_webhook",
     target_task_id="upload_nf_files_to_s3",
@@ -57,7 +57,7 @@ wait_for_webhook = WebhookSensor(
     dag=dag,
 )
 
-# Upload task that executes after webhook is triggered
+# Upload task that executes after webhook is validated
 upload_task = PythonOperator(
     task_id="upload_nf_files_to_s3",
     python_callable=upload_nf_files_to_s3_task,
