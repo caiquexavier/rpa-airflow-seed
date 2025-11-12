@@ -38,7 +38,7 @@ async def health_check() -> dict[str, str]:
 @app.post("/trigger/upload_nf_files_to_s3", summary="Trigger upload_nf_files_to_s3 task")
 async def trigger_upload_nf_files_to_s3(request: Request) -> Dict[str, Any]:
     """Trigger task by setting webhook signal for waiting sensor. Accepts RPA execution response from rpa-api."""
-    dag_id = "ecargo_pod_download"
+    dag_id = "rpa_protocolo_devolucao"
     task_id = "upload_nf_files_to_s3"
     try:
         # Read message from POST body

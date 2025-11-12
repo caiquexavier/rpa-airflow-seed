@@ -7,7 +7,7 @@ import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'libs'))
 from webhook import WebhookSensor
-from tasks.tasks_ecargo_pod_download import (
+from tasks.tasks_rpa_protocolo_devolucao import (
     convert_xls_to_json_task,
     upload_nf_files_to_s3_task,
 )
@@ -21,13 +21,13 @@ default_args = {
 }
 
 dag = DAG(
-    dag_id="ecargo_pod_download",
+    dag_id="rpa_protocolo_devolucao",
     start_date=datetime(2024, 1, 1),
     schedule_interval=None,  # Manual trigger only
     default_args=default_args,
     catchup=False,
     max_active_runs=1,
-    tags=["ecargo", "rpa", "manual"],
+    tags=["rpa", "manual"],
 )
 
 convert_task = PythonOperator(
@@ -66,3 +66,4 @@ upload_task = PythonOperator(
 
 # Define task dependencies
 convert_task >> post_task >> wait_for_webhook >> upload_task
+
