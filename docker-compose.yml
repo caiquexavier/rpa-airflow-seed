@@ -24,7 +24,7 @@ services:
     environment:
       AZURE_KEYVAULT_URL: ${AZURE_KEYVAULT_URL}
       AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_CORE_FERNET_KEY}
-      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/src/dags
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
       AIRFLOW_CONN_PUBLISH_API: ${AIRFLOW_CONN_PUBLISH_API:-http://rpa-api:3000}
@@ -65,15 +65,16 @@ services:
       AIRFLOW__CORE__HIDE_SENSITIVE_VAR_CONN_FIELDS: True
       AIRFLOW__CORE__SENSITIVE_VAR_CONN_FIELD_NAMES: password,passwd,secret,api_key,apikey,access_token
       AIRFLOW__CORE__SENSITIVE_VAR_CONN_FIELD_SECTION: password,passwd,secret,api_key,apikey,access_token
-    command: webserver
+    entrypoint: /start-with-api.sh
     ports:
       - "8080:8080"
+      - "8000:8000"
     volumes:
-      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/src/dags:/opt/airflow/src/dags
       - ./airflow/logs:/opt/airflow/logs
-      - ./airflow/libs:/opt/airflow/libs
-      - ./src:/opt/airflow/src
-      - ./airflow/data:/opt/airflow/data
+      - ./airflow/src/libs:/opt/airflow/src/libs
+      - ./airflow/src/api:/opt/airflow/src/api
+      - ./shared/data:/opt/airflow/data
     depends_on:
       postgres:
         condition: service_healthy
@@ -93,7 +94,7 @@ services:
     environment:
       AZURE_KEYVAULT_URL: ${AZURE_KEYVAULT_URL}
       AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_CORE_FERNET_KEY}
-      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/src/dags
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
       AIRFLOW_CONN_PUBLISH_API: ${AIRFLOW_CONN_PUBLISH_API:-http://rpa-api:3000}
@@ -134,11 +135,11 @@ services:
       AIRFLOW__CORE__SENSITIVE_VAR_CONN_FIELD_SECTION: password,passwd,secret,api_key,apikey,access_token
     command: scheduler
     volumes:
-      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/src/dags:/opt/airflow/src/dags
       - ./airflow/logs:/opt/airflow/logs
-      - ./airflow/libs:/opt/airflow/libs
-      - ./src:/opt/airflow/src
-      - ./airflow/data:/opt/airflow/data
+      - ./airflow/src/libs:/opt/airflow/src/libs
+      - ./airflow/src/api:/opt/airflow/src/api
+      - ./shared/data:/opt/airflow/data
     depends_on:
       postgres:
         condition: service_healthy
@@ -152,10 +153,11 @@ services:
     environment:
       AZURE_KEYVAULT_URL: ${AZURE_KEYVAULT_URL}
       AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_CORE_FERNET_KEY}
-      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/src/dags
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
       AIRFLOW_CONN_PUBLISH_API: ${AIRFLOW_CONN_PUBLISH_API:-http://rpa-api:3000}
+      AIRFLOW_API_BASE_URL: ${AIRFLOW_API_BASE_URL:-http://airflow-webserver:8000}
       AIRFLOW__SECRETS__BACKEND: airflow.secrets.environment_variables.EnvironmentVariablesBackend
       AIRFLOW__WEBSERVER__EXPOSE_CONFIG: True
       AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW__WEBSERVER__SECRET_KEY}
@@ -206,6 +208,7 @@ services:
           --email admin@example.com || true
         # Set required Airflow Variables
         airflow variables set ECARGO_XLSX_PATH /opt/airflow/data/Controle_Unilever_Personalizado.xlsx || true
+        airflow variables set AIRFLOW_API_BASE_URL ${AIRFLOW_API_BASE_URL:-http://airflow-webserver:8000} || true
         # Create required Airflow Connections
         airflow connections delete rpa_api || true
         airflow connections add rpa_api \
@@ -213,11 +216,11 @@ services:
           --conn-host rpa-api \
           --conn-port 3000 || true
     volumes:
-      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/src/dags:/opt/airflow/src/dags
       - ./airflow/logs:/opt/airflow/logs
-      - ./airflow/libs:/opt/airflow/libs
-      - ./src:/opt/airflow/src
-      - ./airflow/data:/opt/airflow/data
+      - ./airflow/src/libs:/opt/airflow/src/libs
+      - ./airflow/src/api:/opt/airflow/src/api
+      - ./shared/data:/opt/airflow/data
     depends_on:
       postgres:
         condition: service_healthy

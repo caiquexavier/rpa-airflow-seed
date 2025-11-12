@@ -4,6 +4,7 @@ from typing import Dict, Any
 
 from ..services.executions_service import create_execution, update_execution_status, get_execution, set_execution_running
 from ..services.rabbitmq_service import publish_execution_message
+from ..services.callback_service import post_callback
 from ..validations.executions_models import (
     RpaExecutionRequestModel, RpaExecutionResponseModel,
     UpdateExecutionRequestModel, UpdateExecutionResponseModel,
@@ -72,7 +73,7 @@ def handle_update_rpa_execution(payload: UpdateExecutionRequestModel) -> UpdateE
         current_status = execution["exec_status"]
         if current_status in [ExecutionStatus.SUCCESS.value, ExecutionStatus.FAIL.value]:
             if current_status == payload.status.value:
-                # Idempotent update - same status, use payload rpa_response
+                # Idempotent update - same status, return without database update or callback
                 return UpdateExecutionResponseModel(
                     exec_id=payload.exec_id,
                     rpa_key_id=payload.rpa_key_id,
@@ -84,7 +85,7 @@ def handle_update_rpa_execution(payload: UpdateExecutionRequestModel) -> UpdateE
             else:
                 raise ValueError(f"Execution {payload.exec_id} is already in terminal state: {current_status}")
         
-        # Update execution
+        # Update execution in database
         full_update_payload = {
             "exec_id": payload.exec_id,
             "rpa_key_id": payload.rpa_key_id,
@@ -104,7 +105,24 @@ def handle_update_rpa_execution(payload: UpdateExecutionRequestModel) -> UpdateE
         if not updated:
             raise Exception("Failed to update execution")
         
-        # Return response with payload rpa_response (contains notas_fiscais array)
+        # Post callback to callback_url after successful database update
+        callback_url = execution.get("callback_url")
+        if callback_url:
+            try:
+                post_callback(
+                    callback_url=callback_url,
+                    exec_id=payload.exec_id,
+                    rpa_key_id=payload.rpa_key_id,
+                    status=payload.status.value,
+                    rpa_response=payload.rpa_response,
+                    error_message=payload.error_message
+                )
+            except Exception as callback_error:
+                # Log error but don't fail the update - callback is best effort
+                logger.warning(
+                    f"Failed to post callback for exec_id={payload.exec_id} to {callback_url}: {callback_error}"
+                )
+        
         return UpdateExecutionResponseModel(
             exec_id=payload.exec_id,
             rpa_key_id=payload.rpa_key_id,
