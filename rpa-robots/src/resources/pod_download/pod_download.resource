@@ -11,273 +11,359 @@ ${SENHA}       Terrific564#TOKIO
 ${NOTA_FISCAL}    5043156
 ${JSON_DATA}    ${EMPTY}
 ${rpa_request}    {"notas_fiscais": []}
+@{ERROR_RESULTS}    @{EMPTY}
+${RESULT_MESSAGE}    ${EMPTY}
+
+# XPath Selectors
+${XPATH_OPERACIONAL_MENU}    //*[contains(text(),'Operacional')]
+${XPATH_REGISTRO_CANHOTOS}    //div[@class='v-list__tile__title' and text()='Registro de Canhotos']
+${XPATH_SEARCH_BUTTON}    /html/body/div/div/div[3]/form/div[1]/div[6]/div/div[1]/button
+${XPATH_ERROR_MODAL}    //*[@id="modalMensagem"]/div/div/div
+${XPATH_ERROR_MSG}    //*[@id="modalMensagem"]/div/div/div/div[1]
+${XPATH_ERROR_CLOSE}    //*[@id="modalMensagem"]/div/div/div/div[2]/button
+${XPATH_CANHOTO_BUTTON}    /html/body/div/div/div[3]/form/div[2]/div[2]/table/tbody/tr[2]/td/div/div[2]/div[3]/button
+${XPATH_MODAL_CANHOTO}    //*[@id="ModalCanhotoNf"]
 
 *** Keywords ***
 Load JSON Data
     [Arguments]    ${json_string}
-    Log    Received JSON string: ${json_string}
-    
-    # Check if json_string is empty or invalid
     ${is_empty}=    Run Keyword And Return Status    Should Be Equal    ${json_string}    ${EMPTY}
     IF    ${is_empty}
-        Log    No JSON data provided; nothing to process
         Set Global Variable    ${JSON_DATA}    {"rpa_request": {"notas_fiscais": []}}
         RETURN
     END
     
-    # Check if json_string is already a dict or needs to be parsed
     ${is_dict}=    Run Keyword And Return Status    Should Be Equal    ${json_string.__class__.__name__}    dict
     IF    ${is_dict}
         Set Global Variable    ${JSON_DATA}    ${json_string}
-        Log    Loaded JSON data (already parsed): ${json_string}
     ELSE
         TRY
             ${json_data}=    Convert String To Json    ${json_string}
             Set Global Variable    ${JSON_DATA}    ${json_data}
-            Log    Loaded JSON data (parsed from string): ${json_data}
         EXCEPT    AS    ${error}
             Log    Error parsing JSON: ${error}
-            Log    Falling back to empty notas_fiscais list
             Set Global Variable    ${JSON_DATA}    {"rpa_request": {"notas_fiscais": []}}
         END
     END
 
 Process Nota Fiscal Array
     Initialize Error Results
-    # Get the nota_fiscal array from rpa_request.nota_fiscal using [*] to get individual elements
-    ${nota_fiscal_array}=    Get Value From Json    ${JSON_DATA}    $.rpa_request.notas_fiscais[*]
-    Log    Raw nota_fiscal_array: ${nota_fiscal_array}
-    # Check if we got a valid array
-    ${array_length}=    Get Length    ${nota_fiscal_array}
-    Log    Array length: ${array_length} (strict execution)
+    TRY
+        ${dt_list}=    Get Value From Json    ${JSON_DATA}    $.rpa_request.dt_list[*]
+        ${array_length}=    Get Length    ${dt_list}
+    EXCEPT    AS    ${error}
+        ${error_msg}=    Set Variable    Failed to parse dt_list: ${error}
+        Log    ${error_msg}    level=ERROR
+        Append Error Result    System    ${error_msg}
+        Build Response Message
+        RETURN
+    END
     
     IF    ${array_length} > 0
-        Log    Processing ${array_length} Nota Fiscal values (strict execution)
-        ${processed_count}=    Set Variable    0
+        ${success_count}=    Set Variable    0
+        ${error_count}=    Set Variable    0
         FOR    ${index}    IN RANGE    0    ${array_length}
-            ${current_nota_fiscal}=    Get Value From Json    ${JSON_DATA}    $.rpa_request.notas_fiscais[${index}]
-            Log    Processing Nota Fiscal ${index + 1}/${array_length}: ${current_nota_fiscal[0]}
-            Process Single Nota Fiscal    ${current_nota_fiscal[0]}
-            ${processed_count}=    Evaluate    ${processed_count} + 1
-            Log    Completed ${processed_count}/${array_length} Nota Fiscal items
+            TRY
+                ${dt_entry}=    Get Value From Json    ${JSON_DATA}    $.rpa_request.dt_list[${index}]
+                ${dt_entry_dict}=    Set Variable    ${dt_entry[0]}
+                ${dt_id}=    Get Value From Json    ${dt_entry_dict}    $.dt_id
+                ${dt_id_value}=    Set Variable    ${dt_id[0]}
+                ${notas_fiscais}=    Get Value From Json    ${dt_entry_dict}    $.notas_fiscais
+                ${notas_fiscais_array}=    Set Variable    ${notas_fiscais[0]}
+                ${notas_fiscais_length}=    Get Length    ${notas_fiscais_array}
+                IF    ${notas_fiscais_length} > 0
+                    TRY
+                        Open Registro De Canhotos Submenu
+                    EXCEPT    AS    ${error}
+                        ${error_msg}=    Set Variable    Failed to open submenu: ${error}
+                        Log    ${error_msg}    level=ERROR
+                        Append Error Result    DT ${dt_id_value}    ${error_msg}
+                        CONTINUE
+                    END
+                    FOR    ${nf_index}    IN RANGE    0    ${notas_fiscais_length}
+                        ${current_nota_fiscal}=    Set Variable    ${notas_fiscais_array[${nf_index}]}
+                        TRY
+                            Process Single Nota Fiscal    ${current_nota_fiscal}    ${dt_id_value}
+                            ${success_count}=    Evaluate    ${success_count} + 1
+                        EXCEPT    AS    ${nf_error}
+                            ${error_count}=    Evaluate    ${error_count} + 1
+                            ${error_msg}=    Set Variable    ${nf_error}
+                            Append Error Result    ${current_nota_fiscal}    ${error_msg}
+                        END
+                    END
+                END
+            EXCEPT    AS    ${error}
+                ${error_count}=    Evaluate    ${error_count} + 1
+                ${error_msg}=    Set Variable    ${error}
+                Append Error Result    DT entry ${index + 1}    ${error_msg}
+            END
         END
-        Log    Finished processing all ${array_length} Nota Fiscal items
-    ELSE
-        Log    No notas_fiscais provided; skipping processing
+        Log    Processed: ${array_length} | Success: ${success_count} | Errors: ${error_count}    level=INFO
     END
     Build Response Message
     
 
 Process Nota Fiscal Array From Variables
-    Initialize Error Results
-    # Check if we have the rpa_request variable (from variable file)
     ${has_rpa_request}=    Run Keyword And Return Status    Variable Should Exist    ${rpa_request}
-    IF    ${has_rpa_request}
-        Log    Processing Nota Fiscal array from rpa_request variable
-        Log    rpa_request content: ${rpa_request}
-        # Get the notas_fiscais array directly from rpa_request
-        ${notas_fiscais}=    Get Value From Json    ${rpa_request}    $.notas_fiscais
-        Log    Raw notas_fiscais from JSON: ${notas_fiscais}
-        # Extract the actual array (JSONLibrary returns list of matches)
-        ${outer_len}=    Get Length    ${notas_fiscais}
-        Log    Outer length: ${outer_len}
-        IF    ${outer_len} > 0
-            ${actual_array}=    Set Variable    ${notas_fiscais[0]}
-            Log    Actual array extracted: ${actual_array}
-        ELSE
-            ${actual_array}=    Create List
-            Log    Empty array, creating empty list
-        END
-        ${array_length}=    Get Length    ${actual_array}
-        Log    Array length: ${array_length} (strict execution - will process exactly ${array_length} items)
-        
-        IF    ${array_length} > 0
-            ${processed_count}=    Set Variable    0
-            ${success_count}=    Set Variable    0
-            ${error_count}=    Set Variable    0
-            
-            # Process exactly array_length items, no more, no less
-            # Loop stays in Registro de Canhotos menu, only downloads NF files
-            FOR    ${index}    IN RANGE    0    ${array_length}
-                # Safety check: ensure we don't exceed array length
-                IF    ${index} >= ${array_length}
-                    Log    Safety check: Index ${index} exceeds array length ${array_length}, stopping loop
-                    Exit For Loop
-                END
-                ${current_nota_fiscal}=    Set Variable    ${actual_array[${index}]}
-                Log    [${index + 1}/${array_length}] Processing Nota Fiscal: ${current_nota_fiscal}
-                TRY
-                    Process Single Nota Fiscal    ${current_nota_fiscal}
-                    ${success_count}=    Evaluate    ${success_count} + 1
-                    Log    [${index + 1}/${array_length}] Successfully processed: ${current_nota_fiscal}
-                EXCEPT    AS    ${error}
-                    ${error_count}=    Evaluate    ${error_count} + 1
-                    Append Error Result    ${current_nota_fiscal}    ${error}
-                    Log    [${index + 1}/${array_length}] Error processing ${current_nota_fiscal}: ${error}
-                END
-                ${processed_count}=    Evaluate    ${processed_count} + 1
-                Log    Progress: ${processed_count}/${array_length} items completed
-            END
-            
-            # Build execution log
-            Log    ===== EXECUTION SUMMARY =====
-            Log    Total items in array: ${array_length}
-            Log    Processed: ${processed_count}
-            Log    Successful: ${success_count}
-            Log    Errors: ${error_count}
-            Log    ============================
-        ELSE
-            Log    Empty notas_fiscais array; nothing to process
-        END
-    ELSE
-        Log    No rpa_request variable found; skipping processing
+    IF    not ${has_rpa_request}
+        Fail    rpa_request variable not found
     END
-    Build Response Message
+    
+    ${notas_fiscais}=    Get Value From Json    ${rpa_request}    $.notas_fiscais
+    ${outer_len}=    Get Length    ${notas_fiscais}
+    ${actual_array}=    Set Variable    ${EMPTY}
+    IF    ${outer_len} > 0
+        ${actual_array}=    Set Variable    ${notas_fiscais[0]}
+    ELSE
+        ${actual_array}=    Create List
+    END
+    
+    ${array_length}=    Get Length    ${actual_array}
+    # If no notas fiscais in rpa_request, use default NOTA_FISCAL for manual testing
+    IF    ${array_length} == 0
+        Log    No notas fiscais found in rpa_request, using default NOTA_FISCAL: ${NOTA_FISCAL}    level=INFO
+        Process Single Nota Fiscal    ${NOTA_FISCAL}
+    ELSE
+        # Process each nota fiscal - fail immediately if any fails
+        FOR    ${index}    IN RANGE    0    ${array_length}
+            ${current_nota_fiscal}=    Set Variable    ${actual_array[${index}]}
+            Process Single Nota Fiscal    ${current_nota_fiscal}
+        END
+    END
 
 Process Single Nota Fiscal
-    [Arguments]    ${nota_fiscal}
-    Log    Processing Nota Fiscal: ${nota_fiscal}
-    Input Nota Fiscal And Search    ${nota_fiscal}
+    [Arguments]    ${nota_fiscal}    ${dt_id}=${EMPTY}
+    Input Nota Fiscal And Search    ${nota_fiscal}    ${dt_id}
 
 Login To e-Cargo
     [Arguments]    ${base_url}=${BASE_URL}
     Go To    ${base_url}
-    Wait Until Element Is Visible    css=#email    timeout=15s
-    Input Text    css=#email    ${USUARIO}
-    Wait Until Element Is Visible    css=#password    timeout=15s
+    # Wait for page to load completely
+    Sleep    3s
+    # Wait for email field with increased timeout
+    # Try multiple selectors in case the page structure changed
+    ${email_selector}=    Set Variable    css=#email
+    ${email_found}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${email_selector}    timeout=30s
+    IF    not ${email_found}
+        ${email_selector}=    Set Variable    css=input[type="email"]
+        ${email_found}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${email_selector}    timeout=5s
+        IF    not ${email_found}
+            ${email_selector}=    Set Variable    css=input[name="email"]
+            ${email_found}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${email_selector}    timeout=5s
+        END
+    END
+    IF    not ${email_found}
+        Fail    Email field not found on login page after 40 seconds. Please check if the page loaded correctly.
+    END
+    Input Text    ${email_selector}    ${USUARIO}
+    Wait Until Element Is Visible    css=#password    timeout=30s
     Input Text    css=#password    ${SENHA}
-    Wait Until Element Is Enabled    css=#login    timeout=15s
+    Wait Until Element Is Enabled    css=#login    timeout=30s
     Click Element    css=#login
-    Sleep    1.5s
+    Sleep    2s
 
 Open Operacional Menu
-    Wait Until Element Is Visible    xpath=//*[contains(text(),'Operacional')]    timeout=10s
-    Click Element    xpath=//*[contains(text(),'Operacional')]
+    Wait Until Element Is Visible    xpath=${XPATH_OPERACIONAL_MENU}    timeout=10s
+    Click Element    xpath=${XPATH_OPERACIONAL_MENU}
     Sleep    1s
 
 Open Registro De Canhotos Submenu
-    Wait Until Element Is Visible    xpath=//div[@class='v-list__tile__title' and text()='Registro de Canhotos']    timeout=10s
-    Click Element    xpath=//div[@class='v-list__tile__title' and text()='Registro de Canhotos']
-    Sleep    2s
+    TRY
+        Wait Until Element Is Visible    xpath=${XPATH_REGISTRO_CANHOTOS}    timeout=10s
+        Click Element    xpath=${XPATH_REGISTRO_CANHOTOS}
+        Sleep    2s
+    EXCEPT    AS    ${error}
+        ${error_msg}=    Set Variable    Failed to open Registro de Canhotos: ${error}
+        Log    ${error_msg}    level=ERROR
+        Fail    ${error_msg}
+    END
 
-Input Nota Fiscal And Search
+Input Nota Fiscal
     [Arguments]    ${nota_fiscal}=${NOTA_FISCAL}
-    # Ensure we're in the frame for Registro de Canhotos
+    # Wait for and select the iframe
     Wait Until Element Is Visible    css=iframe#frame    timeout=15s
     Select Frame    css=iframe#frame
-    # Clear previous search and input new NF
+    
+    # Wait for and input the nota fiscal
     Wait Until Element Is Visible    css=input[name="txtNotaFiscal"]    timeout=15s
-    Click Element    css=input[name="txtNotaFiscal"]
     Clear Element Text    css=input[name="txtNotaFiscal"]
     Input Text    css=input[name="txtNotaFiscal"]    ${nota_fiscal}
-    # Click on Pesquisar button
-    Wait Until Element Is Visible    xpath=/html/body/div/div/div[3]/form/div[1]/div[6]/div/div[1]/button    timeout=10s
-    Click Element    xpath=/html/body/div/div/div[3]/form/div[1]/div[6]/div/div[1]/button
-    Sleep    1s
-    # Check for error modal after search
-    ${has_error_modal}=    Run Keyword And Return Status    Wait Until Element Is Visible    xpath=//*[@id="modalMensagem"]/div/div/div    timeout=3s
-    IF    ${has_error_modal}
-        ${error_msg}=    Get Text    xpath=//*[@id="modalMensagem"]/div/div/div/div[1]
-        Log    Error modal detected after search: ${error_msg}
-        Append Error Result    ${nota_fiscal}    ${error_msg}
-        Click Element    xpath=//*[@id="modalMensagem"]/div/div/div/div[2]/button
+
+Search Nota Fiscal
+    [Arguments]    ${nota_fiscal}=${NOTA_FISCAL}
+    TRY
+        Wait Until Element Is Visible    xpath=${XPATH_SEARCH_BUTTON}    timeout=10s
+        Click Element    xpath=${XPATH_SEARCH_BUTTON}
         Sleep    1s
+    EXCEPT    AS    ${error}
+        ${error_msg}=    Set Variable    Search button not found: ${error}
+        Log    ${error_msg}    level=ERROR
+        Append Error Result    ${nota_fiscal}    ${error_msg}
         Unselect Frame
-        RETURN
+        RETURN    ${False}
     END
-    # Click on "+" button to expand row
+    
+    ${has_error_modal}=    Run Keyword And Return Status    Wait Until Element Is Visible    xpath=${XPATH_ERROR_MODAL}    timeout=3s
+    ${search_success}=    Set Variable    ${True}
+    IF    ${has_error_modal}
+        TRY
+            ${error_msg}=    Get Text    xpath=${XPATH_ERROR_MSG}
+            Append Error Result    ${nota_fiscal}    ${error_msg}
+            Click Element    xpath=${XPATH_ERROR_CLOSE}
+            Sleep    1s
+        EXCEPT    AS    ${error}
+            ${error_msg}=    Set Variable    Error modal detected but could not read message: ${error}
+            Append Error Result    ${nota_fiscal}    ${error_msg}
+        END
+        Unselect Frame
+        ${search_success}=    Set Variable    ${False}
+    END
+    RETURN    ${search_success}
+
+Handle Error Modal
+    [Arguments]    ${nota_fiscal}
+    ${error_msg}=    Get Text    xpath=${XPATH_ERROR_MSG}
+    Append Error Result    ${nota_fiscal}    ${error_msg}
+    Click Element    xpath=${XPATH_ERROR_CLOSE}
+    Sleep    1s
+    Unselect Frame
+
+Input Nota Fiscal And Search
+    [Arguments]    ${nota_fiscal}=${NOTA_FISCAL}    ${dt_id}=${EMPTY}
+    # Step 1: Navigate to registro canhotos (already done in test)
+    # Step 2: Input NF
+    Input Nota Fiscal    ${nota_fiscal}
+    
+    # Step 3: Search for the NF
+    ${search_success}=    Search Nota Fiscal    ${nota_fiscal}
+    IF    not ${search_success}
+        Fail    Failed to search for nota fiscal ${nota_fiscal}
+    END
+    
+    # Step 4: Navigate to Download (click canhoto button)
     Click First Plus Icon With Fallback
-    # Wait for the expanded row content to be visible instead of fixed sleep
-    Wait Until Element Is Visible    xpath=/html/body/div/div/div[3]/form/div[2]/div[2]/table/tbody/tr[2]/td/div/div[2]/div[3]/button    timeout=5s
-    # Click on Canhoto NF button
-    Click Element    xpath=/html/body/div/div/div[3]/form/div[2]/div[2]/table/tbody/tr[2]/td/div/div[2]/div[3]/button
+    Wait Until Element Is Visible    xpath=${XPATH_CANHOTO_BUTTON}    timeout=10s
+    Click Element    xpath=${XPATH_CANHOTO_BUTTON}
     Sleep    1s
-    # Check for error modal
-    ${has_error_modal}=    Run Keyword And Return Status    Wait Until Element Is Visible    xpath=//*[@id="modalMensagem"]/div/div/div    timeout=3s
+    
+    # Check for error modal after clicking download button
+    ${has_error_modal}=    Run Keyword And Return Status    Wait Until Element Is Visible    xpath=${XPATH_ERROR_MODAL}    timeout=3s
     IF    ${has_error_modal}
-        ${error_msg}=    Get Text    xpath=//*[@id="modalMensagem"]/div/div/div/div[1]
-        Log    Error modal detected: ${error_msg}
-        Append Error Result    ${nota_fiscal}    ${error_msg}
-        Click Element    xpath=//*[@id="modalMensagem"]/div/div/div/div[2]/button
+        ${error_msg}=    Get Text    xpath=${XPATH_ERROR_MSG}
+        Click Element    xpath=${XPATH_ERROR_CLOSE}
         Sleep    1s
         Unselect Frame
-        RETURN
+        Fail    Error modal appeared: ${error_msg}
     END
-    # Wait for Canhoto modal and download PDFs
-    Wait Until Element Is Visible    xpath=//*[@id="ModalCanhotoNf"]    timeout=10s
-    Download All PDF Files
+    
+    # Step 5: Download PDFs
+    Wait Until Element Is Visible    xpath=${XPATH_MODAL_CANHOTO}    timeout=10s
+    Download All PDF Files    ${dt_id}
     Sleep    0.5s
-    # Close modal and return to search screen
-    ${close_button}=    Run Keyword And Return Status    Wait Until Element Is Visible    xpath=//*[@id="ModalCanhotoNf"]//button[contains(@class,'close') or contains(@ng-click,'close')]    timeout=2s
+    
+    # Close modal if possible
+    ${close_button}=    Run Keyword And Return Status    Wait Until Element Is Visible    xpath=${XPATH_MODAL_CANHOTO}//button[contains(@class,'close') or contains(@ng-click,'close')]    timeout=2s
     IF    ${close_button}
-        Click Element    xpath=//*[@id="ModalCanhotoNf"]//button[contains(@class,'close') or contains(@ng-click,'close')]
+        Click Element    xpath=${XPATH_MODAL_CANHOTO}//button[contains(@class,'close') or contains(@ng-click,'close')]
+        Sleep    0.5s
     END
+    
+    # Unselect frame
     Unselect Frame
 
 Initialize Error Results
-    Set Global Variable    ${ERROR_RESULTS}    ${EMPTY}
     ${list}=    Create List
     Set Global Variable    ${ERROR_RESULTS}    ${list}
 
 Append Error Result
     [Arguments]    ${nota_fiscal}    ${message}
-    ${entry}=    Create Dictionary    nota_fiscal=${nota_fiscal}    message=${message}
+    ${simplified_msg}=    Set Variable    ${message}
+    ${msg_length}=    Evaluate    len('${message}')
+    IF    ${msg_length} > 200
+        ${simplified_msg}=    Evaluate    '${message}'[:200] + '...'
+    END
+    ${entry}=    Create Dictionary    nota_fiscal=${nota_fiscal}    message=${simplified_msg}
     Append To List    ${ERROR_RESULTS}    ${entry}
+    Log    Error for ${nota_fiscal}: ${simplified_msg}    level=ERROR
 
 Build Response Message
-    # Build simple execution log response
-    ${error_count}=    Get Length    ${ERROR_RESULTS}
-    ${has_errors}=    Evaluate    ${error_count} > 0
-    IF    ${has_errors}
-        ${log_message}=    Set Variable    Execution completed with ${error_count} error(s). Check errors for details.
-    ELSE
-        ${log_message}=    Set Variable    Execution completed successfully.
+    ${has_error_results}=    Run Keyword And Return Status    Variable Should Exist    ${ERROR_RESULTS}
+    IF    not ${has_error_results}
+        Initialize Error Results
     END
-    ${response}=    Create Dictionary    log=${log_message}    errors=${ERROR_RESULTS}    error_count=${error_count}
-    ${response_str}=    Convert To String    ${response}
-    Set Global Variable    ${RESULT_MESSAGE}    ${response_str}
-    Log    Response message: ${response_str}
+    
+    ${error_count}=    Get Length    ${ERROR_RESULTS}
+    ${log_message}=    Set Variable    Execution completed successfully.
+    ${status}=    Set Variable    PASS
+    
+    IF    ${error_count} > 0
+        ${log_message}=    Set Variable    Execution completed with ${error_count} error(s)
+        ${status}=    Set Variable    FAIL
+        Log    ${log_message}    level=ERROR
+        FOR    ${error}    IN    @{ERROR_RESULTS}
+            Log    Critical Error - NF: ${error}[nota_fiscal] | Message: ${error}[message]    level=ERROR
+        END
+    ELSE
+        Log    ${log_message}    level=INFO
+    END
+    
+    ${response}=    Create Dictionary    log=${log_message}    errors=${ERROR_RESULTS}    error_count=${error_count}    status=${status}
+    Set Global Variable    ${RESULT_MESSAGE}    ${response}
+    
+    ${is_fail}=    Evaluate    '${status}' == 'FAIL'
+    IF    ${is_fail}
+        Fail    ${log_message}
+    END
 
 Download All PDF Files
-    # Get count of all PDF download buttons in the modal
-    ${pdf_buttons_count}=    Get Element Count    xpath=//*[@id="ModalCanhotoNf"]//button[contains(@ng-click, 'buscarArquivo') and contains(., 'Pdf')]
-    Log    Found ${pdf_buttons_count} PDF download buttons
+    [Arguments]    ${dt_id}=${EMPTY}
+    ${pdf_buttons_count}=    Get Element Count    xpath=${XPATH_MODAL_CANHOTO}//button[contains(@ng-click, 'buscarArquivo') and contains(., 'Pdf')]
     
-    # Get download directory path
-    ${base_path}=    Join Path    ${CURDIR}    ..    ..    ..
-    ${download_dir}=    Join Path    ${base_path}    assets    download
-    ${download_dir}=    Normalize Path    ${download_dir}
+    # Use the same download directory path as configured in browser.resource
+    # From resources/pod_download: go up 4 levels to workspace root, then to shared/downloads
+    # Same calculation as browser.resource: ${CURDIR}/../../../../shared/downloads
+    ${download_base}=    Evaluate    os.path.abspath(os.path.normpath(os.path.join(r"${CURDIR}", "..", "..", "..", "..", "shared", "downloads")))    os
+    
+    ${download_dir_exists}=    Run Keyword And Return Status    Directory Should Exist    ${download_base}
+    IF    not ${download_dir_exists}
+        Create Directory    ${download_base}
+    END
+    
+    # dt_id is required - fail if empty
+    IF    '${dt_id}' == '${EMPTY}' or '${dt_id}' == ''
+        Fail    dt_id is required for download folder creation but was empty
+    END
+    
+    # Create folder with dt_id value
+    ${download_dir}=    Join Path    ${download_base}    ${dt_id}
     ${download_dir_exists}=    Run Keyword And Return Status    Directory Should Exist    ${download_dir}
     IF    not ${download_dir_exists}
         Create Directory    ${download_dir}
     END
     
-    # Loop through all PDF buttons and click them
+    Log    Using download directory: ${download_dir}    level=INFO
+    
     FOR    ${index}    IN RANGE    1    ${pdf_buttons_count} + 1
-        ${button_xpath}=    Set Variable    (//*[@id="ModalCanhotoNf"]//button[contains(@ng-click, 'buscarArquivo') and contains(., 'Pdf')])[${index}]
+        ${button_xpath}=    Set Variable    (${XPATH_MODAL_CANHOTO}//button[contains(@ng-click, 'buscarArquivo') and contains(., 'Pdf')])[${index}]
         Wait Until Element Is Visible    xpath=${button_xpath}    timeout=5s
         ${is_enabled}=    Run Keyword And Return Status    Element Should Be Enabled    xpath=${button_xpath}
         IF    ${is_enabled}
-            Log    Clicking PDF download button ${index}
-            # Get list of existing PDF files before download
-            ${existing_files_str}=    Evaluate    set([f for f in os.listdir(r"${download_dir}") if f.endswith('.pdf')])    os
-            Log    Existing PDF files before download: ${existing_files_str}
+            # Browser downloads to base folder, so check there first
+            ${existing_files_base}=    Evaluate    set([f for f in os.listdir(r"${download_base}") if f.endswith('.pdf')])    os
             Click Element    xpath=${button_xpath}
-            # Wait for download to complete - wait for new file to appear and stabilize
-            Wait For Download To Complete    ${download_dir}    ${existing_files_str}    timeout=30s
-        ELSE
-            Log    PDF download button ${index} is disabled, skipping
+            # Wait for download in base folder (where browser saves)
+            ${downloaded_file}=    Wait For Download To Complete    ${download_base}    ${existing_files_base}    timeout=30s
+            # Move downloaded file to dt_id folder
+            Move File To Folder    ${downloaded_file}    ${download_dir}
         END
     END
 
 Wait For Download To Complete
     [Arguments]    ${download_dir}    ${existing_files_set}    ${timeout}=30s
-    # Wait for a new PDF file to appear and stabilize (download complete)
     ${timeout_seconds}=    Evaluate    int('${timeout}'.replace('s', '')) if 's' in '${timeout}' else int('${timeout}')
-    ${max_iterations}=    Evaluate    ${timeout_seconds} * 2    # Check every 0.5s
+    ${max_iterations}=    Evaluate    ${timeout_seconds} * 2
     ${new_file_found}=    Set Variable    ${False}
-    ${stable_file}=    Set Variable    ${None}
-    ${stable_size}=    Set Variable    ${0}
+    ${downloaded_file}=    Set Variable    ${EMPTY}
     
     FOR    ${i}    IN RANGE    ${max_iterations}
         ${all_files_set}=    Evaluate    set([f for f in os.listdir(r"${download_dir}") if f.endswith('.pdf')])    os
@@ -289,8 +375,7 @@ Wait For Download To Complete
             ${new_size}=    Evaluate    os.path.getsize(r"${latest_file}")    os
             IF    ${current_size} == ${new_size} and ${current_size} > 0
                 ${new_file_found}=    Set Variable    ${True}
-                ${stable_file}=    Set Variable    ${latest_file}
-                ${stable_size}=    Set Variable    ${current_size}
+                ${downloaded_file}=    Set Variable    ${latest_file}
                 BREAK
             END
         END
@@ -298,17 +383,28 @@ Wait For Download To Complete
     END
     
     IF    not ${new_file_found}
-        ${all_files_set}=    Evaluate    set([f for f in os.listdir(r"${download_dir}") if f.endswith('.pdf')])    os
-        Log    WARNING: No new PDF file detected after ${timeout}
-        Log    Existing files: ${existing_files_set}
-        Log    Current files: ${all_files_set}
         Fail    Download timeout: No new PDF file appeared in ${download_dir} within ${timeout}
     END
     
-    Log    Download complete: ${stable_file} (${stable_size} bytes)
+    RETURN    ${downloaded_file}
+
+Move File To Folder
+    [Arguments]    ${source_file}    ${target_dir}
+    ${filename}=    Evaluate    os.path.basename(r"${source_file}")    os
+    ${target_file}=    Evaluate    os.path.join(r"${target_dir}", r"${filename}")    os
+    
+    # Move file to target directory
+    ${moved}=    Run Keyword And Return Status    Move File    ${source_file}    ${target_file}
+    IF    ${moved}
+        Log    Moved ${filename} to ${target_dir}    level=INFO
+    ELSE
+        Log    Failed to move ${filename} to ${target_dir}, trying copy    level=WARN
+        Copy File    ${source_file}    ${target_file}
+        Remove File    ${source_file}
+        Log    Copied ${filename} to ${target_dir} and removed from source    level=INFO
+    END
 
 Click First Plus Icon With Fallback
-    # Try multiple candidate locators for the "+" expand icon and click the first visible one
     ${candidates}=    Create List    //table//tbody/tr[1]//i[contains(@class,'mdi-plus')]    //table//tbody/tr[1]//i[contains(@class,'fa-plus')]    //table//tbody/tr[1]//i[contains(@class,'icon-plus')]    /html/body/div/div/div[3]/form/div[2]/div[2]/table/tbody/tr[1]/td[10]/i
     FOR    ${xp}    IN    @{candidates}
         ${visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    xpath=${xp}    timeout=5s
@@ -316,8 +412,6 @@ Click First Plus Icon With Fallback
             Scroll Element Into View    xpath=${xp}
             Wait Until Element Is Enabled    xpath=${xp}    timeout=2s
             Click Element    xpath=${xp}
-            Exit For Loop If    ${True}
+            RETURN
         END
     END
-    # If none matched, log and continue (no hard failure)
-    Log    Plus icon not found or not visible; continuing without expanding

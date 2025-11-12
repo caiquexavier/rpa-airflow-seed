@@ -1,10 +1,10 @@
-"""RabbitMQ configuration helpers."""
+# RabbitMQ configuration helpers
 import os
 from dataclasses import dataclass
 
 
 def _get_required_env(name: str) -> str:
-    """Get required environment variable or raise error."""
+    # Get required environment variable or raise error
     value = os.getenv(name)
     if value is None or value == "":
         raise RuntimeError(f"Missing required environment variable: {name}")
@@ -21,12 +21,7 @@ class RabbitMQConfig:
 
 
 def load_rabbitmq_config() -> RabbitMQConfig:
-    """Load RabbitMQ configuration from required environment variables."""
-    return RabbitMQConfig(
-        host=_get_required_env('RABBITMQ_HOST'),
-        user=_get_required_env('RABBITMQ_USER'),
-        password=_get_required_env('RABBITMQ_PASSWORD'),
-        queue=os.getenv('RABBITMQ_QUEUE', 'rpa_events'),  # Optional with default
-    )
+    # Load RabbitMQ configuration from required environment variables
+    return RabbitMQConfig(host=_get_required_env('RABBITMQ_HOST'), user=_get_required_env('RABBITMQ_USER'), password=_get_required_env('RABBITMQ_PASSWORD'), queue=os.getenv('RABBITMQ_QUEUE', 'rpa_events'))
 
 

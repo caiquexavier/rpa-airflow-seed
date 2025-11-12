@@ -181,14 +181,18 @@ rpa-airflow-seed/
 │   │       └── definitions.json # RabbitMQ queue definitions
 │   ├── data/                 # Data files
 │   └── database/             # Database migrations
+├── shared/                    # Shared resources
+│   ├── data/                  # Data files (mounted to /opt/airflow/data in containers)
+│   │   └── Controle_Unilever_Personalizado.xlsx
+│   └── downloads/             # RPA download directory
 ├── airflow/                   # Airflow orchestration
 │   ├── Dockerfile             # Custom Airflow image
-│   ├── dags/                  # Workflow definitions
-│   │   └── dag_ecargo_pod_download.py
-│   ├── libs/                  # Shared utilities
-│   │   └── converter.py       # Excel to RPA request converter
-│   ├── data/                  # Data files
-│   │   └── Controle_Unilever_Personalizado.xlsx
+│   ├── src/
+│   │   ├── dags/              # Workflow definitions
+│   │   │   └── dag_ecargo_pod_download.py
+│   │   ├── libs/              # Shared utilities
+│   │   │   └── converter.py   # Excel to RPA request converter
+│   │   └── api/               # Airflow API
 │   └── logs/                  # Airflow logs
 ├── rpa-api/                   # FastAPI service
 │   ├── Dockerfile             # Docker image for RPA API
