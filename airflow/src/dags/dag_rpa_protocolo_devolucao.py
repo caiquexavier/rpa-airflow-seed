@@ -5,7 +5,7 @@ from airflow.operators.python import PythonOperator
 from airflow.providers.http.operators.http import HttpOperator
 import sys
 import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'libs'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'services'))
 from webhook import WebhookSensor
 from tasks.tasks_rpa_protocolo_devolucao import (
     convert_xls_to_json_task,

@@ -72,7 +72,7 @@ services:
     volumes:
       - ./airflow/src/dags:/opt/airflow/src/dags
       - ./airflow/logs:/opt/airflow/logs
-      - ./airflow/src/libs:/opt/airflow/src/libs
+      - ./airflow/src/services:/opt/airflow/src/services
       - ./airflow/src/api:/opt/airflow/src/api
       - ./shared/data:/opt/airflow/data
     depends_on:
@@ -137,7 +137,7 @@ services:
     volumes:
       - ./airflow/src/dags:/opt/airflow/src/dags
       - ./airflow/logs:/opt/airflow/logs
-      - ./airflow/src/libs:/opt/airflow/src/libs
+      - ./airflow/src/services:/opt/airflow/src/services
       - ./airflow/src/api:/opt/airflow/src/api
       - ./shared/data:/opt/airflow/data
     depends_on:
@@ -218,7 +218,7 @@ services:
     volumes:
       - ./airflow/src/dags:/opt/airflow/src/dags
       - ./airflow/logs:/opt/airflow/logs
-      - ./airflow/src/libs:/opt/airflow/src/libs
+      - ./airflow/src/services:/opt/airflow/src/services
       - ./airflow/src/api:/opt/airflow/src/api
       - ./shared/data:/opt/airflow/data
     depends_on:
