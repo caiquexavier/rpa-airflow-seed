@@ -12,7 +12,7 @@ src_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if src_dir not in sys.path:
     sys.path.insert(0, src_dir)
 
-from libs.webhook import set_webhook_signal, get_latest_dag_run
+from services.webhook import set_webhook_signal, get_latest_dag_run
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)

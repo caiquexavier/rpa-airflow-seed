@@ -4,8 +4,8 @@ from airflow.exceptions import AirflowException
 import sys
 import os
 
-# Add libs to path for imports
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'libs'))
+# Add services to path for imports
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'services'))
 from converter import xls_to_rpa_request
 
 

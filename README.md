@@ -190,7 +190,7 @@ rpa-airflow-seed/
 │   ├── src/
 │   │   ├── dags/              # Workflow definitions
 │   │   │   └── dag_ecargo_pod_download.py
-│   │   ├── libs/              # Shared utilities
+│   │   ├── services/              # Shared utilities
 │   │   │   └── converter.py   # Excel to RPA request converter
 │   │   └── api/               # Airflow API
 │   └── logs/                  # Airflow logs
