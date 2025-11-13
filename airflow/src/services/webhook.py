@@ -104,6 +104,11 @@ class WebhookSensor(BaseSensorOperator):
         
         if isinstance(webhook_data, dict):
             logger.info(f"[WebhookSensor] Webhook data keys: {list(webhook_data.keys())}")
+            
+            # Log SAGA if present
+            saga = webhook_data.get("saga")
+            if saga:
+                logger.info(f"SAGA: {json.dumps(saga, indent=2, ensure_ascii=False)}")
         
         # Validate status - fail task if data is missing or status is not SUCCESS
         if webhook_data is None:

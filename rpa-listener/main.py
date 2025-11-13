@@ -3,12 +3,24 @@
 RPA Listener - entrypoint using modular src structure
 """
 import sys
+import logging
 from pathlib import Path
 from dotenv import load_dotenv
+
+# Configure logging before imports
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+# Reduce pika logging to WARNING to reduce noise
+logging.getLogger('pika').setLevel(logging.WARNING)
 
 # Ensure `src` is importable when running this file directly
 CURRENT_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(CURRENT_DIR))
+
+logger = logging.getLogger(__name__)
 
 from src.config.rabbitmq import load_rabbitmq_config  # noqa: E402
 from src.services.consumer import RpaConsumer  # noqa: E402
@@ -30,9 +42,14 @@ def get_robot_paths():
 
 
 def main():
+    logger.info("Starting RPA Listener...")
     load_dotenv()
     try:
+        logger.info("Loading RabbitMQ configuration...")
         rabbitmq_config = load_rabbitmq_config()
+        logger.info(f"RabbitMQ config loaded: host={rabbitmq_config.host}, queue={rabbitmq_config.queue}, user={rabbitmq_config.user}")
+        
+        logger.info("Loading robot paths...")
         robot_config = get_robot_paths()
 
         # Validate robot paths
@@ -40,7 +57,10 @@ def main():
             raise FileNotFoundError(f"Robot executable not found: {robot_config['robot_exe']}")
         if not robot_config['tests_path'].exists():
             raise FileNotFoundError(f"Tests directory not found: {robot_config['tests_path']}")
+        
+        logger.info("Robot paths validated successfully")
 
+        logger.info("Creating RpaConsumer instance...")
         consumer = RpaConsumer(rabbitmq_config)
 
         def _on_message(message: dict) -> bool:
@@ -52,6 +72,7 @@ def main():
                 robot_config['results_dir'],
             )
 
+        logger.info("Starting consumer...")
         consumer.start(_on_message)
 
     except KeyboardInterrupt:

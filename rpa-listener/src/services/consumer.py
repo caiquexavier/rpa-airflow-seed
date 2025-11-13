@@ -7,11 +7,6 @@ import pika
 from pika.exceptions import AMQPConnectionError, AMQPChannelError, StreamLostError
 from ..config.rabbitmq import RabbitMQConfig
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
 logger = logging.getLogger(__name__)
 
 
@@ -29,9 +24,12 @@ class RpaConsumer:
         retry_delay = 5
         for attempt in range(1, max_retries + 1):
             try:
+                logger.info(f"Connecting to RabbitMQ (attempt {attempt}/{max_retries}): host={self._config.host}, vhost=/, user={self._config.user}")
                 self._connection = pika.BlockingConnection(parameters)
                 self._channel = self._connection.channel()
-                self._channel.queue_declare(queue=self._config.queue, durable=True)
+                logger.info(f"Channel created. Declaring queue: {self._config.queue} (durable=True)")
+                result = self._channel.queue_declare(queue=self._config.queue, durable=True, passive=False)
+                logger.info(f"Queue declared successfully: {self._config.queue}. Messages in queue: {result.method.message_count}, Consumers: {result.method.consumer_count}")
                 return
             except (AMQPConnectionError, StreamLostError, ConnectionAbortedError, OSError) as e:
                 if attempt < max_retries:
@@ -55,7 +53,9 @@ class RpaConsumer:
 
     def start(self, on_message: Callable[[dict], bool]) -> None:
         # Start consuming messages with automatic reconnection on connection errors
+        logger.info(f"RpaConsumer.start() called - connecting to RabbitMQ at {self._config.host}")
         self._connect()
+        logger.info(f"Connected successfully. Queue: {self._config.queue}, User: {self._config.user}")
         def _callback(ch, method, properties, body):
             message_processed = False
             try:
@@ -81,7 +81,13 @@ class RpaConsumer:
         while True:
             try:
                 self._channel.basic_qos(prefetch_count=1)
-                self._channel.basic_consume(queue=self._config.queue, on_message_callback=_callback)
+                logger.info(f"Starting to consume messages from queue: {self._config.queue}")
+                consumer_tag = self._channel.basic_consume(
+                    queue=self._config.queue, 
+                    on_message_callback=_callback,
+                    auto_ack=False
+                )
+                logger.info(f"Consumer registered with tag: {consumer_tag}. Waiting for messages. To exit press CTRL+C")
                 self._channel.start_consuming()
             except (AMQPConnectionError, StreamLostError, ConnectionAbortedError, OSError):
                 self._reconnect()

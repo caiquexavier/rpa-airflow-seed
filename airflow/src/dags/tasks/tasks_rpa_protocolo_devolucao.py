@@ -3,14 +3,32 @@ from airflow.models import Variable
 from airflow.exceptions import AirflowException
 import sys
 import os
+import json
+import logging
 
 # Add services to path for imports
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'services'))
 from converter import xls_to_rpa_request
+try:
+    from .saga_helper import log_saga, get_saga_rpa_key_id, get_saga_rpa_request
+except ImportError:
+    # Fallback if saga_helper not available
+    def log_saga(saga, task_id=None):
+        import json
+        if saga:
+            logger.info(f"[{task_id}] SAGA: {json.dumps(saga, indent=2, ensure_ascii=False)}")
+    
+    def get_saga_rpa_key_id(saga):
+        return saga.get('rpa_key_id') if saga and isinstance(saga, dict) else None
+    
+    def get_saga_rpa_request(saga):
+        return saga.get('rpa_request') if saga and isinstance(saga, dict) else None
+
+logger = logging.getLogger(__name__)
 
 
 def convert_xls_to_json_task(**context):
-    """Convert XLSX file to RPA request payload."""
+    """Convert XLSX file to RPA request payload and create SAGA."""
     # Get XLSX path from Airflow Variable
     xlsx_path = Variable.get("ECARGO_XLSX_PATH", default_var="")
     if not xlsx_path:
@@ -21,8 +39,8 @@ def convert_xls_to_json_task(**context):
     src_path = Path(xlsx_path)
     
     # Log path information for debugging
-    print(f"Attempting to read XLSX file from: {xlsx_path}")
-    print(f"Absolute path: {src_path.resolve()}")
+    logger.info(f"Attempting to read XLSX file from: {xlsx_path}")
+    logger.info(f"Absolute path: {src_path.resolve()}")
     
     # Check if file exists and provide helpful error if not
     if not src_path.exists():
@@ -40,31 +58,48 @@ def convert_xls_to_json_task(**context):
         
         raise AirflowException(error_msg)
     
-    # Convert XLSX to RPA request payload
-    payload = xls_to_rpa_request(xlsx_path)
+    # Convert XLSX to SAGA structure (includes first step event: convert_xls_to_json)
+    saga = xls_to_rpa_request(xlsx_path)
     
-    # Get Airflow API base URL from Variable
-    api_base_url = Variable.get("AIRFLOW_API_BASE_URL")
-    # Remove trailing slash if present
-    api_base_url = api_base_url.rstrip('/')
+    # Log SAGA as INFO
+    logger.info(f"INFO SAGA (Task: read_input_xls): {json.dumps(saga, indent=2, ensure_ascii=False)}")
     
-    # Add callback_url field with webhook endpoint
-    payload["callback_url"] = f"{api_base_url}/trigger/upload_nf_files_to_s3"
+    # Push SAGA to XCom
+    context["task_instance"].xcom_push(key="saga", value=saga)
+    # Also push as rpa_payload for backward compatibility
+    context["task_instance"].xcom_push(key="rpa_payload", value=saga)
     
-    # Push result to XCom
-    context["task_instance"].xcom_push(key="rpa_payload", value=payload)
-    
-    return payload
+    return saga
 
 
 def upload_nf_files_to_s3_task(**context):
     """Upload NF files to S3."""
-    # Get webhook data passed from webhook sensor
-    webhook_data = context['ti'].xcom_pull(key='webhook_data', default=None)
+    # Get SAGA from previous tasks
+    ti = context.get('task_instance')
+    saga = None
+    
+    # Try to get SAGA from webhook_data first (most recent)
+    webhook_data = ti.xcom_pull(key='webhook_data', default=None) if ti else None
+    if webhook_data and isinstance(webhook_data, dict):
+        saga = webhook_data.get('saga')
+        if not saga and 'rpa_key_id' in webhook_data:
+            # webhook_data itself might be SAGA-like
+            saga = webhook_data
+    
+    # Fallback to XCom saga key
+    if not saga and ti:
+        saga = ti.xcom_pull(key='saga', default=None)
+    
+    # Log SAGA as INFO
+    log_saga(saga, task_id="upload_nf_files_to_s3")
+    
+    # Get rpa_key_id and rpa_request from SAGA
+    rpa_key_id = get_saga_rpa_key_id(saga)
+    rpa_request = get_saga_rpa_request(saga)
     
     # Placeholder for S3 upload logic
     # TODO: Implement actual S3 upload logic here
-    print(f"Uploading NF files to S3 with webhook data: {webhook_data}")
+    logger.info(f"Uploading NF files to S3 with SAGA: rpa_key_id={rpa_key_id}")
     
-    return {"status": "uploaded", "webhook_data": webhook_data}
+    return {"status": "uploaded", "saga": saga}
 
