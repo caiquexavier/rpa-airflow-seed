@@ -5,3 +5,9 @@ pika
 python-dotenv
 psycopg2-binary
 requests
+
+# Code Quality Tools
+black>=23.12.0
+isort>=5.13.0
+pylint>=3.0.0
+pre-commit>=3.6.0

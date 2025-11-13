@@ -62,10 +62,15 @@ async def trigger_upload_nf_files_to_s3(request: Request) -> Dict[str, Any]:
         else:
             webhook_data = body if isinstance(body, dict) else None
         
-        # Log status for debugging
+        # Log status and SAGA for debugging
         if isinstance(webhook_data, dict):
             status = webhook_data.get("status", "N/A")
             logger.info(f"Webhook data status: {status}")
+            
+            # Log SAGA if present
+            saga = webhook_data.get("saga")
+            if saga:
+                logger.info(f"SAGA: {json.dumps(saga, indent=2, ensure_ascii=False)}")
         
         # Store webhook data - sensor will validate status
         dag_run_id = get_latest_dag_run(dag_id)

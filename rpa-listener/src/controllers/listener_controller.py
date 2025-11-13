@@ -222,13 +222,17 @@ def _extract_retry_error_from_line(line: str) -> str:
 
 
 def handle_message(message: Dict, project_path: Path, robot_exe: Path, tests_path: Path, results_dir: Path) -> bool:
-    # Handle message by executing Robot Framework tests, then posting to API to update rpa_execution
+    # Handle message by executing Robot Framework tests, then posting to API to update rpa_execution with SAGA
     # Always ensures webhook is called on failure, even if exceptions occur
     exec_id = message.get('exec_id')
     rpa_key_id = message.get('rpa_key_id')
+    saga = message.get('saga', {})
     success = False
     rpa_response = {}
     error_message = None
+    
+    # Log SAGA at start
+    print(f"INFO SAGA: {json.dumps(saga, indent=2, ensure_ascii=False)}", file=sys.stdout)
     
     try:
         # Run robot tests - now returns (success, error_message)
@@ -247,6 +251,35 @@ def handle_message(message: Dict, project_path: Path, robot_exe: Path, tests_pat
             status = "FAIL"
         else:
             status = "SUCCESS"
+        
+        # Update SAGA with robot execution event
+        if not isinstance(saga, dict):
+            saga = {}
+        
+        # Ensure SAGA has required fields
+        if "events" not in saga:
+            saga["events"] = []
+        if "current_state" not in saga:
+            saga["current_state"] = "PENDING"
+        
+        # Add robot execution event to SAGA
+        from datetime import datetime
+        robot_event = {
+            "event_type": "RobotCompleted" if success else "RobotFailed",
+            "event_data": {
+                "status": status,
+                "rpa_response": rpa_response,
+                "error_message": error_message
+            },
+            "task_id": "robot_execution",
+            "dag_id": saga.get("rpa_key_id", rpa_key_id),
+            "occurred_at": datetime.utcnow().isoformat()
+        }
+        saga["events"].append(robot_event)
+        saga["current_state"] = "COMPLETED" if success else "FAILED"
+        
+        # Log updated SAGA
+        print(f"INFO SAGA: {json.dumps(saga, indent=2, ensure_ascii=False)}", file=sys.stdout)
             
     except Exception as e:
         # Catch any exception during execution or response building
@@ -255,14 +288,37 @@ def handle_message(message: Dict, project_path: Path, robot_exe: Path, tests_pat
         error_message = f"Execution error: {str(e)}"
         rpa_response = {"error": error_message}
         print(f"ERROR in handle_message: {error_message}", file=sys.stderr)
+        
+        # Update SAGA with error event
+        if not isinstance(saga, dict):
+            saga = {}
+        if "events" not in saga:
+            saga["events"] = []
+        from datetime import datetime
+        error_event = {
+            "event_type": "RobotError",
+            "event_data": {
+                "error": error_message
+            },
+            "task_id": "robot_execution",
+            "dag_id": saga.get("rpa_key_id", rpa_key_id),
+            "occurred_at": datetime.utcnow().isoformat()
+        }
+        saga["events"].append(error_event)
+        saga["current_state"] = "FAILED"
+        print(f"INFO SAGA: {json.dumps(saga, indent=2, ensure_ascii=False)}", file=sys.stdout)
     
-    # Always attempt to call webhook if we have exec_id and rpa_key_id
+    # Always attempt to call webhook if we have exec_id and rpa_key_id, passing updated SAGA
     if exec_id and rpa_key_id:
-        try:
-            call_webhook(exec_id, rpa_key_id, status, rpa_response, error_message)
-        except Exception as e:
-            print(f"WARNING: Failed to call webhook: {e}", file=sys.stderr)
+        print(f"INFO: Attempting to call webhook for exec_id={exec_id}, rpa_key_id={rpa_key_id}, status={status}", file=sys.stdout)
+        webhook_success = call_webhook(exec_id, rpa_key_id, status, rpa_response, error_message, saga)
+        if webhook_success:
+            print(f"INFO: Webhook called successfully for exec_id={exec_id}", file=sys.stdout)
+        else:
+            print(f"WARNING: Webhook call failed for exec_id={exec_id}", file=sys.stderr)
             # Don't fail the message processing if webhook fails, but log it
+    else:
+        print(f"WARNING: Cannot call webhook - missing exec_id or rpa_key_id. exec_id={exec_id}, rpa_key_id={rpa_key_id}", file=sys.stderr)
     
     return success
 

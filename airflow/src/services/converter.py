@@ -82,13 +82,31 @@ def xls_to_rpa_request(xlsx_path: Union[str, Path]) -> Dict[str, Any]:
             "notas_fiscais": notas_fiscais
         })
     
-    # Return exact dict that matches rpa-api model
-    # rpa_request must be a Dict[str, Any] per API validation, so wrap array in dict
-    return {
+    # Return SAGA structure with rpa_key_id and rpa_request_object
+    # This SAGA will be passed through all DAG tasks
+    # First step: convert_xls_to_json is recorded as an event
+    from datetime import datetime
+    
+    saga = {
         "rpa_key_id": "rpa_protocolo_devolucao",
-        "rpa_request": {
+        "rpa_request_object": {
             "dt_list": dt_list
-        }
+        },
+        "events": [
+            {
+                "event_type": "TaskCompleted",
+                "event_data": {
+                    "step": "convert_xls_to_json",
+                    "status": "SUCCESS",
+                    "dt_count": len(dt_list)
+                },
+                "task_id": "read_input_xls",
+                "dag_id": "rpa_protocolo_devolucao",
+                "occurred_at": datetime.utcnow().isoformat()
+            }
+        ],
+        "current_state": "RUNNING"
     }
+    return saga
 
 
