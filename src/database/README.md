@@ -89,12 +89,17 @@ docker compose exec -T postgres psql -U ${env:POSTGRES_USER} -d rpa_db -c "SELEC
 ```
 
 Expected objects:
-- Tables: `rpa_definitions`, `rpa_automation_exec`, `rpa_steps_exec`
-- Unique constraint on `rpa_steps_exec (exec_id, event_number)`
-- ON DELETE CASCADE from `rpa_automation_exec.exec_id` to `rpa_steps_exec.exec_id`
-- Indexes per README spec
+- Tables: `execution_requests`, `saga`, `event_store`, `execution_read_model`, `saga_read_model`
+- Unique constraint: One DAG_SAGA per exec_id (partial unique index on saga and saga_read_model)
+- Multiple ROBOT_SAGA per exec_id allowed (with parent_saga_id pointing to DAG_SAGA)
+- ON DELETE CASCADE from `execution_requests.exec_id` to `saga.exec_id` and `event_store.exec_id`
+- Triggers: `sync_saga_read_model()` and `sync_execution_read_model()` for CQRS read model synchronization
+- Indexes per migration specs
 
 ## Notes
 
 - This `src/database/` folder is isolated from Airflow configs.
-- No triggers are used; application code should manage `updated_at` on update.
+- The `rpa_steps_exec` table has been removed (replaced by `saga` and `event_store` for CQRS/Event Sourcing architecture).
+- The `rpa_domain` table has been removed (no longer needed).
+- The `rpa_automation_exec` table has been replaced by `execution_requests` with additional fields: `saga_id`, `last_saga_state`, and `flowchart_definition`.
+- Triggers automatically sync read models when command-side tables are updated.

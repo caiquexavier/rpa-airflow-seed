@@ -1,15 +1,15 @@
 """DAG to convert XLSX to RPA request and POST to API."""
+import json
+import logging
 from datetime import datetime, timedelta
+
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.providers.http.operators.http import HttpOperator
-import sys
-import os
-import json
-import logging
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'services'))
-from webhook import WebhookSensor
+from operators.robot_framework_operator import RobotFrameworkOperator
+from operators.start_saga_operator import StartSagaOperator
+from services.webhook import WebhookSensor
 from tasks.tasks_rpa_protocolo_devolucao import (
     convert_xls_to_json_task,
     upload_nf_files_to_s3_task,
@@ -28,11 +28,18 @@ default_args = {
 dag = DAG(
     dag_id="rpa_protocolo_devolucao",
     start_date=datetime(2024, 1, 1),
-    schedule_interval=None,  # Manual trigger only
+    schedule=None,  # Manual trigger only (schedule_interval deprecated in Airflow 2.4+)
     default_args=default_args,
     catchup=False,
     max_active_runs=1,
+    is_paused_upon_creation=False,  # Make DAG active (not transparent) in Graph view
     tags=["rpa", "manual"],
+)
+
+start_saga_task = StartSagaOperator(
+    task_id="start_saga",
+    rpa_key_id="rpa_protocolo_devolucao",
+    dag=dag,
 )
 
 convert_task = PythonOperator(
@@ -41,63 +48,14 @@ convert_task = PythonOperator(
     dag=dag,
 )
 
-
-def post_to_api_with_saga_logging(**context):
-    """Post to API and log SAGA in Airflow logs."""
-    import requests
-    from airflow.models import Variable
-    from tasks.saga_helper import get_saga_from_context, log_saga
-    
-    # Get SAGA and log it
-    saga = get_saga_from_context(context)
-    log_saga(saga, task_id="execute_signa_download_nf")
-    
-    if not saga:
-        raise ValueError("SAGA object is required from previous task")
-    
-    # Get Airflow API base URL for callback
-    from airflow.models import Variable
-    api_base_url = Variable.get("AIRFLOW_API_BASE_URL", default_var="")
-    api_base_url = api_base_url.rstrip('/')
-    callback_url = f"{api_base_url}/trigger/upload_nf_files_to_s3" if api_base_url else None
-    
-    # Build API payload with SAGA (API now expects saga object)
-    api_payload = {
-        "saga": saga,
-        "callback_url": callback_url
-    }
-    
-    # Get API connection details
-    from airflow.hooks.base import BaseHook
-    conn = BaseHook.get_connection("rpa_api")
-    api_url = f"{conn.schema or 'http'}://{conn.host}:{conn.port or 3000}/request_rpa_exec"
-    
-    # Make HTTP request
-    response = requests.post(
-        api_url,
-        json=api_payload,
-        headers={"Content-Type": "application/json"},
-        timeout=30
-    )
-    
-    if response.status_code != 202:
-        raise Exception(f"API request failed with status {response.status_code}: {response.text}")
-    
-    # Log response and updated SAGA
-    response_data = response.json()
-    logger.info(f"API response: {response.status_code} - {response_data}")
-    
-    # Update SAGA in XCom with the one returned from API
-    if "saga" in response_data:
-        context['ti'].xcom_push(key='saga', value=response_data["saga"])
-        log_saga(response_data["saga"], task_id="execute_signa_download_nf_after_api")
-    
-    return response_data
-
-
-post_task = PythonOperator(
-    task_id="execute_signa_download_nf",
-    python_callable=post_to_api_with_saga_logging,
+robotFramework_task = RobotFrameworkOperator(
+    task_id="pod_download",
+    robot_test_file="ecargo_pod_download.robot",
+    rpa_api_conn_id="rpa_api",
+    api_endpoint="/api/v1/robot-operator-saga/start",
+    callback_path="/trigger/upload_nf_files_to_s3",
+    airflow_api_base_url_var="AIRFLOW_API_BASE_URL",
+    timeout=30,
     dag=dag,
 )
 
@@ -119,5 +77,5 @@ upload_task = PythonOperator(
 )
 
 # Define task dependencies
-convert_task >> post_task >> wait_for_webhook >> upload_task
+start_saga_task >> convert_task >> robotFramework_task >> wait_for_webhook >> upload_task
 

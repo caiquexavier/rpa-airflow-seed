@@ -21,15 +21,14 @@ def save_saga(saga: Saga) -> int:
         # Insert new saga
         sql = """
             INSERT INTO saga 
-            (exec_id, rpa_key_id, rpa_request_object, current_state, events, created_at, updated_at)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            (rpa_key_id, data, current_state, events, created_at, updated_at)
+            VALUES (%s, %s, %s, %s, %s, %s)
             RETURNING saga_id
         """
         events_json = json.dumps([e.to_dict() for e in saga.events])
         params = (
-            saga.exec_id,
             saga.rpa_key_id,
-            json.dumps(saga.rpa_request_object),
+            json.dumps(saga.data),
             saga.current_state.value,
             events_json,
             saga.created_at,
@@ -65,7 +64,7 @@ def get_saga(saga_id: int) -> Optional[Saga]:
         Saga or None
     """
     sql = """
-        SELECT saga_id, exec_id, rpa_key_id, rpa_request_object, current_state,
+        SELECT saga_id, rpa_key_id, data, current_state,
                events, created_at, updated_at
         FROM saga
         WHERE saga_id = %s
@@ -78,33 +77,12 @@ def get_saga(saga_id: int) -> Optional[Saga]:
     return _row_to_saga(result[0])
 
 
-def get_saga_by_exec_id(exec_id: int) -> Optional[Saga]:
-    """
-    Get SAGA by execution ID from database.
-    
-    Returns:
-        Saga or None
-    """
-    sql = """
-        SELECT saga_id, exec_id, rpa_key_id, rpa_request_object, current_state,
-               events, created_at, updated_at
-        FROM saga
-        WHERE exec_id = %s
-    """
-    result = execute_query(sql, (exec_id,))
-    
-    if not result:
-        return None
-    
-    return _row_to_saga(result[0])
-
-
 def _row_to_saga(row: dict) -> Saga:
     """Convert database row to Saga entity."""
     # Parse JSON fields
-    rpa_request_object = row.get("rpa_request_object")
-    if isinstance(rpa_request_object, str):
-        rpa_request_object = json.loads(rpa_request_object)
+    data = row.get("data")
+    if isinstance(data, str):
+        data = json.loads(data)
     
     events_data = row.get("events")
     if isinstance(events_data, str):
@@ -122,19 +100,31 @@ def _row_to_saga(row: dict) -> Saga:
             else:
                 occurred_at = event_dict["occurred_at"]
         
+        execution_date = None
+        if event_dict.get("execution_date"):
+            if isinstance(event_dict["execution_date"], str):
+                execution_date = datetime.fromisoformat(event_dict["execution_date"].replace('Z', '+00:00'))
+            else:
+                execution_date = event_dict["execution_date"]
+        
         events.append(SagaEvent(
             event_type=event_dict["event_type"],
             event_data=event_dict["event_data"],
             task_id=event_dict.get("task_id"),
             dag_id=event_dict.get("dag_id"),
+            dag_run_id=event_dict.get("dag_run_id"),
+            execution_date=execution_date,
+            try_number=event_dict.get("try_number"),
+            operator_type=event_dict.get("operator_type"),
+            operator_id=event_dict.get("operator_id"),
+            operator_params=event_dict.get("operator_params"),
             occurred_at=occurred_at
         ))
     
     return Saga(
         saga_id=row["saga_id"],
-        exec_id=row["exec_id"],
         rpa_key_id=row["rpa_key_id"],
-        rpa_request_object=rpa_request_object,
+        data=data,
         current_state=SagaState(row["current_state"]),
         events=events,
         created_at=row["created_at"],

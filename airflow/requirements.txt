@@ -1,0 +1,21 @@
+# Apache Airflow Core
+apache-airflow==2.9.3
+
+# Airflow Providers
+apache-airflow-providers-http
+apache-airflow-providers-microsoft-winrm<3.0.0
+
+# Data Processing
+pandas
+openpyxl
+xlrd
+
+# HTTP & API
+requests
+httpx
+fastapi
+uvicorn
+
+# Cloud Services
+boto3
+

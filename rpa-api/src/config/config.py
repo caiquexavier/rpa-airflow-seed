@@ -20,7 +20,7 @@ def get_rabbitmq_config() -> Dict[str, str]:
         "RABBITMQ_USER": _get_required_env("RABBITMQ_USER"),
         "RABBITMQ_PASSWORD": _get_required_env("RABBITMQ_PASSWORD"),
         "RABBITMQ_EXCHANGE": os.getenv("RABBITMQ_EXCHANGE", ""),
-        "RABBITMQ_ROUTING_KEY": os.getenv("RABBITMQ_ROUTING_KEY", "rpa_events"),
+        "RABBITMQ_ROUTING_KEY": os.getenv("RABBITMQ_ROUTING_KEY", "RobotOperatorQueue"),
     }
 
 

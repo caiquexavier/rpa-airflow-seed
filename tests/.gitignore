@@ -1,0 +1,9 @@
+# Test artifacts
+htmlcov/
+.coverage
+coverage.xml
+.pytest_cache/
+*.pyc
+__pycache__/
+.tox/
+

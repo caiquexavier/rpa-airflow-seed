@@ -34,38 +34,45 @@ try {
         }
     }
 
-    # Load AWS secrets first so required env vars are available
+    # Optionally load AWS secrets if credentials are available
+    # This is optional - listener can run without AWS secrets if robot tests don't need S3
     Set-Location -Path $ProjectRoot
     if (Test-Path $LoadSecretsScript) {
-        Write-Host "Loading secrets from AWS Secrets Manager..." -ForegroundColor Cyan
-        $secretNameArg = $null
-        $regionArg = $null
-        if ($env:AWS_SECRET_NAME) { $secretNameArg = $env:AWS_SECRET_NAME }
-        if ($env:AWS_REGION) { $regionArg = $env:AWS_REGION }
-
-        $secretsLoaded = $false
-        if ($secretNameArg -and $regionArg) {
-            & $LoadSecretsScript -SecretName $secretNameArg -Region $regionArg
-            if ($LASTEXITCODE -eq 0) { $secretsLoaded = $true }
-        } elseif ($secretNameArg) {
-            & $LoadSecretsScript -SecretName $secretNameArg
-            if ($LASTEXITCODE -eq 0) { $secretsLoaded = $true }
-        } elseif ($regionArg) {
-            & $LoadSecretsScript -Region $regionArg
-            if ($LASTEXITCODE -eq 0) { $secretsLoaded = $true }
-        } else {
-            & $LoadSecretsScript
-            if ($LASTEXITCODE -eq 0) { $secretsLoaded = $true }
-        }
+        $hasAwsCredentials = ($env:AWS_ACCESS_KEY_ID -and $env:AWS_SECRET_ACCESS_KEY) -or (Test-Path "$env:USERPROFILE\.aws\credentials")
         
-        if (-not $secretsLoaded) {
-            Write-Host "`nFailed to load secrets from AWS Secrets Manager" -ForegroundColor Red
-            Write-Host "Please fix AWS credentials and try again. Run:" -ForegroundColor Yellow
-            Write-Host "  .\src\scripts\fix-aws-credentials.ps1" -ForegroundColor Yellow
-            Write-Host "Or manually fix credentials:" -ForegroundColor Yellow
-            Write-Host "  `$env:AWS_ACCESS_KEY_ID = 'your-key'.Trim()" -ForegroundColor White
-            Write-Host "  `$env:AWS_SECRET_ACCESS_KEY = 'your-secret'.Trim()" -ForegroundColor White
-            exit 1
+        if ($hasAwsCredentials) {
+            Write-Host "Attempting to load secrets from AWS Secrets Manager..." -ForegroundColor Cyan
+            $secretNameArg = $null
+            $regionArg = $null
+            if ($env:AWS_SECRET_NAME) { $secretNameArg = $env:AWS_SECRET_NAME }
+            if ($env:AWS_REGION) { $regionArg = $env:AWS_REGION }
+
+            $secretsLoaded = $false
+            if ($secretNameArg -and $regionArg) {
+                & $LoadSecretsScript -SecretName $secretNameArg -Region $regionArg 2>&1 | Out-Null
+                if ($LASTEXITCODE -eq 0) { $secretsLoaded = $true }
+            } elseif ($secretNameArg) {
+                & $LoadSecretsScript -SecretName $secretNameArg 2>&1 | Out-Null
+                if ($LASTEXITCODE -eq 0) { $secretsLoaded = $true }
+            } elseif ($regionArg) {
+                & $LoadSecretsScript -Region $regionArg 2>&1 | Out-Null
+                if ($LASTEXITCODE -eq 0) { $secretsLoaded = $true }
+            } else {
+                & $LoadSecretsScript 2>&1 | Out-Null
+                if ($LASTEXITCODE -eq 0) { $secretsLoaded = $true }
+            }
+            
+            if ($secretsLoaded) {
+                Write-Host "AWS secrets loaded successfully" -ForegroundColor Green
+            } else {
+                Write-Host "Warning: Failed to load secrets from AWS Secrets Manager" -ForegroundColor Yellow
+                Write-Host "  Continuing without AWS secrets (listener will use environment variables directly)" -ForegroundColor Yellow
+                Write-Host "  If robot tests need S3 access, fix AWS credentials:" -ForegroundColor Yellow
+                Write-Host "    .\src\scripts\fix-aws-credentials.ps1" -ForegroundColor White
+            }
+        } else {
+            Write-Host "AWS credentials not found - skipping AWS Secrets Manager" -ForegroundColor Gray
+            Write-Host "  Listener will use environment variables directly" -ForegroundColor Gray
         }
     } else {
         Write-Host "Warning: load-aws-secrets.ps1 not found at: $LoadSecretsScript" -ForegroundColor Yellow

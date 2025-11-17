@@ -1,0 +1,29 @@
+{
+  "name": "robotflow",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "start": "cross-env PORT=3001 nuxt start",
+    "preview": "nuxt preview"
+  },
+  "dependencies": {
+    "@vue-flow/background": "^1.3.2",
+    "@vue-flow/controls": "^1.1.3",
+    "@vue-flow/core": "^1.47.0",
+    "@vue-flow/minimap": "^1.5.4",
+    "js-yaml": "^4.1.1",
+    "nuxt": "^3.13.0"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.0.0",
+    "@types/xml2js": "^0.4.14",
+    "cross-env": "^7.0.3",
+    "tsx": "^4.7.0",
+    "xml2js": "^0.6.2"
+  }
+}

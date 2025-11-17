@@ -1,18 +1,12 @@
 # FastAPI application for Airflow webhook endpoints
-import os
-import sys
-import logging
 import json
-from typing import Optional, Dict, Any
+import logging
+from typing import Any, Dict, Optional
+
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 
-# Add src directory to path for imports
-src_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if src_dir not in sys.path:
-    sys.path.insert(0, src_dir)
-
-from services.webhook import set_webhook_signal, get_latest_dag_run
+from services.webhook import get_latest_dag_run, set_webhook_signal
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -22,7 +16,7 @@ app = FastAPI(title="Airflow API", version="0.1.0")
 
 class RpaExecutionResponse(BaseModel):
     """Model for RPA execution response from rpa-api."""
-    exec_id: int
+    saga_id: int
     rpa_key_id: str
     status: str
     rpa_response: Dict[str, Any]
@@ -46,7 +40,7 @@ async def trigger_upload_nf_files_to_s3(request: Request) -> Dict[str, Any]:
         logger.info(f"Received webhook body: {body}")
         
         # Extract webhook data - handle different formats
-        if isinstance(body, dict) and "exec_id" in body and "status" in body:
+        if isinstance(body, dict) and "saga_id" in body and "status" in body:
             # RPA execution response format (from rpa-api)
             webhook_data = body
         elif isinstance(body, dict) and "data" in body:
@@ -62,15 +56,51 @@ async def trigger_upload_nf_files_to_s3(request: Request) -> Dict[str, Any]:
         else:
             webhook_data = body if isinstance(body, dict) else None
         
-        # Log status and SAGA for debugging
+        # Normalize and validate webhook data
         if isinstance(webhook_data, dict):
+            # Normalize robot_saga to robot_operator_saga for consistency
+            if "robot_saga" in webhook_data and "robot_operator_saga" not in webhook_data:
+                webhook_data["robot_operator_saga"] = webhook_data.pop("robot_saga")
+                logger.info("Normalized 'robot_saga' to 'robot_operator_saga' in webhook payload")
+            
+            # Extract status from robot_operator_saga if missing
+            if "status" not in webhook_data:
+                robot_operator_saga = webhook_data.get("robot_operator_saga") or webhook_data.get("robot_saga")
+                if isinstance(robot_operator_saga, dict):
+                    # Try to extract status from robot_operator_saga current_state
+                    current_state = robot_operator_saga.get("current_state", "").upper()
+                    if current_state in ["COMPLETED", "SUCCESS"]:
+                        webhook_data["status"] = "SUCCESS"
+                        logger.info("Extracted status=SUCCESS from robot_operator_saga.current_state")
+                    elif current_state in ["FAILED", "FAIL"]:
+                        webhook_data["status"] = "FAIL"
+                        logger.info("Extracted status=FAIL from robot_operator_saga.current_state")
+                    else:
+                        # Default to SUCCESS if state is unclear
+                        webhook_data["status"] = "SUCCESS"
+                        logger.warning(f"Status missing and could not determine from current_state='{current_state}', defaulting to SUCCESS")
+                else:
+                    # Default to SUCCESS if robot_operator_saga is not available
+                    webhook_data["status"] = "SUCCESS"
+                    logger.warning("Status missing and robot_operator_saga not available, defaulting to SUCCESS")
+            
             status = webhook_data.get("status", "N/A")
             logger.info(f"Webhook data status: {status}")
             
-            # Log SAGA if present
+            # Log parent SAGA if present
             saga = webhook_data.get("saga")
+            saga_id = webhook_data.get("saga_id")
             if saga:
                 logger.info(f"SAGA: {json.dumps(saga, indent=2, ensure_ascii=False)}")
+            elif saga_id:
+                logger.info(f"SAGA ID: {saga_id} (full SAGA not available in payload)")
+            
+            # Log RobotOperatorSaga if present
+            robot_operator_saga = webhook_data.get("robot_operator_saga") or webhook_data.get("robot_saga")
+            if robot_operator_saga:
+                logger.info(f"RobotOperatorSaga: {json.dumps(robot_operator_saga, indent=2, ensure_ascii=False)}")
+            else:
+                logger.warning("RobotOperatorSaga not found in webhook payload")
         
         # Store webhook data - sensor will validate status
         dag_run_id = get_latest_dag_run(dag_id)

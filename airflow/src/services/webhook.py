@@ -1,12 +1,13 @@
 """Webhook-based task activation utilities for Airflow."""
-from typing import Optional, Any
 import json
 import logging
-from airflow.models import XCom, DagRun
-from airflow.utils.session import provide_session
+from typing import Any, Optional
+
+from airflow.exceptions import AirflowException
+from airflow.models import DagRun, XCom
 from airflow.sensors.base import BaseSensorOperator
 from airflow.utils.context import Context
-from airflow.exceptions import AirflowException
+from airflow.utils.session import provide_session
 from sqlalchemy import desc
 
 logger = logging.getLogger(__name__)
@@ -108,7 +109,12 @@ class WebhookSensor(BaseSensorOperator):
             # Log SAGA if present
             saga = webhook_data.get("saga")
             if saga:
-                logger.info(f"SAGA: {json.dumps(saga, indent=2, ensure_ascii=False)}")
+                logger.info(f"[WebhookSensor] SAGA: {json.dumps(saga, indent=2, ensure_ascii=False)}")
+            
+            # Log RobotOperatorSaga if present
+            robot_operator_saga = webhook_data.get("robot_operator_saga") or webhook_data.get("robot_saga")
+            if robot_operator_saga:
+                logger.info(f"[WebhookSensor] RobotOperatorSaga: {json.dumps(robot_operator_saga, indent=2, ensure_ascii=False)}")
         
         # Validate status - fail task if data is missing or status is not SUCCESS
         if webhook_data is None:
@@ -132,13 +138,46 @@ class WebhookSensor(BaseSensorOperator):
         
         # FAIL THE TASK if status is not SUCCESS
         if status_upper != "SUCCESS":
+            # Extract error message
             error_msg = (
                 webhook_data.get("error_message") or
                 (webhook_data.get("rpa_response", {}).get("error") if isinstance(webhook_data.get("rpa_response"), dict) else None) or
                 f"RPA execution failed with status: {status_upper}"
             )
+            
+            # Build detailed error message with SAGA and RobotOperatorSaga information
+            saga_info_parts = []
+            
+            # Include SAGA information
+            saga = webhook_data.get("saga")
+            saga_id = webhook_data.get("saga_id")
+            if saga:
+                saga_id_from_saga = saga.get("saga_id", "N/A")
+                saga_state = saga.get("current_state", "N/A")
+                saga_info_parts.append(f"SAGA(id={saga_id_from_saga}, state={saga_state})")
+            elif saga_id:
+                saga_info_parts.append(f"SAGA(id={saga_id})")
+            
+            # Include RobotOperatorSaga information
+            robot_operator_saga = webhook_data.get("robot_operator_saga") or webhook_data.get("robot_saga")
+            if robot_operator_saga and isinstance(robot_operator_saga, dict):
+                robot_saga_id = robot_operator_saga.get("robot_operator_saga_id", "N/A")
+                robot_saga_state = robot_operator_saga.get("current_state", "N/A")
+                robot_operator_id = robot_operator_saga.get("robot_operator_id", "N/A")
+                saga_info_parts.append(f"RobotOperatorSaga(id={robot_saga_id}, state={robot_saga_state}, operator={robot_operator_id})")
+            
+            # Build comprehensive error message
+            saga_context = f" [{', '.join(saga_info_parts)}]" if saga_info_parts else ""
+            detailed_error = f"Webhook response indicates failure. Status: {status_upper}. Error message: {error_msg}{saga_context}"
+            
+            # Log full details including SAGA and RobotOperatorSaga
             logger.error(f"[WebhookSensor] FAILURE DETECTED - Status: {status_upper}, Error: {error_msg}")
-            raise AirflowException(f"Webhook response indicates failure. Status: {status_upper}. Error message: {error_msg}")
+            if saga:
+                logger.error(f"[WebhookSensor] FAILURE SAGA details: {json.dumps(saga, indent=2, ensure_ascii=False)}")
+            if robot_operator_saga:
+                logger.error(f"[WebhookSensor] FAILURE RobotOperatorSaga details: {json.dumps(robot_operator_saga, indent=2, ensure_ascii=False)}")
+            
+            raise AirflowException(detailed_error)
         
         # Status is SUCCESS - store data and continue
         logger.info("[WebhookSensor] Status is SUCCESS - proceeding")

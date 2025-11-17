@@ -75,15 +75,18 @@ function Test-AWSCredentials {
     if ($LASTEXITCODE -ne 0) {
         # Determine if credentials exist but are invalid, or don't exist
         $errorText = $stsTest -join "`n"
+        $isInvalidToken = $errorText -match "InvalidClientTokenId|The security token included in the request is invalid"
         $isSignatureError = $errorText -match "SignatureDoesNotMatch|InvalidSignatureException"
         $isNoCredentials = $errorText -match "Unable to locate credentials|NoCredentialsError"
         
-        if ($isSignatureError) {
+        if ($isInvalidToken) {
+            Write-Error "AWS credentials are INVALID (InvalidClientTokenId).`n`nSource: $credentialsSource`nError: $errorText`n`nThis means the Access Key ID is invalid, expired, or doesn't exist.`n`nSOLUTION:`n  1. Get NEW credentials from AWS IAM Console:`n     - Go to AWS IAM Console (https://console.aws.amazon.com/iam/)`n     - Navigate to Users > Your User > Security credentials`n     - Create new Access Key (or use existing valid one)`n     - Copy the Access Key ID and Secret Access Key`n`n  2. Set them in PowerShell (with .Trim() to remove whitespace):`n     `$env:AWS_ACCESS_KEY_ID = 'NEW-ACCESS-KEY'.Trim()`n     `$env:AWS_SECRET_ACCESS_KEY = 'NEW-SECRET-KEY'.Trim()`n     `$env:AWS_DEFAULT_REGION = '$Region'`n`n  3. Or configure AWS CLI:`n     aws configure`n     (Enter the new credentials when prompted)`n`n  4. Test credentials:`n     aws sts get-caller-identity --region $Region`n`nCommon causes:`n  - Access Key ID is incorrect or has typos`n  - Access Key was deleted or deactivated in AWS`n  - Credentials are from wrong AWS account`n  - Credentials have hidden whitespace (use .Trim())`n  - Access Key ID format is wrong (should be ~20 characters)"
+        } elseif ($isSignatureError) {
             Write-Error "AWS credentials are INVALID (signature mismatch).`n`nSource: $credentialsSource`nError: $errorText`n`nThis means credentials were found but they are WRONG.`n`nSOLUTION:`n  1. Get NEW credentials from AWS IAM Console:`n     - Go to AWS IAM Console`n     - Create new Access Key`n     - Copy the Access Key ID and Secret Access Key`n`n  2. Set them in PowerShell (with .Trim() to remove whitespace):`n     `$env:AWS_ACCESS_KEY_ID = 'NEW-ACCESS-KEY'.Trim()`n     `$env:AWS_SECRET_ACCESS_KEY = 'NEW-SECRET-KEY'.Trim()`n     `$env:AWS_DEFAULT_REGION = '$Region'`n`n  3. Or configure AWS CLI:`n     aws configure`n     (Enter the new credentials when prompted)`n`n  4. Test credentials:`n     aws sts get-caller-identity --region $Region`n`nCommon causes:`n  - Credentials are incorrect/expired`n  - Credentials have hidden whitespace (use .Trim())`n  - System clock is out of sync`n  - Credentials are from wrong AWS account"
         } elseif ($isNoCredentials) {
             Write-Error "AWS credentials not found. Configure via:`n`n  1. Environment variables:`n     `$env:AWS_ACCESS_KEY_ID = 'your-access-key'.Trim()`n     `$env:AWS_SECRET_ACCESS_KEY = 'your-secret-key'.Trim()`n     `$env:AWS_DEFAULT_REGION = '$Region'`n`n  2. AWS CLI:`n     aws configure`n`nError: $errorText"
         } else {
-            Write-Error "Failed to validate AWS credentials.`n`nSource: $credentialsSource`nError: $errorText`n`nPlease check your AWS credentials and try again."
+            Write-Error "Failed to validate AWS credentials.`n`nSource: $credentialsSource`nError: $errorText`n`nPlease check your AWS credentials and try again.`n`nCommon solutions:`n  1. Verify credentials in AWS IAM Console`n  2. Remove whitespace: `$env:AWS_ACCESS_KEY_ID = `$env:AWS_ACCESS_KEY_ID.Trim()`n  3. Test with: aws sts get-caller-identity --region $Region`n  4. Check system time: Get-Date (must be synchronized)"
         }
         return $false
     }

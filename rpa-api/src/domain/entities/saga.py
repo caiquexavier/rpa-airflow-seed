@@ -21,6 +21,12 @@ class SagaEvent:
     event_data: Dict[str, Any]
     task_id: Optional[str] = None
     dag_id: Optional[str] = None
+    dag_run_id: Optional[str] = None
+    execution_date: Optional[datetime] = None
+    try_number: Optional[int] = None
+    operator_type: Optional[str] = None
+    operator_id: Optional[str] = None
+    operator_params: Optional[Dict[str, Any]] = None
     occurred_at: Optional[datetime] = None
 
     def to_dict(self) -> Dict[str, Any]:
@@ -30,6 +36,12 @@ class SagaEvent:
             "event_data": self.event_data,
             "task_id": self.task_id,
             "dag_id": self.dag_id,
+            "dag_run_id": self.dag_run_id,
+            "execution_date": self.execution_date.isoformat() if self.execution_date else None,
+            "try_number": self.try_number,
+            "operator_type": self.operator_type,
+            "operator_id": self.operator_id,
+            "operator_params": self.operator_params,
             "occurred_at": self.occurred_at.isoformat() if self.occurred_at else datetime.utcnow().isoformat()
         }
 
@@ -38,9 +50,8 @@ class SagaEvent:
 class Saga:
     """SAGA entity - immutable domain model."""
     saga_id: int
-    exec_id: int
     rpa_key_id: str
-    rpa_request_object: Dict[str, Any]
+    data: Dict[str, Any]
     current_state: SagaState
     events: List[SagaEvent] = field(default_factory=list)
     created_at: datetime = field(default_factory=datetime.utcnow)
@@ -51,9 +62,8 @@ class Saga:
         new_events = list(self.events) + [event]
         return Saga(
             saga_id=self.saga_id,
-            exec_id=self.exec_id,
             rpa_key_id=self.rpa_key_id,
-            rpa_request_object=self.rpa_request_object,
+            data=self.data,
             current_state=self.current_state,
             events=new_events,
             created_at=self.created_at,
@@ -64,9 +74,8 @@ class Saga:
         """Create new Saga instance with new state (immutable)."""
         return Saga(
             saga_id=self.saga_id,
-            exec_id=self.exec_id,
             rpa_key_id=self.rpa_key_id,
-            rpa_request_object=self.rpa_request_object,
+            data=self.data,
             current_state=new_state,
             events=self.events,
             created_at=self.created_at,

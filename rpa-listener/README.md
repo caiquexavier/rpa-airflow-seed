@@ -37,19 +37,19 @@ pip install -r requirements.txt
 # Windows PowerShell:
 $env:AZURE_KEYVAULT_URL = "https://rpaidentity.vault.azure.net/"
 $env:RABBITMQ_HOST = "localhost"
-$env:RABBITMQ_QUEUE = "rpa_events"
+$env:RABBITMQ_QUEUE = "RobotOperatorQueue"
 $env:PROJECT_DIR = "C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots"
 
 # Windows CMD:
 set AZURE_KEYVAULT_URL=https://rpaidentity.vault.azure.net/
 set RABBITMQ_HOST=localhost
-set RABBITMQ_QUEUE=rpa_events
+set RABBITMQ_QUEUE=RobotOperatorQueue
 set PROJECT_DIR=C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots
 
 # Linux/Mac:
 export AZURE_KEYVAULT_URL=https://rpaidentity.vault.azure.net/
 export RABBITMQ_HOST=localhost
-export RABBITMQ_QUEUE=rpa_events
+export RABBITMQ_QUEUE=RobotOperatorQueue
 export PROJECT_DIR=/path/to/rpa-robots
 ```
 
@@ -62,7 +62,7 @@ python main.py
 
 The listener automatically loads AWS credentials from AWS Secrets Manager before running Robot Framework tests. This ensures S3 uploads work without manual environment variable setup.
 
-**See [README_AWS_SECRETS.md](README_AWS_SECRETS.md) for detailed configuration.**
+**See [docs/README_AWS_SECRETS.md](docs/README_AWS_SECRETS.md) for detailed configuration.**
 
 ### Quick Setup
 
@@ -82,14 +82,35 @@ The listener automatically loads AWS credentials from AWS Secrets Manager before
 
 3. The listener will automatically load these secrets when processing messages.
 
+## Project Structure
+
+The codebase follows a **Domain-Driven Architecture**:
+
+```
+src/
+├── core/                    # Core infrastructure
+│   └── config/             # Configuration modules
+├── infrastructure/          # External integrations
+│   ├── messaging/          # RabbitMQ consumer
+│   ├── secrets/           # AWS Secrets Manager
+│   └── http/              # HTTP clients (API, webhooks)
+├── domain/                 # Business logic domains
+│   ├── robot/             # Robot execution domain
+│   ├── saga/              # Saga management domain
+│   └── message/           # Message handling domain
+└── application/           # Application layer (orchestration)
+```
+
+For detailed architecture documentation, see [docs/MIGRATION_SUMMARY.md](docs/MIGRATION_SUMMARY.md).
+
 ## Service Information
 - **Purpose**: Listens for RabbitMQ messages and triggers RPA robot execution
-- **Queue**: rpa_events
+- **Queue**: RobotOperatorQueue
 - **Dependencies**: RabbitMQ server, AWS Secrets Manager access (for S3 credentials)
 
 ## Testing
 
-Send a message to the `rpa_events` queue with this JSON payload:
+Send a message to the `RobotOperatorQueue` queue with this JSON payload:
 ```json
 { "rpa_id": "job-001" }
 ```
@@ -111,7 +132,7 @@ docker run -e AZURE_KEYVAULT_URL=https://rpaidentity.vault.azure.net/ -e RABBITM
 ## Configuration
 
 - `RABBITMQ_HOST`: RabbitMQ server host (default: localhost)
-- `RABBITMQ_QUEUE`: Queue name to listen to (default: rpa_events)
+- `RABBITMQ_QUEUE`: Queue name to listen to (default: RobotOperatorQueue)
 - `PROJECT_DIR`: Path to Robot Framework project directory
 
 ## Features

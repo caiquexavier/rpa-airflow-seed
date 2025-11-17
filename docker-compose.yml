@@ -74,6 +74,9 @@ services:
       - ./airflow/logs:/opt/airflow/logs
       - ./airflow/src/services:/opt/airflow/src/services
       - ./airflow/src/api:/opt/airflow/src/api
+      - ./airflow/src/operators:/opt/airflow/src/operators
+      - ./airflow/src/libs:/opt/airflow/src/libs
+      - ./airflow/src/tasks:/opt/airflow/src/tasks
       - ./shared/data:/opt/airflow/data
     depends_on:
       postgres:
@@ -139,6 +142,9 @@ services:
       - ./airflow/logs:/opt/airflow/logs
       - ./airflow/src/services:/opt/airflow/src/services
       - ./airflow/src/api:/opt/airflow/src/api
+      - ./airflow/src/operators:/opt/airflow/src/operators
+      - ./airflow/src/libs:/opt/airflow/src/libs
+      - ./airflow/src/tasks:/opt/airflow/src/tasks
       - ./shared/data:/opt/airflow/data
     depends_on:
       postgres:
@@ -220,6 +226,9 @@ services:
       - ./airflow/logs:/opt/airflow/logs
       - ./airflow/src/services:/opt/airflow/src/services
       - ./airflow/src/api:/opt/airflow/src/api
+      - ./airflow/src/operators:/opt/airflow/src/operators
+      - ./airflow/src/libs:/opt/airflow/src/libs
+      - ./airflow/src/tasks:/opt/airflow/src/tasks
       - ./shared/data:/opt/airflow/data
     depends_on:
       postgres:
@@ -274,7 +283,7 @@ services:
       rpa-db-init:
         condition: service_completed_successfully
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/request_rpa_exec", "-X", "POST", "-H", "Content-Type: application/json", "-d", "{\"rpa_id\":\"health_check\"}"]
+      test: ["CMD", "curl", "-f", "http://localhost:3000/docs"]
       interval: 30s
       timeout: 10s
       retries: 5

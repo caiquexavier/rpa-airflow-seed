@@ -2,6 +2,7 @@
 """
 RPA Listener - entrypoint using modular src structure
 """
+import os
 import sys
 import logging
 from pathlib import Path
@@ -22,9 +23,10 @@ sys.path.insert(0, str(CURRENT_DIR))
 
 logger = logging.getLogger(__name__)
 
-from src.config.rabbitmq import load_rabbitmq_config  # noqa: E402
-from src.services.consumer import RpaConsumer  # noqa: E402
-from src.controllers.listener_controller import handle_message  # noqa: E402
+from src.core.config.rabbitmq import load_rabbitmq_config  # noqa: E402
+from src.infrastructure.messaging.consumer import RpaConsumer  # noqa: E402
+from src.application.message_processor import process_message  # noqa: E402
+from src.infrastructure.secrets.aws_secrets import load_aws_secrets  # noqa: E402
 
 
 def get_robot_paths():
@@ -41,9 +43,34 @@ def get_robot_paths():
     }
 
 
+def _load_required_runtime_secrets():
+    """
+    Ensure required settings are present, preferring `.env` but falling back to AWS.
+    
+    We first honor variables that may have been written by `load-aws-secrets.ps1`
+    (or any other local workflow). Only when `RPA_API_BASE_URL` is absent do we
+    hit AWS Secrets Manager, keeping local development friction low.
+    """
+    required_keys = ["RPA_API_BASE_URL"]
+    missing_keys = [key for key in required_keys if not os.getenv(key)]
+    if not missing_keys:
+        return
+    
+    secrets = load_aws_secrets()
+    still_missing = [key for key in missing_keys if not secrets.get(key)]
+    if still_missing:
+        raise RuntimeError(
+            "Missing required keys in AWS Secrets Manager: "
+            + ", ".join(still_missing)
+        )
+    for key in missing_keys:
+        os.environ[key] = str(secrets[key]).strip()
+
+
 def main():
     logger.info("Starting RPA Listener...")
     load_dotenv()
+    _load_required_runtime_secrets()
     try:
         logger.info("Loading RabbitMQ configuration...")
         rabbitmq_config = load_rabbitmq_config()
@@ -64,7 +91,7 @@ def main():
         consumer = RpaConsumer(rabbitmq_config)
 
         def _on_message(message: dict) -> bool:
-            return handle_message(
+            return process_message(
                 message,
                 robot_config['project_path'],
                 robot_config['robot_exe'],
@@ -76,9 +103,9 @@ def main():
         consumer.start(_on_message)
 
     except KeyboardInterrupt:
-        if 'consumer' in locals() and consumer._connection and not consumer._connection.is_closed:
+        if 'consumer' in locals():
             try:
-                consumer._connection.close()
+                consumer.close()
             except Exception:
                 pass
     except Exception as exc:

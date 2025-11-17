@@ -22,7 +22,7 @@
   ],
   "queues": [
     {
-      "name": "rpa_events",
+      "name": "RobotOperatorQueue",
       "vhost": "/",
       "durable": true,
       "auto_delete": false,

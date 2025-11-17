@@ -32,20 +32,22 @@ class SagaOrchestrator:
     
     def start_saga(
         self,
-        exec_id: int,
         rpa_key_id: str,
-        rpa_request_object: dict
+        data: dict
     ) -> int:
         """
         Start a new SAGA.
+        
+        Args:
+            rpa_key_id: RPA key identifier
+            data: Saga data payload
         
         Returns:
             saga_id
         """
         command = CreateSagaCommand(
-            exec_id=exec_id,
             rpa_key_id=rpa_key_id,
-            rpa_request_object=rpa_request_object
+            data=data
         )
         
         return create_saga(
@@ -57,7 +59,6 @@ class SagaOrchestrator:
     def record_task_event(
         self,
         saga_id: int,
-        exec_id: int,
         task_id: str,
         dag_id: str,
         event_type: str,
@@ -66,12 +67,18 @@ class SagaOrchestrator:
         """
         Record an event for a task in the SAGA.
         
+        Args:
+            saga_id: Saga ID
+            task_id: DAG task identifier
+            dag_id: DAG identifier
+            event_type: Event type
+            event_data: Event data
+        
         Returns:
             Updated saga
         """
         command = AddSagaEventCommand(
             saga_id=saga_id,
-            exec_id=exec_id,
             event_type=event_type,
             event_data=event_data,
             task_id=task_id,
@@ -85,13 +92,6 @@ class SagaOrchestrator:
             save_event=self.save_event_fn
         )
     
-    def get_saga_by_exec_id(self, exec_id: int) -> Optional[Saga]:
-        """Get SAGA by execution ID."""
-        query = GetSagaQuery(exec_id=exec_id)
-        return get_saga(
-            query=query,
-            get_saga_by_exec_id=self.get_saga_fn
-        )
     
     def get_events_for_task(self, saga_id: int, task_id: str) -> list[TaskEvent]:
         """Get all events for a specific task."""

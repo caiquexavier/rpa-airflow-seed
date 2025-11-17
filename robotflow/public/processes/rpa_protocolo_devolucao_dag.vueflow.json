@@ -1,0 +1,341 @@
+{
+  "nodes": [
+    {
+      "id": "StartEvent_1",
+      "type": "start",
+      "position": {
+        "x": 100,
+        "y": 300
+      },
+      "data": {
+        "label": "Start",
+        "type": "start",
+        "notes": "Manual trigger point for the DAG workflow"
+      },
+      "draggable": true,
+      "selectable": true,
+      "connectable": true
+    },
+    {
+      "id": "read_input_xls",
+      "type": "task",
+      "position": {
+        "x": 450,
+        "y": 300
+      },
+      "data": {
+        "label": "Read Input XLS",
+        "type": "task",
+        "notes": "Convert XLSX file to RPA request payload and create SAGA",
+        "rpa": {
+          "metadata": {
+            "icon": "file-excel",
+            "category": "data-input",
+            "service": "airflow",
+            "task_type": "data-conversion",
+            "operator_type": "PythonOperator",
+            "python_callable": "convert_xls_to_json_task",
+            "callable_module": "airflow.src.dags.tasks.tasks_rpa_protocolo_devolucao",
+            "callable_function": "convert_xls_to_json_task"
+          },
+          "details": {
+            "purpose": "Reads input Excel file containing protocol data and converts it to SAGA structure",
+            "xcom_keys": {
+              "output": [
+                "saga",
+                "rpa_payload"
+              ]
+            },
+            "airflow_variables": {
+              "required": [
+                "ECARGO_XLSX_PATH"
+              ]
+            },
+            "imports": [
+              "airflow.models.Variable",
+              "airflow.exceptions.AirflowException",
+              "pathlib.Path",
+              "json",
+              "logging"
+            ],
+            "dependencies": {
+              "internal": [
+                "converter.xls_to_rpa_request"
+              ],
+              "external": [
+                "Excel file from ECARGO_XLSX_PATH variable"
+              ]
+            },
+            "error_handling": [
+              "Validates XLSX path exists",
+              "Raises AirflowException if path is missing or file not found",
+              "Provides helpful error messages with directory listings"
+            ]
+          }
+        }
+      },
+      "draggable": true,
+      "selectable": true,
+      "connectable": true
+    },
+    {
+      "id": "execute_signa_download_nf",
+      "type": "task",
+      "position": {
+        "x": 800,
+        "y": 300
+      },
+      "data": {
+        "label": "Execute Signa Download NF",
+        "type": "task",
+        "notes": "Post to API and log SAGA in Airflow logs",
+        "rpa": {
+          "metadata": {
+            "icon": "api",
+            "category": "integration",
+            "service": "airflow",
+            "task_type": "http-request",
+            "operator_type": "PythonOperator",
+            "python_callable": "post_to_api_with_saga_logging",
+            "callable_module": "airflow.src.dags.dag_rpa_protocolo_devolucao",
+            "callable_function": "post_to_api_with_saga_logging"
+          },
+          "details": {
+            "purpose": "Posts SAGA to RPA API endpoint and handles callback URL setup",
+            "xcom_keys": {
+              "input": [
+                "saga (from previous task)"
+              ],
+              "output": [
+                "saga (updated from API response)"
+              ]
+            },
+            "airflow_variables": {
+              "required": [
+                "AIRFLOW_API_BASE_URL"
+              ]
+            },
+            "airflow_connections": {
+              "required": {
+                "rpa_api": {
+                  "schema": "http",
+                  "host": "localhost",
+                  "port": 3000
+                }
+              }
+            },
+            "imports": [
+              "requests",
+              "airflow.models.Variable",
+              "airflow.hooks.base.BaseHook",
+              "tasks.saga_helper.get_saga_from_context",
+              "tasks.saga_helper.log_saga"
+            ],
+            "api_details": {
+              "endpoint": "/request_rpa_exec",
+              "method": "POST",
+              "payload_structure": {
+                "saga": "SAGA object from previous task",
+                "callback_url": "Constructed from AIRFLOW_API_BASE_URL"
+              },
+              "expected_response": {
+                "status_code": 202,
+                "body": {
+                  "saga": "Updated SAGA object",
+                  "exec_id": "Execution ID",
+                  "status": "Execution status"
+                }
+              }
+            },
+            "error_handling": [
+              "Validates SAGA exists from context",
+              "Raises ValueError if SAGA is missing",
+              "Raises Exception if API request fails (non-202 status)",
+              "Logs SAGA before and after API call"
+            ]
+          }
+        }
+      },
+      "draggable": true,
+      "selectable": true,
+      "connectable": true
+    },
+    {
+      "id": "wait_for_webhook",
+      "type": "task",
+      "position": {
+        "x": 1150,
+        "y": 300
+      },
+      "data": {
+        "label": "Wait for Webhook",
+        "type": "task",
+        "notes": "Sensor that waits for webhook and validates status",
+        "rpa": {
+          "metadata": {
+            "icon": "webhook",
+            "category": "sensor",
+            "service": "airflow",
+            "task_type": "webhook-sensor",
+            "operator_type": "WebhookSensor",
+            "sensor_class": "WebhookSensor",
+            "sensor_module": "airflow.src.services.webhook"
+          },
+          "details": {
+            "purpose": "Waits for webhook confirmation from RPA API before proceeding to upload task",
+            "sensor_config": {
+              "target_task_id": "upload_nf_files_to_s3",
+              "poke_interval": 5,
+              "timeout": 3600,
+              "mode": "poke"
+            },
+            "xcom_keys": {
+              "input": [
+                "webhook_data (set by external webhook endpoint)"
+              ],
+              "output": [
+                "webhook_data (passed to downstream task)"
+              ]
+            },
+            "webhook_endpoint": {
+              "path": "/trigger/upload_nf_files_to_s3",
+              "method": "POST",
+              "handler_module": "airflow.src.api.main",
+              "handler_function": "trigger_upload_nf_files_to_s3",
+              "expected_payload": {
+                "exec_id": "Execution ID",
+                "status": "success|failure|error",
+                "saga": "Updated SAGA object (optional)"
+              }
+            },
+            "validation": [
+              "Validates webhook status before allowing downstream task to proceed",
+              "Stores webhook data in XCom for downstream task consumption"
+            ],
+            "imports": [
+              "airflow.src.services.webhook.WebhookSensor"
+            ]
+          }
+        }
+      },
+      "draggable": true,
+      "selectable": true,
+      "connectable": true
+    },
+    {
+      "id": "upload_nf_files_to_s3",
+      "type": "task",
+      "position": {
+        "x": 1500,
+        "y": 300
+      },
+      "data": {
+        "label": "Upload NF Files to S3",
+        "type": "task",
+        "notes": "Upload NF files to S3",
+        "rpa": {
+          "metadata": {
+            "icon": "s3",
+            "category": "storage",
+            "service": "airflow",
+            "task_type": "s3-upload",
+            "operator_type": "PythonOperator",
+            "python_callable": "upload_nf_files_to_s3_task",
+            "callable_module": "airflow.src.dags.tasks.tasks_rpa_protocolo_devolucao",
+            "callable_function": "upload_nf_files_to_s3_task"
+          },
+          "details": {
+            "purpose": "Uploads processed NF (Nota Fiscal) files to AWS S3 storage",
+            "xcom_keys": {
+              "input": [
+                "webhook_data (from wait_for_webhook)",
+                "saga (fallback from previous tasks)"
+              ],
+              "output": [
+                "status",
+                "saga"
+              ]
+            },
+            "imports": [
+              "tasks.saga_helper.log_saga",
+              "tasks.saga_helper.get_saga_rpa_key_id",
+              "tasks.saga_helper.get_saga_rpa_request",
+              "logging"
+            ],
+            "saga_handling": [
+              "Retrieves SAGA from webhook_data first (most recent)",
+              "Falls back to XCom saga key if webhook_data doesn't contain saga",
+              "Extracts rpa_key_id and rpa_request from SAGA",
+              "Logs SAGA for debugging"
+            ],
+            "s3_upload": {
+              "status": "TODO - Implementation pending",
+              "note": "Placeholder for actual S3 upload logic",
+              "expected_implementation": [
+                "Use boto3 or Airflow S3Hook",
+                "Upload files based on SAGA rpa_request data",
+                "Handle upload errors and retries"
+              ]
+            },
+            "error_handling": [
+              "Handles missing SAGA gracefully",
+              "Logs warnings if SAGA cannot be retrieved"
+            ]
+          }
+        }
+      },
+      "draggable": true,
+      "selectable": true,
+      "connectable": true
+    },
+    {
+      "id": "EndEvent_1",
+      "type": "end",
+      "position": {
+        "x": 1850,
+        "y": 300
+      },
+      "data": {
+        "label": "End",
+        "type": "end",
+        "notes": "DAG execution complete"
+      },
+      "draggable": true,
+      "selectable": true,
+      "connectable": true
+    }
+  ],
+  "edges": [
+    {
+      "id": "StartEvent_1->read_input_xls-0",
+      "source": "StartEvent_1",
+      "target": "read_input_xls",
+      "type": "smoothstep"
+    },
+    {
+      "id": "read_input_xls->execute_signa_download_nf-0",
+      "source": "read_input_xls",
+      "target": "execute_signa_download_nf",
+      "type": "smoothstep"
+    },
+    {
+      "id": "execute_signa_download_nf->wait_for_webhook-0",
+      "source": "execute_signa_download_nf",
+      "target": "wait_for_webhook",
+      "type": "smoothstep"
+    },
+    {
+      "id": "wait_for_webhook->upload_nf_files_to_s3-0",
+      "source": "wait_for_webhook",
+      "target": "upload_nf_files_to_s3",
+      "type": "smoothstep"
+    },
+    {
+      "id": "upload_nf_files_to_s3->EndEvent_1-0",
+      "source": "upload_nf_files_to_s3",
+      "target": "EndEvent_1",
+      "type": "smoothstep"
+    }
+  ]
+}
+

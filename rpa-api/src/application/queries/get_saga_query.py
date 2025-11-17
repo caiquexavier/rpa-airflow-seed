@@ -4,6 +4,6 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class GetSagaQuery:
-    """Query to get SAGA by execution ID."""
-    exec_id: int
+    """Query to get SAGA by saga ID."""
+    saga_id: int
 

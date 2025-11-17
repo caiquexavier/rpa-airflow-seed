@@ -41,7 +41,6 @@ Load JSON Data
             ${json_data}=    Convert String To Json    ${json_string}
             Set Global Variable    ${JSON_DATA}    ${json_data}
         EXCEPT    AS    ${error}
-            Log    Error parsing JSON: ${error}
             Set Global Variable    ${JSON_DATA}    {"rpa_request": {"dt_list": []}}
         END
     END
@@ -53,7 +52,6 @@ Process Nota Fiscal Array
         ${array_length}=    Get Length    ${dt_list}
     EXCEPT    AS    ${error}
         ${error_msg}=    Set Variable    Failed to parse dt_list: ${error}
-        Log    ${error_msg}    level=ERROR
         Append Error Result    System    ${error_msg}
         Build Response Message
         RETURN
@@ -76,7 +74,6 @@ Process Nota Fiscal Array
                         Open Registro De Canhotos Submenu
                     EXCEPT    AS    ${error}
                         ${error_msg}=    Set Variable    Failed to open submenu: ${error}
-                        Log    ${error_msg}    level=ERROR
                         Append Error Result    DT ${dt_id_value}    ${error_msg}
                         CONTINUE
                     END
@@ -98,7 +95,6 @@ Process Nota Fiscal Array
                 Append Error Result    DT entry ${index + 1}    ${error_msg}
             END
         END
-        Log    Processed: ${array_length} | Success: ${success_count} | Errors: ${error_count}    level=INFO
     END
     Build Response Message
 
@@ -118,17 +114,15 @@ Process Nota Fiscal Array From Variables
     END
     
     ${array_length}=    Get Length    ${actual_array}
-    # If no notas fiscais in rpa_request, use default NOTA_FISCAL for manual testing
     IF    ${array_length} == 0
-        Log    No notas fiscais found in rpa_request, using default NOTA_FISCAL: ${NOTA_FISCAL}    level=INFO
         Process Single Nota Fiscal    ${NOTA_FISCAL}
     ELSE
-        # Process each nota fiscal - fail immediately if any fails
         FOR    ${index}    IN RANGE    0    ${array_length}
             ${current_nota_fiscal}=    Set Variable    ${actual_array[${index}]}
             Process Single Nota Fiscal    ${current_nota_fiscal}
         END
     END
+
 
 Process Single Nota Fiscal
     [Arguments]    ${nota_fiscal}
@@ -137,10 +131,7 @@ Process Single Nota Fiscal
 Login To e-Cargo
     [Arguments]    ${base_url}=${BASE_URL}
     Go To    ${base_url}
-    # Wait for page to load completely
     Sleep    3s
-    # Wait for email field with timeout
-    # Try multiple selectors in case the page structure changed
     ${email_selector}=    Set Variable    css=#email
     ${email_found}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${email_selector}    timeout=10s
     IF    not ${email_found}
@@ -173,17 +164,13 @@ Open Registro De Canhotos Submenu
         Sleep    2s
     EXCEPT    AS    ${error}
         ${error_msg}=    Set Variable    Failed to open Registro de Canhotos: ${error}
-        Log    ${error_msg}    level=ERROR
         Fail    ${error_msg}
     END
 
 Input Nota Fiscal
     [Arguments]    ${nota_fiscal}=${NOTA_FISCAL}
-    # Wait for and select the iframe
     Wait Until Element Is Visible    css=iframe#frame    timeout=15s
     Select Frame    css=iframe#frame
-    
-    # Wait for and input the nota fiscal
     Wait Until Element Is Visible    css=input[name="txtNotaFiscal"]    timeout=15s
     Clear Element Text    css=input[name="txtNotaFiscal"]
     Input Text    css=input[name="txtNotaFiscal"]    ${nota_fiscal}
@@ -196,7 +183,6 @@ Search Nota Fiscal
         Sleep    1s
     EXCEPT    AS    ${error}
         ${error_msg}=    Set Variable    Search button not found: ${error}
-        Log    ${error_msg}    level=ERROR
         Append Error Result    ${nota_fiscal}    ${error_msg}
         Unselect Frame
         RETURN    ${False}
@@ -229,23 +215,15 @@ Handle Error Modal
 
 Input Nota Fiscal And Search
     [Arguments]    ${nota_fiscal}=${NOTA_FISCAL}
-    # Step 1: Navigate to registro canhotos (already done in test)
-    # Step 2: Input NF
     Input Nota Fiscal    ${nota_fiscal}
-    
-    # Step 3: Search for the NF
     ${search_success}=    Search Nota Fiscal    ${nota_fiscal}
     IF    not ${search_success}
         Fail    Failed to search for nota fiscal ${nota_fiscal}
     END
-    
-    # Step 4: Navigate to Download (click canhoto button)
     Click First Plus Icon With Fallback
     Wait Until Element Is Visible    xpath=${XPATH_CANHOTO_BUTTON}    timeout=10s
     Click Element    xpath=${XPATH_CANHOTO_BUTTON}
     Sleep    1s
-    
-    # Check for error modal after clicking download button
     ${has_error_modal}=    Run Keyword And Return Status    Wait Until Element Is Visible    xpath=${XPATH_ERROR_MODAL}    timeout=3s
     IF    ${has_error_modal}
         ${error_msg}=    Get Text    xpath=${XPATH_ERROR_MSG}
@@ -254,20 +232,14 @@ Input Nota Fiscal And Search
         Unselect Frame
         Fail    Error modal appeared: ${error_msg}
     END
-    
-    # Step 5: Download PDFs
     Wait Until Element Is Visible    xpath=${XPATH_MODAL_CANHOTO}    timeout=10s
     Download All PDF Files
     Sleep    0.5s
-    
-    # Close modal if possible
     ${close_button}=    Run Keyword And Return Status    Wait Until Element Is Visible    xpath=${XPATH_MODAL_CANHOTO}//button[contains(@class,'close') or contains(@ng-click,'close')]    timeout=2s
     IF    ${close_button}
         Click Element    xpath=${XPATH_MODAL_CANHOTO}//button[contains(@class,'close') or contains(@ng-click,'close')]
         Sleep    0.5s
     END
-    
-    # Unselect frame
     Unselect Frame
 
 Initialize Error Results
@@ -283,7 +255,6 @@ Append Error Result
     END
     ${entry}=    Create Dictionary    nota_fiscal=${nota_fiscal}    message=${simplified_msg}
     Append To List    ${ERROR_RESULTS}    ${entry}
-    Log    Error for ${nota_fiscal}: ${simplified_msg}    level=ERROR
 
 Build Response Message
     ${has_error_results}=    Run Keyword And Return Status    Variable Should Exist    ${ERROR_RESULTS}
@@ -298,12 +269,6 @@ Build Response Message
     IF    ${error_count} > 0
         ${log_message}=    Set Variable    Execution completed with ${error_count} error(s)
         ${status}=    Set Variable    FAIL
-        Log    ${log_message}    level=ERROR
-        FOR    ${error}    IN    @{ERROR_RESULTS}
-            Log    Critical Error - NF: ${error}[nota_fiscal] | Message: ${error}[message]    level=ERROR
-        END
-    ELSE
-        Log    ${log_message}    level=INFO
     END
     
     ${response}=    Create Dictionary    log=${log_message}    errors=${ERROR_RESULTS}    error_count=${error_count}    status=${status}
@@ -316,10 +281,6 @@ Build Response Message
 
 Download All PDF Files
     ${pdf_buttons_count}=    Get Element Count    xpath=${XPATH_MODAL_CANHOTO}//button[contains(@ng-click, 'buscarArquivo') and contains(., 'Pdf')]
-    
-    # Use the same download directory path as configured in browser.resource
-    # From resources/pod_download: go up 4 levels to workspace root, then to shared/downloads
-    # Same calculation as browser.resource: ${CURDIR}/../../../../shared/downloads
     ${download_dir}=    Evaluate    os.path.abspath(os.path.normpath(os.path.join(r"${CURDIR}", "..", "..", "..", "..", "shared", "downloads")))    os
     
     ${download_dir_exists}=    Run Keyword And Return Status    Directory Should Exist    ${download_dir}
@@ -327,20 +288,14 @@ Download All PDF Files
         Create Directory    ${download_dir}
     END
     
-    Log    Using download directory: ${download_dir}    level=INFO
-    
     FOR    ${index}    IN RANGE    1    ${pdf_buttons_count} + 1
         ${button_xpath}=    Set Variable    (${XPATH_MODAL_CANHOTO}//button[contains(@ng-click, 'buscarArquivo') and contains(., 'Pdf')])[${index}]
         Wait Until Element Is Visible    xpath=${button_xpath}    timeout=5s
         ${is_enabled}=    Run Keyword And Return Status    Element Should Be Enabled    xpath=${button_xpath}
         IF    ${is_enabled}
-            # Browser downloads to download folder, so check there first
             ${existing_files}=    Evaluate    set([f for f in os.listdir(r"${download_dir}") if f.endswith('.pdf')])    os
             Click Element    xpath=${button_xpath}
-            # Wait for download in download folder (where browser saves)
             ${downloaded_file}=    Wait For Download To Complete    ${download_dir}    ${existing_files}    timeout=30s
-            # File is already in the correct location, no need to move
-            Log    File downloaded to: ${downloaded_file}    level=INFO
         END
     END
 
@@ -378,35 +333,25 @@ Move File To Folder
     [Arguments]    ${source_file}    ${target_dir}
     ${filename}=    Evaluate    os.path.basename(r"${source_file}")    os
     ${target_file}=    Evaluate    os.path.join(r"${target_dir}", r"${filename}")    os
-    
-    # Ensure target directory exists
     ${target_dir_exists}=    Run Keyword And Return Status    Directory Should Exist    ${target_dir}
     IF    not ${target_dir_exists}
         Create Directory    ${target_dir}
-        Log    Created target directory: ${target_dir}    level=INFO
     END
-    
-    # Verify source file exists
     ${source_exists}=    Run Keyword And Return Status    File Should Exist    ${source_file}
     IF    not ${source_exists}
         Fail    Source file does not exist: ${source_file}
     END
-    
-    # Move file to target directory
     ${moved}=    Run Keyword And Return Status    Move File    ${source_file}    ${target_file}
     IF    ${moved}
-        Log    Successfully moved ${filename} to ${target_dir}    level=INFO
         ${verify_moved}=    Run Keyword And Return Status    File Should Exist    ${target_file}
         IF    not ${verify_moved}
             Fail    File move reported success but target file not found: ${target_file}
         END
     ELSE
-        Log    Failed to move ${filename} to ${target_dir}, trying copy    level=WARN
         Copy File    ${source_file}    ${target_file}
         ${copied_exists}=    Run Keyword And Return Status    File Should Exist    ${target_file}
         IF    ${copied_exists}
             Remove File    ${source_file}
-            Log    Copied ${filename} to ${target_dir} and removed from source    level=INFO
         ELSE
             Fail    Failed to copy file to ${target_dir}
         END

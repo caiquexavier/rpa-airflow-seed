@@ -13,10 +13,10 @@ logger = logging.getLogger(__name__)
 
 def publish_execution_message(payload: dict) -> bool:
     """
-    Publish an execution message to RabbitMQ queue.
+    Publish RobotOperatorSaga message to RabbitMQ queue - pure function.
     
     Args:
-        payload: Dictionary containing exec_id, rpa_key_id, callback_url, rpa_request
+        payload: Dictionary containing robot_operator_saga_id, saga_id, robot_operator_id, robot_test_file, callback_path, rpa_request, robot_saga
         
     Returns:
         bool: True if published successfully, False otherwise
@@ -63,7 +63,8 @@ def publish_execution_message(payload: dict) -> bool:
                 
                 # Publish message
                 json_payload = json.dumps(payload, separators=(',', ':'), ensure_ascii=False)
-                logger.info(f"Publishing message to queue '{queue}': exec_id={payload.get('exec_id')}, payload_size={len(json_payload)} bytes")
+                robot_saga_id = payload.get('robot_operator_saga_id') or payload.get('saga_id', 'unknown')
+                logger.info(f"Publishing message to queue '{queue}': robot_operator_saga_id={robot_saga_id}, payload_size={len(json_payload)} bytes")
                 channel.basic_publish(
                     exchange='',
                     routing_key=queue,
@@ -73,10 +74,11 @@ def publish_execution_message(payload: dict) -> bool:
                         delivery_mode=2  # Persistent message
                     )
                 )
-                logger.info(f"Message published successfully to queue '{queue}' for exec_id={payload.get('exec_id')}")
+                robot_saga_id = payload.get('robot_operator_saga_id') or payload.get('saga_id', 'unknown')
+                logger.info(f"Message published successfully to queue '{queue}' for robot_operator_saga_id={robot_saga_id}")
                 
                 connection.close()
-                logger.info(f"Connection closed. Published execution message for exec_id={payload.get('exec_id')}")
+                logger.info(f"Connection closed. Published RobotOperatorSaga message for robot_operator_saga_id={robot_saga_id}")
                 return True
                 
             except Exception as connect_error:

@@ -1,0 +1,520 @@
+{
+  "nodes": [
+    {
+      "id": "StartEvent_1",
+      "type": "start",
+      "position": {
+        "x": 100,
+        "y": 300
+      },
+      "data": {
+        "label": "Manual DAG Trigger",
+        "type": "start",
+        "notes": "Manual trigger point for the workflow. Initiated by user or scheduler."
+      },
+      "draggable": true,
+      "selectable": true,
+      "connectable": true
+    },
+    {
+      "id": "Task_ReadInputXLS",
+      "type": "task",
+      "position": {
+        "x": 450,
+        "y": 300
+      },
+      "data": {
+        "label": "read_input_xls",
+        "type": "task",
+        "notes": "Reads input Excel file containing protocol data for processing.",
+        "rpa": {
+          "metadata": {
+            "icon": "file",
+            "category": "data-input",
+            "service": "airflow"
+          }
+        }
+      },
+      "draggable": true,
+      "selectable": true,
+      "connectable": true
+    },
+    {
+      "id": "Task_PostToAPI",
+      "type": "task",
+      "position": {
+        "x": 800,
+        "y": 300
+      },
+      "data": {
+        "label": "execute_signa_download_nf",
+        "type": "task",
+        "notes": "Executes Signa integration to download NF (Nota Fiscal) documents.",
+        "rpa": {
+          "metadata": {
+            "icon": "integration",
+            "category": "integration",
+            "service": "airflow"
+          }
+        }
+      },
+      "draggable": true,
+      "selectable": true,
+      "connectable": true
+    },
+    {
+      "id": "Task_CreateExecution",
+      "type": "task",
+      "position": {
+        "x": 1150,
+        "y": 300
+      },
+      "data": {
+        "label": "RPA API: Create Execution",
+        "type": "task",
+        "notes": "Creates a new execution record in the RPA API system.",
+        "rpa": {
+          "rpa_key_id": "create_execution",
+          "saga_step": 1,
+          "saga_event": "execution_created",
+          "metadata": {
+            "icon": "api",
+            "category": "api",
+            "service": "rpa-api",
+            "endpoint": "/api/executions"
+          }
+        }
+      },
+      "draggable": true,
+      "selectable": true,
+      "connectable": true
+    },
+    {
+      "id": "Task_PublishToQueue",
+      "type": "task",
+      "position": {
+        "x": 1500,
+        "y": 300
+      },
+      "data": {
+        "label": "Publish to RabbitMQ",
+        "type": "task",
+        "notes": "Publishes execution message to RabbitMQ queue for robot processing.",
+        "rpa": {
+          "metadata": {
+            "icon": "rabbitmq",
+            "category": "messaging",
+            "service": "airflow",
+            "queue": "rpa_execution_queue"
+          }
+        }
+      },
+      "draggable": true,
+      "selectable": true,
+      "connectable": true
+    },
+    {
+      "id": "Task_ConsumeMessage",
+      "type": "task",
+      "position": {
+        "x": 1850,
+        "y": 300
+      },
+      "data": {
+        "label": "RPA Listener: Consume Message",
+        "type": "task",
+        "notes": "RPA Listener service consumes message from RabbitMQ and prepares robot execution.",
+        "rpa": {
+          "metadata": {
+            "icon": "rabbitmq",
+            "category": "messaging",
+            "service": "rpa-listener"
+          }
+        }
+      },
+      "draggable": true,
+      "selectable": true,
+      "connectable": true
+    },
+    {
+      "id": "SubProcess_RobotExecution",
+      "type": "subprocess",
+      "position": {
+        "x": 2200,
+        "y": 200
+      },
+      "data": {
+        "label": "Robot Framework Execution",
+        "type": "subprocess",
+        "notes": "Subprocess containing Robot Framework automation tasks. Executes the actual RPA robot workflow.",
+        "rpa": {
+          "rpa_key_id": "robot_execution",
+          "saga_step": 2,
+          "saga_event": "robot_started",
+          "metadata": {
+            "icon": "robot-framework",
+            "category": "robot",
+            "service": "rpa-robots",
+            "is_subprocess": true,
+            "subprocess_type": "robot-framework"
+          }
+        },
+        "steps": [
+          {
+            "id": "Robot_StartBrowser",
+            "label": "Start Browser",
+            "type": "task",
+            "notes": "Initializes and starts the browser session for automation.",
+            "rpa": {
+              "metadata": {
+                "icon": "task",
+                "category": "robot",
+                "service": "rpa-robots"
+              }
+            }
+          },
+          {
+            "id": "Robot_LoginToECargo",
+            "label": "Login To e-Cargo",
+            "type": "task",
+            "notes": "Authenticates user credentials to access the e-Cargo system.",
+            "rpa": {
+              "metadata": {
+                "icon": "task",
+                "category": "robot",
+                "service": "rpa-robots"
+              }
+            }
+          },
+          {
+            "id": "Robot_OpenOperacionalMenu",
+            "label": "Open Operacional Menu",
+            "type": "task",
+            "notes": "Navigates to the operational menu section in the e-Cargo application.",
+            "rpa": {
+              "metadata": {
+                "icon": "task",
+                "category": "robot",
+                "service": "rpa-robots"
+              }
+            }
+          },
+          {
+            "id": "Robot_OpenRegistroCanhotosSubmenu",
+            "label": "Open Registro De Canhotos Submenu",
+            "type": "task",
+            "notes": "Opens the 'Registro de Canhotos' submenu within the operational section.",
+            "rpa": {
+              "metadata": {
+                "icon": "task",
+                "category": "robot",
+                "service": "rpa-robots"
+              }
+            }
+          },
+          {
+            "id": "Robot_ProcessNotaFiscalArray",
+            "label": "Process Nota Fiscal Array From Variables",
+            "type": "task",
+            "notes": "Processes the array of Nota Fiscal documents from variables, executing the main automation workflow.",
+            "rpa": {
+              "metadata": {
+                "icon": "task",
+                "category": "robot",
+                "service": "rpa-robots"
+              }
+            }
+          },
+          {
+            "id": "Robot_CloseBrowser",
+            "label": "Close Browser",
+            "type": "task",
+            "notes": "Closes the browser session and cleans up resources after automation completion.",
+            "rpa": {
+              "metadata": {
+                "icon": "task",
+                "category": "robot",
+                "service": "rpa-robots"
+              }
+            }
+          }
+        ]
+      },
+      "draggable": true,
+      "selectable": true,
+      "connectable": true
+    },
+    {
+      "id": "Gateway_1",
+      "type": "gateway",
+      "position": {
+        "x": 2550,
+        "y": 300
+      },
+      "data": {
+        "label": "Robot Result",
+        "type": "gateway",
+        "notes": "Decision gateway evaluating robot execution result (success/failure).",
+        "rpa": {
+          "metadata": {
+            "category": "decision"
+          }
+        }
+      },
+      "draggable": true,
+      "selectable": true,
+      "connectable": true
+    },
+    {
+      "id": "Task_UpdateSaga",
+      "type": "task",
+      "position": {
+        "x": 2900,
+        "y": 300
+      },
+      "data": {
+        "label": "Update SAGA",
+        "type": "task",
+        "notes": "Updates the SAGA orchestration state based on robot execution result.",
+        "rpa": {
+          "saga_step": 3,
+          "saga_event": "saga_updated",
+          "metadata": {
+            "icon": "api",
+            "category": "orchestration",
+            "service": "rpa-api"
+          }
+        }
+      },
+      "draggable": true,
+      "selectable": true,
+      "connectable": true
+    },
+    {
+      "id": "Task_CallWebhook",
+      "type": "task",
+      "position": {
+        "x": 3250,
+        "y": 300
+      },
+      "data": {
+        "label": "Call Webhook to RPA API",
+        "type": "task",
+        "notes": "Calls webhook endpoint in RPA API to notify about execution status.",
+        "rpa": {
+          "callback_url": "/api/webhooks/execution-status",
+          "metadata": {
+            "icon": "webhook",
+            "category": "webhook",
+            "service": "rpa-api"
+          }
+        }
+      },
+      "draggable": true,
+      "selectable": true,
+      "connectable": true
+    },
+    {
+      "id": "Task_UpdateExecution",
+      "type": "task",
+      "position": {
+        "x": 3600,
+        "y": 300
+      },
+      "data": {
+        "label": "RPA API: Update Execution",
+        "type": "task",
+        "notes": "Updates execution record in RPA API with final status and results.",
+        "rpa": {
+          "rpa_key_id": "update_execution",
+          "saga_step": 4,
+          "saga_event": "execution_updated",
+          "metadata": {
+            "icon": "api",
+            "category": "api",
+            "service": "rpa-api",
+            "endpoint": "/api/executions/{id}"
+          }
+        }
+      },
+      "draggable": true,
+      "selectable": true,
+      "connectable": true
+    },
+    {
+      "id": "Task_CallAirflowCallback",
+      "type": "task",
+      "position": {
+        "x": 3950,
+        "y": 300
+      },
+      "data": {
+        "label": "Call Airflow Callback",
+        "type": "task",
+        "notes": "Calls back to Airflow DAG to update task status and trigger next steps.",
+        "rpa": {
+          "callback_url": "/airflow/callback",
+          "metadata": {
+            "icon": "callback",
+            "category": "callback",
+            "service": "airflow"
+          }
+        }
+      },
+      "draggable": true,
+      "selectable": true,
+      "connectable": true
+    },
+    {
+      "id": "Task_WaitForWebhook",
+      "type": "task",
+      "position": {
+        "x": 4300,
+        "y": 300
+      },
+      "data": {
+        "label": "wait_for_webhook",
+        "type": "task",
+        "notes": "Waits for external webhook confirmation before proceeding to file upload.",
+        "rpa": {
+          "metadata": {
+            "icon": "webhook",
+            "category": "wait",
+            "service": "airflow",
+            "timeout": 300
+          }
+        }
+      },
+      "draggable": true,
+      "selectable": true,
+      "connectable": true
+    },
+    {
+      "id": "Task_UploadToS3",
+      "type": "task",
+      "position": {
+        "x": 4650,
+        "y": 300
+      },
+      "data": {
+        "label": "upload_nf_files_to_s3",
+        "type": "task",
+        "notes": "Uploads processed NF (Nota Fiscal) files to AWS S3 storage.",
+        "rpa": {
+          "metadata": {
+            "icon": "s3",
+            "category": "storage",
+            "service": "airflow",
+            "storage_type": "s3"
+          }
+        }
+      },
+      "draggable": true,
+      "selectable": true,
+      "connectable": true
+    },
+    {
+      "id": "EndEvent_1",
+      "type": "end",
+      "position": {
+        "x": 5000,
+        "y": 300
+      },
+      "data": {
+        "label": "Process Complete",
+        "type": "end",
+        "notes": "Process completion endpoint. All tasks have been successfully executed."
+      },
+      "draggable": true,
+      "selectable": true,
+      "connectable": true
+    }
+  ],
+  "edges": [
+    {
+      "id": "StartEvent_1->Task_ReadInputXLS-0",
+      "source": "StartEvent_1",
+      "target": "Task_ReadInputXLS",
+      "type": "smoothstep"
+    },
+    {
+      "id": "Task_ReadInputXLS->Task_PostToAPI-0",
+      "source": "Task_ReadInputXLS",
+      "target": "Task_PostToAPI",
+      "type": "smoothstep"
+    },
+    {
+      "id": "Task_PostToAPI->Task_CreateExecution-0",
+      "source": "Task_PostToAPI",
+      "target": "Task_CreateExecution",
+      "type": "smoothstep"
+    },
+    {
+      "id": "Task_CreateExecution->Task_PublishToQueue-0",
+      "source": "Task_CreateExecution",
+      "target": "Task_PublishToQueue",
+      "type": "smoothstep"
+    },
+    {
+      "id": "Task_PublishToQueue->Task_ConsumeMessage-0",
+      "source": "Task_PublishToQueue",
+      "target": "Task_ConsumeMessage",
+      "type": "smoothstep"
+    },
+    {
+      "id": "Task_ConsumeMessage->SubProcess_RobotExecution-0",
+      "source": "Task_ConsumeMessage",
+      "target": "SubProcess_RobotExecution",
+      "type": "smoothstep"
+    },
+    {
+      "id": "SubProcess_RobotExecution->Gateway_1-0",
+      "source": "SubProcess_RobotExecution",
+      "target": "Gateway_1",
+      "type": "smoothstep"
+    },
+    {
+      "id": "Gateway_1->Task_UpdateSaga-0",
+      "source": "Gateway_1",
+      "target": "Task_UpdateSaga",
+      "type": "smoothstep"
+    },
+    {
+      "id": "Task_UpdateSaga->Task_CallWebhook-0",
+      "source": "Task_UpdateSaga",
+      "target": "Task_CallWebhook",
+      "type": "smoothstep"
+    },
+    {
+      "id": "Task_CallWebhook->Task_UpdateExecution-0",
+      "source": "Task_CallWebhook",
+      "target": "Task_UpdateExecution",
+      "type": "smoothstep"
+    },
+    {
+      "id": "Task_UpdateExecution->Task_CallAirflowCallback-0",
+      "source": "Task_UpdateExecution",
+      "target": "Task_CallAirflowCallback",
+      "type": "smoothstep"
+    },
+    {
+      "id": "Task_CallAirflowCallback->Task_WaitForWebhook-0",
+      "source": "Task_CallAirflowCallback",
+      "target": "Task_WaitForWebhook",
+      "type": "smoothstep"
+    },
+    {
+      "id": "Task_WaitForWebhook->Task_UploadToS3-0",
+      "source": "Task_WaitForWebhook",
+      "target": "Task_UploadToS3",
+      "type": "smoothstep"
+    },
+    {
+      "id": "Task_UploadToS3->EndEvent_1-0",
+      "source": "Task_UploadToS3",
+      "target": "EndEvent_1",
+      "type": "smoothstep"
+    }
+  ]
+}
+
