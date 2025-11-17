@@ -278,6 +278,9 @@ services:
       RPA_DB_USER: ${RPA_DB_USER:-airflow}
       RPA_DB_PASSWORD: ${RPA_DB_PASSWORD:-airflow}
       RPA_DB_NAME: ${RPA_DB_NAME:-rpa_db}
+    volumes:
+      - ./shared/data:/opt/airflow/data
+      - ./shared/downloads:/opt/airflow/downloads
     depends_on:
       postgres:
         condition: service_healthy

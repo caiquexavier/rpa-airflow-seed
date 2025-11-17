@@ -13,6 +13,7 @@ load_dotenv()
 from .presentation.dtos.errors import create_validation_error_response, create_internal_error_response
 from .presentation.routers.saga_router import router as saga_router
 from .presentation.routers.robot_operator_saga_router import router as robot_operator_saga_router
+from .presentation.routers.ocr_pdf_router import router as ocr_pdf_router
 
 # Configure logging
 logging.basicConfig(
@@ -28,6 +29,7 @@ app = FastAPI(title="rpa-api")
 # Include routers
 app.include_router(saga_router)
 app.include_router(robot_operator_saga_router)
+app.include_router(ocr_pdf_router)
 
 
 @app.exception_handler(ValidationError)

@@ -8,6 +8,7 @@ from airflow.operators.python import PythonOperator
 from operators.robot_framework_operator import RobotFrameworkOperator
 from operators.split_files_operator import SplitFilesOperator
 from operators.saga_operator import SagaOperator
+from operators.ocr_operator import OcrOperator
 from services.webhook import WebhookSensor
 from tasks.tasks_rpa_protocolo_devolucao import (
     convert_xls_to_json_task,
@@ -77,6 +78,16 @@ split_files_task = SplitFilesOperator(
     dag=dag,
 )
 
+# OCR PDF files task that processes split PDFs
+ocr_task = OcrOperator(
+    task_id="ocr_pdf_files",
+    folder_path="/opt/airflow/data/processar",
+    fields=None,  # None means extract only NF-E number
+    rpa_api_conn_id="rpa_api",
+    timeout=300,  # 5 minutes timeout per file
+    dag=dag,
+)
+
 # Final task to mark SAGA as completed
 complete_saga_task_op = SagaOperator(
     task_id="complete_saga",
@@ -85,5 +96,5 @@ complete_saga_task_op = SagaOperator(
 )
 
 # Define task dependencies
-start_saga_task >> convert_task >> robotFramework_task >> wait_for_webhook >> split_files_task >> complete_saga_task_op
+start_saga_task >> convert_task >> robotFramework_task >> wait_for_webhook >> split_files_task >> ocr_task >> complete_saga_task_op
 

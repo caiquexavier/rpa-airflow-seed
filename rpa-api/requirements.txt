@@ -5,6 +5,9 @@ pika
 python-dotenv
 psycopg2-binary
 requests
+pdf2image
+pytesseract
+Pillow
 
 # Code Quality Tools
 black>=23.12.0

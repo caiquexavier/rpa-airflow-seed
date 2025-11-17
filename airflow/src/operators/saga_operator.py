@@ -1,5 +1,7 @@
 # SAGA operator - Unified operator for starting and completing SAGA.
 import logging
+import shutil
+from pathlib import Path
 from typing import Any, Dict, Optional, Literal
 
 import requests
@@ -174,6 +176,45 @@ def validate_saga_response(api_response: Dict[str, Any]) -> None:
         )
 
 
+def cleanup_shared_folders() -> None:
+    """
+    Clean up temporary shared folders before starting a new saga. Pure function.
+    
+    Removes all files from:
+    - /opt/airflow/downloads (temporary download folder)
+    - /opt/airflow/data/processar (temporary processing folder)
+    """
+    folders_to_clean = [
+        Path("/opt/airflow/downloads"),
+        Path("/opt/airflow/data/processar")
+    ]
+    
+    for folder_path in folders_to_clean:
+        try:
+            if folder_path.exists() and folder_path.is_dir():
+                # Remove all files in the folder
+                files_removed = 0
+                for file_path in folder_path.iterdir():
+                    if file_path.is_file():
+                        file_path.unlink()
+                        files_removed += 1
+                    elif file_path.is_dir():
+                        shutil.rmtree(file_path)
+                        files_removed += 1
+                
+                if files_removed > 0:
+                    logger.info(f"Cleaned {files_removed} items from {folder_path}")
+                else:
+                    logger.debug(f"Folder {folder_path} was already empty")
+            else:
+                # Create folder if it doesn't exist
+                folder_path.mkdir(parents=True, exist_ok=True)
+                logger.info(f"Created folder {folder_path}")
+        except Exception as e:
+            logger.error(f"Error cleaning folder {folder_path}: {e}")
+            raise AirflowException(f"Failed to clean folder {folder_path}: {e}") from e
+
+
 # ============================================================================
 # Operator Class
 # ============================================================================
@@ -238,6 +279,10 @@ class SagaOperator(BaseOperator):
         # Get context values
         dag = context.get('dag')
         task_id = self.task_id or "start_saga"
+        
+        # Clean up temporary shared folders before starting saga
+        logger.info("Cleaning up temporary shared folders before starting saga")
+        cleanup_shared_folders()
 
         # Extract DAG context
         dag_context = extract_dag_context(context)
