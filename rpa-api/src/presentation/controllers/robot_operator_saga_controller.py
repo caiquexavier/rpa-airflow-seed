@@ -15,6 +15,7 @@ from ...infrastructure.repositories.robot_operator_saga_repository import (
 from ...infrastructure.event_store.robot_operator_saga_event_store import save_robot_operator_event
 from ...infrastructure.messaging.event_publisher import publish_task_event
 from ...infrastructure.adapters.rabbitmq_service import publish_execution_message
+from ...config.config import get_rabbitmq_config
 from ..dtos.robot_operator_saga_models import (
     CreateRobotOperatorSagaRequest,
     UpdateRobotOperatorSagaEventRequest,
@@ -119,16 +120,20 @@ def handle_create_robot_operator_saga(payload: CreateRobotOperatorSagaRequest) -
     rabbitmq_payload = _build_rabbitmq_payload(saga, robot_saga_dict)
     published = publish_execution_message(rabbitmq_payload)
     
+    # Get queue name from config
+    rabbitmq_config = get_rabbitmq_config()
+    queue_name = rabbitmq_config["RABBITMQ_ROUTING_KEY"]
+    
     # Record publishing to RabbitMQ as a RobotOperatorSaga event
     if published:
-        logger.info(f"Published RobotOperatorSaga {saga_id} to RobotOperatorQueue")
+        logger.info(f"Published RobotOperatorSaga {saga_id} to {queue_name}")
         
         # Add event for successful queue publishing
         publish_event_command = AddRobotOperatorSagaEventCommand(
             robot_operator_saga_id=saga_id,
             event_type="RobotOperatorSagaPublishedToQueue",
             event_data={
-                "queue": "RobotOperatorQueue",
+                "queue": queue_name,
                 "status": "published",
                 "payload_size": len(str(rabbitmq_payload))
             },
@@ -157,7 +162,7 @@ def handle_create_robot_operator_saga(payload: CreateRobotOperatorSagaRequest) -
             robot_operator_saga_id=saga_id,
             event_type="RobotOperatorSagaPublishFailed",
             event_data={
-                "queue": "RobotOperatorQueue",
+                "queue": queue_name,
                 "status": "failed",
                 "error": "Failed to publish to RabbitMQ queue"
             },

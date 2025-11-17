@@ -1,6 +1,4 @@
 """Saga event management service."""
-import json
-import sys
 from datetime import datetime
 from typing import Dict, Optional
 
@@ -58,8 +56,4 @@ def add_event_to_saga(saga: Dict, event: Dict, new_state: str) -> Dict:
     saga["current_state"] = new_state
     return saga
 
-
-def log_saga(saga: Dict, prefix: str = "INFO") -> None:
-    """Log saga as JSON."""
-    print(f"{prefix} RobotOperatorSaga: {json.dumps(saga, indent=2, ensure_ascii=False)}", file=sys.stdout)
 

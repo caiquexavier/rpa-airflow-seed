@@ -10,6 +10,8 @@ from airflow.utils.context import Context
 from airflow.utils.session import provide_session
 from sqlalchemy import desc
 
+from services.saga import get_saga_from_context, build_saga_event, send_saga_event_to_api, log_saga
+
 logger = logging.getLogger(__name__)
 
 
@@ -182,4 +184,52 @@ class WebhookSensor(BaseSensorOperator):
         # Status is SUCCESS - store data and continue
         logger.info("[WebhookSensor] Status is SUCCESS - proceeding")
         context['ti'].xcom_push(key=self.output_key, value=webhook_data)
+        
+        # Update SAGA with webhook received event
+        saga = get_saga_from_context(context)
+        if saga and saga.get("saga_id"):
+            # Merge webhook_data saga if present (may have updated robot_sagas)
+            webhook_saga = webhook_data.get("saga")
+            if webhook_saga and isinstance(webhook_saga, dict):
+                # Merge robot_sagas if present in webhook
+                if "robot_sagas" in webhook_saga:
+                    saga["robot_sagas"] = webhook_saga["robot_sagas"]
+                # Merge any other updated fields
+                for key in ["current_state", "data", "rpa_key_id"]:
+                    if key in webhook_saga:
+                        saga[key] = webhook_saga[key]
+            
+            # Ensure events list exists
+            if "events" not in saga:
+                saga["events"] = []
+            
+            # Build event for webhook received
+            event = build_saga_event(
+                event_type="TaskCompleted",
+                event_data={
+                    "step": "webhook_received",
+                    "status": "SUCCESS",
+                    "webhook_status": status_upper,
+                    "target_task_id": self.target_task_id,
+                    "robot_operator_saga_id": webhook_data.get("robot_operator_saga", {}).get("robot_operator_saga_id") if isinstance(webhook_data.get("robot_operator_saga"), dict) else None
+                },
+                context=context,
+                task_id=self.task_id
+            )
+            saga["events"].append(event)
+            
+            # Send event to rpa-api
+            send_saga_event_to_api(saga, event, rpa_api_conn_id="rpa_api")
+            
+            # Update events_count
+            saga["events_count"] = len(saga["events"])
+            
+            # Push updated SAGA back to XCom
+            task_instance = context.get('task_instance')
+            if task_instance:
+                task_instance.xcom_push(key="saga", value=saga)
+                task_instance.xcom_push(key="rpa_payload", value=saga)  # Backward compatibility
+            
+            log_saga(saga, task_id=self.task_id)
+        
         return result

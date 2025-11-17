@@ -33,6 +33,9 @@ def call_callback_webhook(
 def _build_webhook_url(callback_path: str) -> str:
     """Build webhook URL from callback path."""
     api_base_url = os.getenv("AIRFLOW_API_BASE_URL", "http://localhost:8000")
+    # If running outside Docker, replace airflow-webserver with localhost
+    if "airflow-webserver" in api_base_url:
+        api_base_url = api_base_url.replace("airflow-webserver", "localhost")
     if not api_base_url.endswith('/'):
         api_base_url = api_base_url.rstrip('/')
     return f"{api_base_url}{callback_path}"

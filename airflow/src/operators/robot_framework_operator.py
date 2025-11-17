@@ -3,11 +3,11 @@ from typing import Any, Dict, Optional
 
 from airflow.exceptions import AirflowException
 from airflow.hooks.base import BaseHook
-from airflow.models import BaseOperator, Variable
+from airflow.models import BaseOperator
 from airflow.utils.context import Context
 
-from libs.rpa_robot_executor import build_api_url, build_callback_url, execute_robot_business_flow
-from services.saga import get_saga_from_context, log_saga
+from libs.rpa_robot_executor import build_api_url, execute_robot_business_flow
+from services.saga import get_saga_from_context, log_saga, build_saga_event, send_saga_event_to_api
 
 
 class RobotFrameworkOperator(BaseOperator):
@@ -66,7 +66,68 @@ class RobotFrameworkOperator(BaseOperator):
                 robot_test_file=self.robot_test_file,
                 timeout=self.timeout
             )
+            
+            # Update SAGA with robot execution started event
+            if saga and saga.get("saga_id"):
+                # Ensure events list exists
+                if "events" not in saga:
+                    saga["events"] = []
+                
+                # Build event for robot execution start
+                event = build_saga_event(
+                    event_type="TaskStarted",
+                    event_data={
+                        "step": "robot_execution",
+                        "status": "STARTED",
+                        "robot_test_file": self.robot_test_file,
+                        "robot_operator_id": robot_operator_id,
+                        "callback_path": self.callback_path
+                    },
+                    context=context,
+                    task_id=self.task_id
+                )
+                saga["events"].append(event)
+                
+                # Send event to rpa-api
+                send_saga_event_to_api(saga, event, rpa_api_conn_id=self.rpa_api_conn_id)
+                
+                # Update events_count
+                saga["events_count"] = len(saga["events"])
+                
+                # Push updated SAGA back to XCom
+                task_instance = context.get('task_instance')
+                if task_instance:
+                    task_instance.xcom_push(key="saga", value=saga)
+                    task_instance.xcom_push(key="rpa_payload", value=saga)  # Backward compatibility
+                
+                log_saga(saga, task_id=self.task_id)
         except Exception as e:
+            # Update SAGA with failure event
+            if saga and saga.get("saga_id"):
+                if "events" not in saga:
+                    saga["events"] = []
+                
+                event = build_saga_event(
+                    event_type="TaskFailed",
+                    event_data={
+                        "step": "robot_execution",
+                        "status": "FAILED",
+                        "error": str(e),
+                        "robot_test_file": self.robot_test_file
+                    },
+                    context=context,
+                    task_id=self.task_id
+                )
+                saga["events"].append(event)
+                send_saga_event_to_api(saga, event, rpa_api_conn_id=self.rpa_api_conn_id)
+                saga["events_count"] = len(saga["events"])
+                saga["current_state"] = "FAILED"
+                
+                task_instance = context.get('task_instance')
+                if task_instance:
+                    task_instance.xcom_push(key="saga", value=saga)
+                    task_instance.xcom_push(key="rpa_payload", value=saga)
+            
             raise AirflowException(f"Failed to create RobotOperatorSaga: {e}") from e
 
         return result

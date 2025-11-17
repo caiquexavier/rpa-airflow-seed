@@ -9,6 +9,7 @@ apache-airflow-providers-microsoft-winrm<3.0.0
 pandas
 openpyxl
 xlrd
+pypdf
 
 # HTTP & API
 requests

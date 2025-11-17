@@ -78,6 +78,7 @@ services:
       - ./airflow/src/libs:/opt/airflow/src/libs
       - ./airflow/src/tasks:/opt/airflow/src/tasks
       - ./shared/data:/opt/airflow/data
+      - ./shared/downloads:/opt/airflow/downloads
     depends_on:
       postgres:
         condition: service_healthy
@@ -146,6 +147,7 @@ services:
       - ./airflow/src/libs:/opt/airflow/src/libs
       - ./airflow/src/tasks:/opt/airflow/src/tasks
       - ./shared/data:/opt/airflow/data
+      - ./shared/downloads:/opt/airflow/downloads
     depends_on:
       postgres:
         condition: service_healthy
@@ -230,6 +232,7 @@ services:
       - ./airflow/src/libs:/opt/airflow/src/libs
       - ./airflow/src/tasks:/opt/airflow/src/tasks
       - ./shared/data:/opt/airflow/data
+      - ./shared/downloads:/opt/airflow/downloads
     depends_on:
       postgres:
         condition: service_healthy
@@ -269,7 +272,7 @@ services:
       RABBITMQ_USER: ${RABBITMQ_DEFAULT_USER:-admin}
       RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS:-admin}
       RABBITMQ_EXCHANGE: ${RABBITMQ_EXCHANGE:-}
-      RABBITMQ_ROUTING_KEY: ${RABBITMQ_ROUTING_KEY:-rpa_events}
+      RABBITMQ_ROBOT_OPERATOR_QUEUE: ${RABBITMQ_ROBOT_OPERATOR_QUEUE}
       RPA_DB_HOST: ${RPA_DB_HOST:-postgres}
       RPA_DB_PORT: ${RPA_DB_PORT:-5432}
       RPA_DB_USER: ${RPA_DB_USER:-airflow}

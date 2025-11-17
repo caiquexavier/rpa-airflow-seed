@@ -86,7 +86,7 @@ try {
     if (-not $env:RABBITMQ_PORT) { $missingVars += "RABBITMQ_PORT" }
     if (-not $env:RABBITMQ_DEFAULT_USER) { $missingVars += "RABBITMQ_DEFAULT_USER" } else { $env:RABBITMQ_USER = $env:RABBITMQ_DEFAULT_USER }
     if (-not $env:RABBITMQ_DEFAULT_PASS) { $missingVars += "RABBITMQ_DEFAULT_PASS" } else { $env:RABBITMQ_PASSWORD = $env:RABBITMQ_DEFAULT_PASS }
-    if (-not $env:RABBITMQ_QUEUE) { $missingVars += "RABBITMQ_QUEUE" }
+    if (-not $env:RABBITMQ_ROBOT_OPERATOR_QUEUE) { $missingVars += "RABBITMQ_ROBOT_OPERATOR_QUEUE" }
 
     if ($missingVars.Count -gt 0) {
         Write-Host "ERROR: Missing required variables: $($missingVars -join ', ')" -ForegroundColor Red

@@ -28,6 +28,6 @@ def load_rabbitmq_config() -> RabbitMQConfig:
         host=get_required_env('RABBITMQ_HOST'),
         user=get_required_env('RABBITMQ_USER'),
         password=get_required_env('RABBITMQ_PASSWORD'),
-        queue=get_env('RABBITMQ_QUEUE', 'RobotOperatorQueue')
+        queue=get_required_env('RABBITMQ_ROBOT_OPERATOR_QUEUE')
     )
 

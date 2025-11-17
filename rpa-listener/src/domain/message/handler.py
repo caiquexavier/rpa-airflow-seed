@@ -1,6 +1,5 @@
 """Message handler for RobotOperatorSaga messages."""
 import logging
-import sys
 from pathlib import Path
 from typing import Dict, Optional
 
@@ -9,8 +8,7 @@ from ..robot.response_builder import build_rpa_response
 from ..robot.step_results import extract_top_level_step_results, StepResult
 from ..saga.manager import (
     create_robot_event,
-    add_event_to_saga,
-    log_saga
+    add_event_to_saga
 )
 from ...infrastructure.http.api_client import update_robot_operator_saga
 from ...infrastructure.http.webhook_client import call_callback_webhook
@@ -45,8 +43,6 @@ def handle_message(
             "callback_path": callback_path,
         },
     )
-    
-    log_saga(robot_saga)
     
     robot_test_path = _determine_test_file_path(tests_path, robot_test_file, robot_operator_id)
     logger.debug("Resolved robot test path: %s", robot_test_path)
@@ -88,7 +84,6 @@ def handle_message(
         )
         new_state = "COMPLETED" if success else "FAILED"
         robot_saga = add_event_to_saga(robot_saga, robot_event, new_state)
-        log_saga(robot_saga)
     except Exception as saga_error:
         logger.exception("Failed to append robot event to saga: %s", saga_error)
     
