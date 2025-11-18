@@ -278,6 +278,8 @@ services:
       RPA_DB_USER: ${RPA_DB_USER:-airflow}
       RPA_DB_PASSWORD: ${RPA_DB_PASSWORD:-airflow}
       RPA_DB_NAME: ${RPA_DB_NAME:-rpa_db}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_MODEL_NAME: ${OPENAI_MODEL_NAME:-gpt-4o-mini}
     volumes:
       - ./shared/data:/opt/airflow/data
       - ./shared/downloads:/opt/airflow/downloads

@@ -138,7 +138,7 @@ try {
     Write-Host "Generated .env file: $rootEnvPath" -ForegroundColor Green
     
     # Verify critical variables
-    $criticalVars = @("POSTGRES_USER", "POSTGRES_PASSWORD", "POSTGRES_DB", "AIRFLOW__DATABASE__SQL_ALCHEMY_CONN", "AIRFLOW_CORE_FERNET_KEY", "AIRFLOW__WEBSERVER__SECRET_KEY", "AIRFLOW_WWW_USER_USERNAME", "AIRFLOW_WWW_USER_PASSWORD", "RABBITMQ_DEFAULT_USER", "RABBITMQ_DEFAULT_PASS", "RPA_DB_USER", "RPA_DB_PASSWORD", "RPA_DB_NAME")
+    $criticalVars = @("POSTGRES_USER", "POSTGRES_PASSWORD", "POSTGRES_DB", "AIRFLOW__DATABASE__SQL_ALCHEMY_CONN", "AIRFLOW_CORE_FERNET_KEY", "AIRFLOW__WEBSERVER__SECRET_KEY", "AIRFLOW_WWW_USER_USERNAME", "AIRFLOW_WWW_USER_PASSWORD", "RABBITMQ_DEFAULT_USER", "RABBITMQ_DEFAULT_PASS", "RPA_DB_USER", "RPA_DB_PASSWORD", "RPA_DB_NAME", "OPENAI_API_KEY")
     $missing = $criticalVars | Where-Object { [string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($_, "Process")) }
     
     if ($missing.Count -gt 0) {

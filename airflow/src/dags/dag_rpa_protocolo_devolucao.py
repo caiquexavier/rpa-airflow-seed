@@ -6,9 +6,9 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 
 from operators.robot_framework_operator import RobotFrameworkOperator
-from operators.split_files_operator import SplitFilesOperator
+from operators.pdf_functions_operator import PdfFunctionsOperator
 from operators.saga_operator import SagaOperator
-from operators.ocr_operator import OcrOperator
+from operators.gpt_pdf_extractor_operator import GptPdfExtractorOperator
 from services.webhook import WebhookSensor
 from tasks.tasks_rpa_protocolo_devolucao import (
     convert_xls_to_json_task,
@@ -70,19 +70,21 @@ wait_for_webhook = WebhookSensor(
 )
 
 # Split PDF files task that executes after webhook is validated
-split_files_task = SplitFilesOperator(
+split_files_task = PdfFunctionsOperator(
     task_id="split_pdf_files",
     folder_path="/opt/airflow/downloads",
     output_dir="/opt/airflow/data/processar",
+    functions=["split"],
     overwrite=True,  # Always overwrite existing files
     dag=dag,
 )
 
-# OCR PDF files task that processes split PDFs
-ocr_task = OcrOperator(
-    task_id="ocr_pdf_files",
+# GPT PDF Extractor task: rotates PDFs and extracts all fields using GPT
+gpt_pdf_extractor_task = GptPdfExtractorOperator(
+    task_id="extract_pdf_fields",
     folder_path="/opt/airflow/data/processar",
-    fields=None,  # None means extract only NF-E number
+    output_dir="/opt/airflow/data/processado",  # Directory where rotated PDFs will be saved
+    fields=None,  # None means extract all identifiable fields with GPT
     rpa_api_conn_id="rpa_api",
     timeout=300,  # 5 minutes timeout per file
     dag=dag,
@@ -96,5 +98,5 @@ complete_saga_task_op = SagaOperator(
 )
 
 # Define task dependencies
-start_saga_task >> convert_task >> robotFramework_task >> wait_for_webhook >> split_files_task >> ocr_task >> complete_saga_task_op
+start_saga_task >> convert_task >> robotFramework_task >> wait_for_webhook >> split_files_task >> gpt_pdf_extractor_task >> complete_saga_task_op
 

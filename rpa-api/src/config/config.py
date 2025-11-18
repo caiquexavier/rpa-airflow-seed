@@ -32,3 +32,13 @@ def get_postgres_dsn() -> str:
     password = _get_required_env("RPA_DB_PASSWORD")
     dbname = _get_required_env("RPA_DB_NAME")
     return f"postgresql://{user}:{password}@{host}:{port}/{dbname}"
+
+
+def get_openai_api_key() -> str:
+    """Get OpenAI API key from environment variables."""
+    return _get_required_env("OPENAI_API_KEY")
+
+
+def get_openai_model_name() -> str:
+    """Get OpenAI model name from environment variables, with safe default."""
+    return os.getenv("OPENAI_MODEL_NAME", "gpt-4o-mini")

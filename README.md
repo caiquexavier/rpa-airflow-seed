@@ -448,6 +448,8 @@ The following environment variables must be present in the AWS secret:
 
 **RPA API:**
 - `RPA_API_PORT` (optional, default: 3000)
+- `OPENAI_API_KEY` (required for PDF extraction with GPT)
+- `OPENAI_MODEL_NAME` (optional, default: gpt-4o-mini)
 
 #### Loading Secrets
 

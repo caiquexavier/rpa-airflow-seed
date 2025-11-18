@@ -5,9 +5,9 @@ Library           Collections
 Library           OperatingSystem
 
 *** Variables ***
-${BASE_URL}    https://mrc-hml.signa.net.br/
+${BASE_URL}   https://ecargo.mercosulline.com.br/
 ${USUARIO}     RPA001
-${SENHA}       Terrific564#TOKIO
+${SENHA}       Mercosul@25@25
 ${NOTA_FISCAL}    5043156
 ${JSON_DATA}    ${EMPTY}
 ${rpa_request}    {"notas_fiscais": []}
