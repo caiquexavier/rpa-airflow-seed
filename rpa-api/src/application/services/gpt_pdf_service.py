@@ -2,6 +2,7 @@
 import json
 import logging
 import os
+import re
 import shutil
 from datetime import datetime
 from pathlib import Path
@@ -44,7 +45,11 @@ def gpt_pdf_extractor(
     2. Uses GPT to determine the best rotation AND extract all identifiable data in one prompt
     3. Applies the rotation to the PDF
     4. Saves the rotated PDF to output_path
-    5. Returns the rotated file path and extracted JSON data
+    5. Copies the file to organized folder based on extracted fields (doc_transportes and nf_e):
+       - Creates folder: {doc_transportes}/
+       - Copies file to: {doc_transportes}/{nf_e}.pdf (original file is kept in place)
+       - Trims leading zeros from nf_e
+    6. Returns the copied file path and extracted JSON data
     
     Args:
         file_path: Path to PDF file to process
@@ -52,7 +57,8 @@ def gpt_pdf_extractor(
         fields: Optional list of specific fields to extract. If None, extracts all identifiable fields.
         
     Returns:
-        Tuple of (rotated_file_path, extracted_data_dict)
+        Tuple of (organized_file_path, extracted_data_dict)
+        Note: organized_file_path may be the same as output_path if required fields are missing.
         
     Raises:
         FileNotFoundError: If PDF file does not exist
@@ -193,7 +199,10 @@ def gpt_pdf_extractor(
         else:
             logger.info(f"✓ PDF rotated by {rotation_needed}° to {best_rotation}° - should now be in readable position (left to right)")
         
-        return output_path, extracted_data
+        # Step 3: Organize file based on extracted fields
+        organized_file_path = _organize_file_by_extracted_fields(output_path, extracted_data)
+        
+        return organized_file_path, extracted_data
         
     finally:
         doc.close()
@@ -673,6 +682,122 @@ def _ask_gpt_vision_for_rotation_and_extraction(
         logger.error(f"OpenAI API error: {e}")
         logger.warning("Defaulting to 0° rotation and empty data")
         return 0, {}
+
+
+def _organize_file_by_extracted_fields(
+    file_path: str,
+    extracted_data: Dict[str, Any]
+) -> str:
+    """
+    Copy PDF file to organized folder based on extracted fields (doc_transportes and nf_e).
+    
+    Creates folder structure: {doc_transportes}/{nf_e}.pdf
+    where nf_e has leading zeros trimmed.
+    The original file is kept in place; a copy is created in the organized folder.
+    
+    Args:
+        file_path: Current path to the PDF file
+        extracted_data: Dictionary with extracted fields from GPT
+        
+    Returns:
+        New file path after organization (copy location), or original path if fields are missing
+    """
+    try:
+        # Extract required fields (strict: only doc_transportes/doc_transporte + nf_e variants)
+        doc_transportes = extracted_data.get("doc_transportes") or extracted_data.get("doc_transporte")
+        nf_e = extracted_data.get("nf_e") or extracted_data.get("nf") or extracted_data.get("nota_fiscal")
+        
+        # Check if both fields are available
+        if not doc_transportes or not nf_e:
+            logger.warning(
+                f"Cannot organize file: missing required fields. "
+                f"doc_transportes={doc_transportes}, nf_e={nf_e}. "
+                f"Available fields: {list(extracted_data.keys())}"
+            )
+            return file_path
+        
+        # Convert to string and clean
+        doc_transportes = str(doc_transportes).strip()
+        nf_e = str(nf_e).strip()
+        
+        # Trim leading zeros from nf_e
+        nf_e_trimmed = nf_e.lstrip('0') or '0'  # Keep at least one '0' if all are zeros
+        
+        # Sanitize folder and file names (remove invalid characters)
+        doc_transportes_clean = re.sub(r'[<>:"/\\|?*]', '_', doc_transportes)
+        nf_e_clean = re.sub(r'[<>:"/\\|?*]', '_', nf_e_trimmed)
+        
+        # Build new path structure: {doc_transportes}/{nf_e}.pdf
+        # Normalize paths to handle Windows/Linux differences
+        original_file = Path(file_path)
+        
+        # Resolve to absolute path, but handle case where file might not exist
+        try:
+            original_file = original_file.resolve()
+        except (OSError, RuntimeError):
+            # If resolve fails, use the path as-is
+            original_file = Path(file_path).absolute()
+        
+        base_dir = original_file.parent
+        new_folder = base_dir / doc_transportes_clean
+        new_filename = f"{nf_e_clean}.pdf"
+        new_file_path = new_folder / new_filename
+        
+        logger.info(f"Organizing file - Source: {original_file}, Target: {new_file_path}")
+        
+        # Create folder if it doesn't exist
+        try:
+            new_folder.mkdir(parents=True, exist_ok=True)
+            logger.info(f"Created/organized folder: {new_folder}")
+        except Exception as e:
+            logger.error(f"Failed to create folder {new_folder}: {e}")
+            return file_path
+        
+        # Normalize paths for comparison (use absolute paths)
+        original_path_str = str(original_file.absolute())
+        new_path_str = str(new_file_path.absolute())
+        
+        # Copy file to new location (keep original in place)
+        if original_path_str != new_path_str:
+            # Ensure source file exists before copying
+            if not original_file.exists():
+                logger.error(f"Source file does not exist: {original_file}")
+                return file_path
+            
+            # Check if target file already exists
+            if new_file_path.exists():
+                logger.warning(f"Target file already exists: {new_file_path}. Overwriting...")
+                try:
+                    new_file_path.unlink()
+                except Exception as e:
+                    logger.error(f"Failed to remove existing target file: {e}")
+                    return file_path
+            
+            # Perform the copy (copy2 preserves metadata)
+            try:
+                shutil.copy2(str(original_file), str(new_file_path))
+                logger.info(f"Copied file to organized location: {original_file} -> {new_file_path}")
+            except Exception as e:
+                logger.error(f"Failed to copy file: {e}")
+                logger.error(f"  Source exists: {original_file.exists()}, Source: {original_file}")
+                logger.error(f"  Target parent exists: {new_file_path.parent.exists()}, Target: {new_file_path}")
+                return file_path
+            
+            # Verify the copy was successful
+            if new_file_path.exists() and new_file_path.stat().st_size > 0:
+                logger.info(f"✓ File successfully copied to: {new_file_path} ({new_file_path.stat().st_size} bytes)")
+            else:
+                logger.error(f"✗ File copy verification failed - target does not exist or is empty: {new_file_path}")
+                return file_path
+        else:
+            logger.info(f"File already at organized location: {new_file_path}")
+        
+        return str(new_file_path.absolute())
+        
+    except Exception as e:
+        logger.error(f"Failed to organize file based on extracted fields: {e}")
+        logger.warning(f"Returning original file path: {file_path}")
+        return file_path
 
 
 def _ask_gpt_vision_for_data_extraction(
