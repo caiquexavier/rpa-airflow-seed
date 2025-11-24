@@ -49,26 +49,57 @@ mkdir -p results
 ### 6. Run Robot Framework tests
 ```bash
 # Run all tests
-robot -d results tests/
+robot -d results robot/tests/
 
-# Run specific test
-robot -d results tests/ecargo_pod_download.robot
+# Run specific test file
+robot -d results robot/tests/protocolo_devolucao_main.robot
+
+# Run specific test file
+robot -d results robot/tests/protocolo_devolucao_main.robot
+
+# Run with saga variables (from Airflow/listener)
+robot -d results -v EXEC_ID:123 -v RPA_KEY_ID:456 -v STEP_ID:step-01 robot/tests/protocolo_devolucao_main.robot
 
 # Run with specific browser
-robot -d results --variable BROWSER:chrome tests/
+robot -d results --variable BROWSER:chrome robot/tests/
 ```
 
-## Test Structure
-- **Tests Directory**: `tests/`
-- **Source Code**: `src/`
-  - `resources/` - Robot Framework resources
-    - `browser/` - Browser automation resources
-    - `pod_download/` - Pod download specific resources
-  - `browser/` - Browser traces and screenshots
-- **Results**: `results/` - Test execution results
+## Project Structure
+The project follows a clean, layered architecture:
+
+```
+robot/
+  tests/              # Test suites organized by domain
+    protocolo_devolucao_main.robot
+  resources/
+    infra/             # Infrastructure keywords (HTTP, browser, filesystem, UI, Windows)
+      browser_keywords.robot
+      http_keywords.robot
+      filesystem_keywords.robot
+      ui_keywords.robot
+      windows_keywords.robot
+    saga/              # Saga/CQRS orchestration keywords
+      saga_context_keywords.robot
+      saga_lifecycle_keywords.robot
+    domain/            # Domain-specific business keywords
+      protocolo_devolucao_keywords.robot
+  libs/                # Python libraries (pure functions)
+    saga_client.py
+    rpa_api_client.py
+    parsing_utils.py
+    loop_detector.py
+  variables/           # Environment and default variables
+    env_dev.robot
+    env_prod.robot
+    saga_defaults.robot
+  config/              # Documentation and configuration
+    README.md
+    robot_cli_examples.md
+results/               # Test execution results
+```
 
 ## Available Tests
-- `ecargo_pod_download.robot` - e-Cargo pod download automation
+- `protocolo_devolucao` - Protocolo de devolução automation (e-Cargo pod download)
 
 ## Test Results
 After execution, check the `results/` directory for:
@@ -88,10 +119,21 @@ docker run -v $(pwd)/results:/app/results rpa-robots
 ### General Issues
 - Ensure all dependencies are installed
 - Run `rfbrowser init` if browser initialization fails
-- Check that test files exist in `tests/` directory
+- Check that test files exist in `robot/tests/` directory
 - Verify browser resources are properly configured
 - Check logs in `results/` directory for detailed error information
 
-## Manual Test Execution
-You can also run individual test steps by examining the robot files and running them manually through the Robot Framework IDE or command line with specific options.
+## Documentation
+
+- **Project Structure**: See `robot/config/README.md` for detailed structure explanation
+- **CLI Examples**: See `robot/config/robot_cli_examples.md` for command-line usage examples
+
+## Integration
+
+Tests are executed by:
+- **Airflow**: Via `RobotFrameworkOperator` with saga context
+- **Listener**: Via `rpa-listener` which receives RabbitMQ messages and executes tests
+- **Manual**: Direct CLI execution (see examples above)
+
+All execution methods pass saga context variables (`EXEC_ID`, `RPA_KEY_ID`, `STEP_ID`, `data`) to enable saga/CQRS orchestration.
 

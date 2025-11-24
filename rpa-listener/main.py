@@ -33,7 +33,7 @@ def get_robot_paths():
     repo_root = Path(__file__).resolve().parent.parent
     project_path = repo_root / 'rpa-robots'
     robot_exe = project_path / 'venv' / 'Scripts' / 'robot.exe'
-    tests_path = project_path / 'tests'
+    tests_path = project_path / 'robot' / 'tests'
     results_dir = project_path / 'results'
     return {
         'project_path': project_path,

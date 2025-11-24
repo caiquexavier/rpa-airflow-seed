@@ -127,7 +127,7 @@ create_saga_task = HttpOperator(
   "exec_id": 123,
   "rpa_key_id": "rpa_protocolo_devolucao",
   "data": {
-    "notas_fiscais": []
+    "doc_transportes_list": []
   },
   "dag_config": {
     "dag_id": "rpa_protocolo_devolucao",

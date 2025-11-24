@@ -1,9 +1,8 @@
-"""GPT PDF Extractor operator - Processes PDF files using unified GPT service for rotation and extraction."""
+"""GPT PDF Extractor operator - Processes PDF files using GPT extraction API."""
 import json
 import logging
-import shutil
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 import requests
 from airflow.exceptions import AirflowException
@@ -13,6 +12,7 @@ from airflow.utils.context import Context
 
 from services.saga import get_saga_from_context, build_saga_event, send_saga_event_to_api, log_saga
 from libs.rpa_robot_executor import build_api_url
+from libs.pdf_field_map import get_pdf_field_map
 
 logger = logging.getLogger(__name__)
 
@@ -22,47 +22,42 @@ class GptPdfExtractorOperator(BaseOperator):
     Operator for processing PDF files using unified GPT service.
     
     This operator:
-    1. Calls unified GPT service endpoint `/rpa/pdf/rotate-and-extract` to rotate PDF and extract all data in one operation
-    2. Saves the rotated PDF files to output directory
-    3. Logs extracted data to Airflow logs
-    
-    The operator sends requests matching GptPdfRotateExtractInput DTO:
-    - file_path: Absolute path to PDF file
-    - output_path: Path where rotated PDF should be saved
-    - fields: Optional list of field names to extract (None = extract all identifiable fields)
-    
-    Expected response (GptPdfRotateExtractOutput):
-    - status: "SUCCESS" or "FAIL"
-    - rotated_file_path: Path to the rotated PDF file
-    - extracted_data: Dictionary with extracted field values
+    1. Calls the GPT extraction endpoint `/rpa/pdf/extract-gpt`
+    2. Uploads extracted data / logs result for each PDF
+    3. Assumes rotation has already been handled upstream (e.g., PdfFunctionsOperator)
     
     Args:
         folder_path: Path to directory containing PDF files to process
         output_dir: Path to directory where rotated PDFs will be saved
-        fields: Optional list of field names to extract. If None, extracts all identifiable fields
+        field_map: Optional dictionary mapping field names to descriptions/instructions.
+                  If None, uses the default PDF field map. If empty dict, GPT will identify all fields.
         rpa_api_conn_id: Connection ID for RPA API (default: "rpa_api")
-        endpoint: API endpoint for unified rotate-and-extract service (default: "/rpa/pdf/rotate-and-extract")
+        endpoint: API endpoint for GPT extraction service (default: "/rpa/pdf/extract-gpt")
         timeout: Request timeout in seconds (default: 300)
+        save_extracted_data: If True, saves extracted JSON to rpa_extracted_data table via rpa-api (default: False)
     """
 
     def __init__(
         self,
         folder_path: str,
         output_dir: str,
-        fields: Optional[List[str]] = None,
+        field_map: Optional[Dict[str, str]] = None,
         rpa_api_conn_id: str = "rpa_api",
-        endpoint: str = "/rpa/pdf/rotate-and-extract",
+        endpoint: str = "/rpa/pdf/extract-gpt",
         timeout: int = 300,
+        save_extracted_data: bool = False,
         task_id: Optional[str] = None,
         **kwargs
     ):
         super().__init__(task_id=task_id, **kwargs)
         self.folder_path = Path(folder_path).resolve()
         self.output_dir = Path(output_dir).resolve()
-        self.fields = fields
+        # Use provided field_map or default PDF field map
+        self.field_map = field_map if field_map is not None else get_pdf_field_map()
         self.rpa_api_conn_id = rpa_api_conn_id
         self.endpoint = endpoint
         self.timeout = timeout
+        self.save_extracted_data = save_extracted_data
 
     def execute(self, context: Context) -> Dict[str, Any]:
         """Process PDF files using unified GPT service for rotation and extraction."""
@@ -100,6 +95,11 @@ class GptPdfExtractorOperator(BaseOperator):
                 results.append(result)
                 processed_count += 1
                 logger.info("Successfully processed PDF: %s", pdf_file.name)
+                if saga and result.get("success") and result.get("extracted_data"):
+                    self._store_extracted_data_in_saga(saga, result["extracted_data"])
+                    # Save to rpa_extracted_data table if enabled
+                    if self.save_extracted_data:
+                        self._save_extracted_data_to_api(saga, result["extracted_data"])
             except Exception as e:
                 failed_count += 1
                 logger.error("Failed to process PDF %s: %s", pdf_file.name, e)
@@ -110,7 +110,6 @@ class GptPdfExtractorOperator(BaseOperator):
                 })
         
         logger.info("GptPdfExtractorOperator processed %d files successfully, %d failed", processed_count, failed_count)
-        
         # Update SAGA with PDF extraction operation event
         if saga:
             self._update_saga_with_event(
@@ -129,30 +128,29 @@ class GptPdfExtractorOperator(BaseOperator):
     
     def _process_pdf(self, pdf_file: Path, api_url: str) -> Dict[str, Any]:
         """
-        Process a single PDF file using unified GPT service.
-        
+        Process a single PDF file using GPT extraction service.
+
         Args:
             pdf_file: Path to PDF file
-            api_url: Full API URL for rotate-and-extract endpoint
-            
+            api_url: Full API URL for extraction endpoint
+
         Returns:
             Dictionary with extraction results
         """
         file_path = str(pdf_file.absolute())
         output_file_path = str(self.output_dir / pdf_file.name)
         
-        logger.info("Processing PDF %s with unified GPT service (endpoint: %s)", pdf_file.name, api_url)
+        logger.info("Processing PDF %s with GPT extraction service (endpoint: %s)", pdf_file.name, api_url)
         
         try:
-            # Build payload matching GptPdfRotateExtractInput DTO
             payload = {
                 "file_path": file_path,
                 "output_path": output_file_path,
-                "fields": self.fields if self.fields else None
+                "field_map": self.field_map if self.field_map else None
             }
             
-            logger.debug("Request payload: file_path=%s, output_path=%s, fields=%s", 
-                        file_path, output_file_path, self.fields)
+            logger.debug("Request payload: file_path=%s, output_path=%s, field_map_size=%s", 
+                        file_path, output_file_path, len(self.field_map) if self.field_map else 0)
             
             response = requests.post(
                 api_url,
@@ -163,56 +161,25 @@ class GptPdfExtractorOperator(BaseOperator):
             response.raise_for_status()
             result = response.json()
             
-            # Validate response structure (GptPdfRotateExtractOutput)
             status = result.get("status", "FAIL")
-            rotated_file_path = result.get("rotated_file_path")
-            extracted_data = result.get("extracted_data", {})
+            extracted_data = result.get("extracted") or result.get("extracted_data", {})
+            organized_file_path = result.get("organized_file_path") or output_file_path
             
-            if not rotated_file_path:
-                logger.warning("Service did not return rotated_file_path, using expected output path")
-                rotated_file_path = output_file_path
-            
-            # Normalize paths for comparison
-            rotated_path = Path(rotated_file_path).resolve()
-            expected_path = Path(output_file_path).resolve()
-            
-            # Verify rotated file exists at the returned path
-            if not rotated_path.exists():
-                logger.warning("Rotated file not found at returned path: %s, checking expected path: %s", 
-                             rotated_file_path, output_file_path)
-                if expected_path.exists():
-                    rotated_file_path = str(expected_path)
-                    rotated_path = expected_path
-                else:
-                    raise AirflowException(
-                        f"Rotated PDF not found at returned path {rotated_file_path} or expected path {output_file_path}"
-                    )
-            
-            # Move file if service saved it to a different location (defensive)
-            if rotated_path != expected_path:
-                logger.info("Moving rotated PDF from %s to %s", rotated_file_path, output_file_path)
-                shutil.move(str(rotated_path), output_file_path)
-                rotated_file_path = output_file_path
-            
-            # Verify final file exists
-            if not Path(output_file_path).exists():
-                raise AirflowException(f"Rotated PDF not found at final output path: {output_file_path}")
-            
-            # ENFORCE LOG: Log extracted data to Airflow logs
+            # Log extracted data to Airflow logs for observability
             extracted_json = json.dumps(extracted_data, indent=2, ensure_ascii=False)
             logger.info("=" * 80)
             logger.info("EXTRACTED DATA FOR %s:", pdf_file.name)
             logger.info("=" * 80)
             logger.info("\n%s", extracted_json)
             logger.info("=" * 80)
-            
+
             success = status == "SUCCESS"
             if not success:
                 logger.warning("Service returned status: %s (expected SUCCESS)", status)
             
             return {
                 "file_path": file_path,
-                "rotated_file_path": output_file_path,
+                "output_file_path": organized_file_path,
                 "success": success,
                 "status": status,
                 "extracted_data": extracted_data
@@ -257,7 +224,7 @@ class GptPdfExtractorOperator(BaseOperator):
                 "files_processed": files_processed,
                 "files_failed": files_failed,
                 "folder_path": str(self.folder_path),
-                "fields": self.fields
+                "field_map_size": len(self.field_map) if self.field_map else 0
             },
             context=context,
             task_id=self.task_id
@@ -282,4 +249,110 @@ class GptPdfExtractorOperator(BaseOperator):
         
         # Log SAGA
         log_saga(saga, task_id=self.task_id)
+
+    def _store_extracted_data_in_saga(self, saga: Dict[str, Any], extracted_data: Dict[str, Any]) -> None:
+        """
+        Persist extracted data payloads inside saga.data.extracted_data keyed by nf_e.
+        Avoids duplicates by skipping inserts when the nf_e key already exists.
+        """
+        if not saga or not extracted_data:
+            return
+
+        nf_value = extracted_data.get("nf_e")
+        if nf_value is None:
+            logger.warning("Extracted data missing nf_e field; skipping saga persistence")
+            return
+
+        nf_key = str(nf_value).strip()
+        if not nf_key:
+            logger.warning("Extracted data contains empty nf_e value; skipping saga persistence")
+            return
+
+        saga.setdefault("data", {})
+        extracted_bucket = saga["data"].setdefault("extracted_data", {})
+
+        if not isinstance(extracted_bucket, dict):
+            logger.warning(
+                "Unexpected saga.data.extracted_data type %s; resetting to dict for keyed storage",
+                type(extracted_bucket).__name__,
+            )
+            extracted_bucket = {}
+            saga["data"]["extracted_data"] = extracted_bucket
+
+        if nf_key in extracted_bucket:
+            logger.info("Saga already has extracted data for NF-e %s; skipping duplicate insert", nf_key)
+            return
+
+        extracted_bucket[nf_key] = extracted_data
+        logger.info("Stored extracted data for NF-e %s into saga.data.extracted_data", nf_key)
+
+    def _save_extracted_data_to_api(self, saga: Dict[str, Any], extracted_data: Dict[str, Any]) -> None:
+        """
+        Save extracted data to rpa_extracted_data table via rpa-api.
+        
+        Only saves if save_extracted_data=True and saga has valid saga_id.
+        Preserves existing duplicate-removal logic by checking nf_e before saving.
+        """
+        if not self.save_extracted_data:
+            return
+        
+        saga_id = saga.get("saga_id")
+        if not saga_id:
+            logger.warning("Cannot save extracted data: saga missing saga_id")
+            return
+        
+        if not extracted_data:
+            logger.warning("Cannot save extracted data: extracted_data is empty")
+            return
+        
+        # Apply same duplicate-removal logic as _store_extracted_data_in_saga
+        nf_value = extracted_data.get("nf_e")
+        if nf_value is None:
+            logger.warning("Extracted data missing nf_e field; skipping API persistence")
+            return
+        
+        nf_key = str(nf_value).strip()
+        if not nf_key:
+            logger.warning("Extracted data contains empty nf_e value; skipping API persistence")
+            return
+        
+        # Check if already saved (via saga.data.extracted_data)
+        saga.setdefault("data", {})
+        extracted_bucket = saga["data"].get("extracted_data", {})
+        if isinstance(extracted_bucket, dict) and nf_key in extracted_bucket:
+            logger.info("Extracted data for NF-e %s already exists in saga; skipping API save", nf_key)
+            return
+        
+        try:
+            conn = BaseHook.get_connection(self.rpa_api_conn_id)
+            api_url = build_api_url(conn.schema, conn.host, conn.port, "/api/v1/extracted-data/")
+            
+            payload = {
+                "saga_id": saga_id,
+                "metadata": extracted_data
+            }
+            
+            response = requests.post(
+                api_url,
+                json=payload,
+                headers={"Content-Type": "application/json"},
+                timeout=self.timeout
+            )
+            response.raise_for_status()
+            
+            result = response.json()
+            record_id = result.get("id")
+            logger.info("Successfully saved extracted data for NF-e %s to rpa_extracted_data (id=%s)", nf_key, record_id)
+        except requests.exceptions.HTTPError as e:
+            error_msg = f"HTTP error saving extracted data for NF-e {nf_key}"
+            if hasattr(e.response, 'text'):
+                error_msg += f": {e.response.text}"
+            logger.error("%s: %s", error_msg, e)
+            # Don't raise - allow operator to continue even if API save fails
+        except requests.exceptions.RequestException as e:
+            logger.error("Request error saving extracted data for NF-e %s: %s", nf_key, e)
+            # Don't raise - allow operator to continue even if API save fails
+        except Exception as e:
+            logger.error("Unexpected error saving extracted data for NF-e %s: %s", nf_key, e)
+            # Don't raise - allow operator to continue even if API save fails
 

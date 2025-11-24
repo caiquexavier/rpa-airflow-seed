@@ -4,17 +4,17 @@ import type { FlowNode, FlowEdge } from '~/src/types/flowTypes';
  * Auto-layout configuration
  */
 const LAYOUT_CONFIG = {
-  NODES_PER_ROW: 4, // Enforced 4 elements per row
-  HORIZONTAL_SPACING: 150, // Shorter horizontal spacing between elements
-  VERTICAL_SPACING: 120, // Shorter vertical spacing between rows
+  NODES_PER_ROW: 5, // More nodes per row for event sourcing (better horizontal flow)
+  HORIZONTAL_SPACING: 180, // Better spacing for event boxes
+  VERTICAL_SPACING: 140, // Better vertical spacing for event flow
   START_X: 200,
   START_Y: 200,
   NODE_WIDTH: 280,
-  NODE_HEIGHT: 120,
-  MIN_NODE_DISTANCE: 150, // Shorter minimum distance
+  NODE_HEIGHT: 140, // Slightly taller for event details
+  MIN_NODE_DISTANCE: 160, // Better minimum distance
   SUBPROCESS_MARGIN: 20, // Reduced margin
   SUBPROCESS_WIDTH: 280, // Same as regular nodes
-  SUBPROCESS_HEIGHT: 120, // Same as regular nodes
+  SUBPROCESS_HEIGHT: 140, // Same as regular nodes
   ARROW_CLEARANCE: 15, // Reduced arrow clearance for shorter arrows
   ALIGNMENT_GRID: 20, // Grid size for strict alignment
 };

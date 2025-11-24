@@ -1,120 +1,77 @@
-"""GPT PDF controller - Unified controller for PDF rotation and extraction using GPT."""
+"""GPT PDF controller - Handles GPT Vision extraction."""
 import logging
-from typing import Dict, Any
+from typing import Any, Dict
 
 from ...application.services.gpt_pdf_service import gpt_pdf_extractor
-from ..dtos.gpt_pdf_rotate_extract_models import GptPdfRotateExtractInput
 from ..dtos.gpt_pdf_extraction_models import GptPdfExtractionInput
-from ..dtos.pdf_rotation_models import PdfRotationInput
 
 logger = logging.getLogger(__name__)
 
 
-def handle_rotate_and_extract_pdf(payload: GptPdfRotateExtractInput) -> Dict[str, Any]:
-    """
-    Handle GPT PDF rotation and extraction - pure function.
-
-    Rotates PDF to readable position and extracts all data using GPT in a single operation.
-    """
-    logger.info(f"Rotating and extracting data from PDF: {payload.file_path}")
-
-    try:
-        # Call unified service
-        rotated_file_path, extracted_data = gpt_pdf_extractor(
-            file_path=payload.file_path,
-            output_path=payload.output_path,
-            fields=payload.fields
-        )
-
-        extracted_count = len([v for v in extracted_data.values() if v])
-        if payload.fields:
-            logger.info(f"Extracted {extracted_count} of {len(payload.fields)} requested fields")
-        else:
-            logger.info(f"Extracted {extracted_count} identifiable fields")
-
-        return {
-            "status": "SUCCESS",
-            "rotated_file_path": rotated_file_path,
-            "extracted_data": extracted_data
-        }
-    except FileNotFoundError as e:
-        logger.warning(f"File not found: {e}")
-        raise ValueError(f"PDF file not found: {payload.file_path}")
-    except RuntimeError as e:
-        logger.error(f"Processing error: {e}")
-        raise ValueError(f"PDF processing failed: {e}")
-    except Exception as e:
-        logger.error(f"Unexpected error: {e}")
-        raise ValueError(f"Failed to process PDF: {e}")
-
-
 def handle_extract_pdf_fields(payload: GptPdfExtractionInput) -> Dict[str, Any]:
     """
-    Handle GPT PDF field extraction - pure function.
-
-    Extracts requested fields from PDF using unified GPT service (rotates and extracts).
+    Handle GPT PDF field extraction (rotation handled elsewhere).
     """
-    logger.info(f"Extracting PDF fields from {payload.file_path} for fields: {payload.fields}")
+    logger.info(
+        "Extracting PDF fields from %s with field_map=%s",
+        payload.file_path,
+        len(payload.field_map) if payload.field_map else 0
+    )
 
     try:
-        # Use unified GPT service (rotates and extracts)
-        rotated_file_path, extracted_data = gpt_pdf_extractor(
+        organized_file_path, extracted_data = gpt_pdf_extractor(
             file_path=payload.file_path,
-            output_path=None,  # Overwrite original with rotated version
-            fields=payload.fields if payload.fields else None
+            output_path=payload.output_path,
+            field_map=payload.field_map,
         )
 
-        extracted_count = len([v for v in extracted_data.values() if v])
-        if payload.fields:
-            logger.info(f"Extracted {extracted_count} of {len(payload.fields)} requested fields from PDF")
+        # Handle response format (may include suggested_fields if no field_map was provided)
+        if isinstance(extracted_data, dict) and "extracted_data" in extracted_data:
+            # Response with suggested_fields
+            actual_data = extracted_data.get("extracted_data", {})
+            suggested_fields = extracted_data.get("suggested_fields", [])
+            extracted_count = len([v for v in actual_data.values() if v])
+            logger.info(
+                "Extracted %s fields. GPT suggested %s additional fields: %s",
+                extracted_count,
+                len(suggested_fields),
+                suggested_fields
+            )
         else:
-            logger.info(f"Extracted {extracted_count} identifiable fields from PDF")
+            # Standard response (when field_map was provided)
+            extracted_count = len([v for v in extracted_data.values() if v])
+            if payload.field_map:
+                logger.info(
+                    "Extracted %s of %s requested fields from field_map",
+                    extracted_count,
+                    len(payload.field_map),
+                )
+            else:
+                logger.info("Extracted %s identifiable fields", extracted_count)
 
-        return {
+        # Handle response format - may include suggested_fields
+        response_data = {
             "status": "SUCCESS",
-            "extracted": extracted_data,
-            "raw_text": None  # Not returned by unified service
+            "raw_text": None,
+            "organized_file_path": organized_file_path,
         }
-    except FileNotFoundError as e:
-        logger.warning(f"File not found: {e}")
-        raise ValueError(f"PDF file not found: {payload.file_path}")
-    except RuntimeError as e:
-        logger.error(f"OpenAI API error: {e}")
-        raise ValueError(f"OpenAI API call failed: {e}")
-    except Exception as e:
-        logger.error(f"Unexpected error extracting PDF fields: {e}")
-        raise ValueError(f"Failed to extract PDF fields: {e}")
-
-
-def handle_rotate_pdf(payload: PdfRotationInput) -> Dict[str, Any]:
-    """
-    Handle PDF rotation - pure function.
-
-    Rotates PDF to readable position using GPT service (rotation only, no extraction).
-    """
-    logger.info(f"Rotating PDF using GPT: {payload.file_path}")
-
-    try:
-        # Use unified GPT service (extract empty fields to get rotation only)
-        rotated_file_path, _ = gpt_pdf_extractor(
-            file_path=payload.file_path,
-            output_path=None,  # Overwrite original
-            fields=[]  # Empty fields list - just rotate, don't extract
-        )
-
-        logger.info(f"Successfully rotated PDF: {rotated_file_path}")
-
-        return {
-            "file_path": rotated_file_path,
-            "success": True
-        }
-    except FileNotFoundError as e:
-        logger.warning(f"File not found: {e}")
-        raise ValueError(f"PDF file not found: {payload.file_path}")
-    except RuntimeError as e:
-        logger.error(f"PDF rotation error: {e}")
-        raise ValueError(f"PDF rotation failed: {e}")
-    except Exception as e:
-        logger.error(f"Unexpected error rotating PDF: {e}")
-        raise ValueError(f"Failed to rotate PDF: {e}")
+        
+        if isinstance(extracted_data, dict) and "extracted_data" in extracted_data:
+            # Response with suggested_fields (when no field_map was provided)
+            response_data["extracted"] = extracted_data.get("extracted_data", {})
+            response_data["suggested_fields"] = extracted_data.get("suggested_fields", [])
+        else:
+            # Standard response (when field_map was provided)
+            response_data["extracted"] = extracted_data
+        
+        return response_data
+    except FileNotFoundError as exc:
+        logger.warning("File not found: %s", exc)
+        raise ValueError(f"PDF file not found: {payload.file_path}") from exc
+    except RuntimeError as exc:
+        logger.error("OpenAI API error: %s", exc)
+        raise ValueError(f"OpenAI API call failed: {exc}") from exc
+    except Exception as exc:
+        logger.error("Unexpected error extracting PDF fields: %s", exc)
+        raise ValueError(f"Failed to extract PDF fields: {exc}") from exc
 

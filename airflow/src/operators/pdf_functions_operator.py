@@ -19,6 +19,8 @@ from services.saga import (
     send_saga_event_to_api,
 )
 
+from .plugins import rotate_pdf_with_ocr
+
 logger = logging.getLogger(__name__)
 
 
@@ -29,7 +31,7 @@ class PdfFunctionsOperator(BaseOperator):
     Args:
         folder_path: Directory containing PDF files to process.
         output_dir: Directory where the processed files will be stored.
-        functions: Ordered list of functions to execute. Supported: ["split"].
+        functions: Ordered list of functions to execute. Supported: ["split", "rotate"].
         overwrite: Whether to overwrite existing files when writing outputs.
         include_single_page: Whether to include single-page PDFs when splitting.
         task_id: Airflow task id (required by BaseOperator but exposed for completeness).
@@ -37,6 +39,7 @@ class PdfFunctionsOperator(BaseOperator):
 
     SUPPORTED_FUNCTIONS: dict[str, str] = {
         "split": "_split_pdfs",
+        "rotate": "_rotate_pdfs",
     }
 
     def __init__(
@@ -213,6 +216,27 @@ class PdfFunctionsOperator(BaseOperator):
         with target_path.open("wb") as target_file:
             writer.write(target_file)
 
+
+    def _rotate_pdfs(self, files: Sequence[Path]) -> List[Path]:
+        """Rotate PDFs using the OCR-based plugin (documents saved to output_dir)."""
+        if not files:
+            return []
+
+        rotated_paths: List[Path] = []
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+
+        for pdf_path in files:
+            target_path = self.output_dir / pdf_path.name
+            if target_path == pdf_path and not self.overwrite:
+                raise AirflowException(
+                    f"Target file {target_path} exists. Set overwrite=True to replace."
+                )
+
+            logger.info("Rotating PDF %s -> %s", pdf_path, target_path)
+            rotated = rotate_pdf_with_ocr(pdf_path, target_path)
+            rotated_paths.append(Path(rotated))
+
+        return rotated_paths
 
 
 

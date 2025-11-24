@@ -14,10 +14,11 @@
       :nodes-draggable="true"
       :nodes-connectable="true"
       :elements-selectable="true"
-      :pan-on-drag="[2]"
+      :pan-on-drag="[1, 2]"
       :pan-on-scroll="false"
       :zoom-on-scroll="true"
       :zoom-on-pinch="true"
+      :pan-on-drag-mode="'free'"
       :select-nodes-on-drag="false"
       :delete-key-code="'Delete'"
       :multi-select-key-code="'Shift'"
@@ -33,8 +34,14 @@
       @node-drag-stop="onNodeDragStop"
     >
       <Background pattern-color="#374151" :gap="20" />
-      <Controls />
-      <MiniMap />
+      <Controls :show-lock="false" />
+      <MiniMap 
+        :width="150"
+        :height="100"
+        node-stroke-color="#0ea5e9"
+        node-color="#1f2937"
+        mask-color="rgba(15, 23, 42, 0.6)"
+      />
     </VueFlow>
   </div>
 </template>
@@ -416,23 +423,88 @@ defineExpose({
   background: rgba(15, 23, 42, 0.9);
   border: 1px solid rgba(75, 85, 99, 0.3);
   border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px;
 }
 
 :deep(.vue-flow__controls-button) {
   background: rgba(31, 41, 55, 0.8);
   border: 1px solid rgba(75, 85, 99, 0.3);
-  color: #f5f5f5;
+  color: #ffffff !important;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+:deep(.vue-flow__controls-button svg) {
+  width: 14px !important;
+  height: 14px !important;
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+:deep(.vue-flow__controls-button path) {
+  stroke: #ffffff !important;
+  fill: #ffffff !important;
 }
 
 :deep(.vue-flow__controls-button:hover) {
   background: rgba(55, 65, 81, 0.9);
   border-color: #0ea5e9;
+  color: #ffffff !important;
+}
+
+:deep(.vue-flow__controls-button:hover svg) {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+:deep(.vue-flow__controls-button:hover path) {
+  stroke: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+/* Hide lock button */
+:deep(.vue-flow__controls-button[aria-label*="lock" i]),
+:deep(.vue-flow__controls-button[aria-label*="Lock" i]),
+:deep(.vue-flow__controls-button[title*="lock" i]),
+:deep(.vue-flow__controls-button[title*="Lock" i]) {
+  display: none !important;
+}
+
+:deep(.vue-flow__controls-button:active) {
+  transform: scale(0.95);
+  background: rgba(14, 165, 233, 0.2);
 }
 
 :deep(.vue-flow__minimap) {
   background: rgba(15, 23, 42, 0.9);
   border: 1px solid rgba(75, 85, 99, 0.3);
   border-radius: 8px;
+  width: 150px !important;
+  height: 100px !important;
+  min-width: 150px !important;
+  min-height: 100px !important;
+  max-width: 150px !important;
+  max-height: 100px !important;
+}
+
+:deep(.vue-flow__minimap-mask) {
+  fill: rgba(15, 23, 42, 0.6);
+}
+
+:deep(.vue-flow__minimap-node) {
+  fill: #1f2937;
+  stroke: #0ea5e9;
+  stroke-width: 1;
 }
 
 :deep(.vue-flow__background) {

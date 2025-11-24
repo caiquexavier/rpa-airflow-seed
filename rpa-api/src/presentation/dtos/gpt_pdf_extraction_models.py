@@ -7,10 +7,20 @@ class GptPdfExtractionInput(BaseModel):
     """Request model for GPT PDF extraction."""
 
     file_path: constr(strip_whitespace=True, min_length=1) = Field(
-        ..., description="Absolute or relative path to the PDF file to process"
+        ..., description="Absolute path to the PDF file to process"
     )
-    fields: Optional[List[constr(strip_whitespace=True, min_length=1)]] = Field(
-        None, description="List of field names to extract from the document. If None or empty, extracts all identifiable fields."
+    output_path: Optional[constr(strip_whitespace=True, min_length=1)] = Field(
+        None,
+        description="Optional path used when copying/renaming the processed PDF (e.g., /opt/airflow/data/processado/XYZ.pdf)",
+    )
+    field_map: Optional[Dict[str, str]] = Field(
+        None,
+        description=(
+            "JSON model mapping field names to descriptions/instructions. "
+            "Example: {'cnpj': 'Brazilian company registration number (CNPJ)', 'valor_total': 'Total invoice amount'}. "
+            "If provided, GPT will use this map as a guide to locate and extract these specific fields from the document images. "
+            "If None or empty, GPT will identify and suggest all fields it finds in the document."
+        ),
     )
 
 
@@ -21,7 +31,18 @@ class GptPdfExtractionOutput(BaseModel):
     extracted: Dict[str, Optional[str]] = Field(
         ..., description="Extracted field values, with null for fields not found"
     )
+    suggested_fields: Optional[List[str]] = Field(
+        None,
+        description=(
+            "List of field names suggested by GPT when no field_map was provided. "
+            "This helps understand what fields are available in this document type."
+        ),
+    )
     raw_text: Optional[str] = Field(
         None, description="Full extracted text from PDF (optional, may be large)"
+    )
+    organized_file_path: Optional[str] = Field(
+        None,
+        description="Absolute path to the renamed/copied PDF (if available)",
     )
 

@@ -1,533 +1,2457 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generator="Robot 7.1.1 (Python 3.11.9 on win32)" generated="2025-10-17T22:24:23.027786" rpa="false" schemaversion="5">
-<suite id="s1" name="Ecargo Pod Download" source="C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\tests\ecargo_pod_download.robot">
-<test id="s1-t1" name="Pod Download" line="6">
-<kw name="Start Browser" owner="browser">
+<robot generator="Robot 7.1.1 (Python 3.11.9 on win32)" generated="2025-11-21T21:35:40.797469" rpa="false" schemaversion="5">
+<suite id="s1" name="Protocolo Devolucao Main" source="C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\robot\tests\protocolo_devolucao_main.robot">
+<kw name="Initialize Test Suite" type="SETUP">
+<kw name="Set Screenshot Directory" owner="SeleniumLibrary">
+<arg>${None}</arg>
+<doc>Sets the directory for captured screenshots.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.189304" elapsed="0.000000"/>
+</kw>
+<doc>Initialize test suite: disable screenshots.</doc>
+<status status="PASS" start="2025-11-21T21:35:41.187922" elapsed="0.001382"/>
+</kw>
+<test id="s1-t1" name="Pod Download" line="9">
+<kw name="Start Browser" owner="browser_keywords">
+<kw name="Evaluate" owner="BuiltIn">
+<var>${download_dir}</var>
+<arg>os.path.abspath(os.path.normpath(r"${DOWNLOAD_DIR}"))</arg>
+<arg>os</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.189304" elapsed="0.000000"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<var>${options}</var>
+<arg>sys.modules['selenium.webdriver'].ChromeOptions()</arg>
+<arg>sys, selenium.webdriver</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.189304" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--disable-notifications</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.190816" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--disable-features\=PushMessaging</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.190816" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--disable-logging</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.190816" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--log-level\=3</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.190816" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--no-sandbox</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.190816" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--disable-dev-shm-usage</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.190816" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--disable-gpu</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.190816" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--disable-software-rasterizer</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.190816" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--disable-extensions</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.190816" elapsed="0.001363"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--disable-background-networking</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.192179" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--disable-background-timer-throttling</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.192179" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--disable-renderer-backgrounding</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.192179" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--disable-backgrounding-occluded-windows</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.192179" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--disable-breakpad</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.192179" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--disable-component-extensions-with-background-pages</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.193239" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--disable-default-apps</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.193239" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--disable-hang-monitor</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.193239" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--disable-prompt-on-repost</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.193239" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--disable-sync</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.193239" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--disable-translate</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.193239" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--metrics-recording-only</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.193239" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--no-first-run</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.193239" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--safebrowsing-disable-auto-update</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.193239" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--enable-automation</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.194368" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--password-store\=basic</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.194368" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--use-mock-keychain</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.194368" elapsed="0.000000"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<var>${prefs}</var>
+<arg>download.default_directory=${download_dir}</arg>
+<arg>download.prompt_for_download=${False}</arg>
+<arg>download.directory_upgrade=${True}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.194368" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_experimental_option</arg>
+<arg>prefs</arg>
+<arg>${prefs}</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.194368" elapsed="0.000000"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<var>${exclude_switches}</var>
+<arg>['enable-logging', 'enable-automation']</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.194368" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_experimental_option</arg>
+<arg>excludeSwitches</arg>
+<arg>${exclude_switches}</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.194368" elapsed="0.000000"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<var>${use_automation_extension}</var>
+<arg>False</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.194368" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_experimental_option</arg>
+<arg>useAutomationExtension</arg>
+<arg>${use_automation_extension}</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.194368" elapsed="0.000000"/>
+</kw>
+<try>
+<branch type="TRY">
 <kw name="Open Browser" owner="SeleniumLibrary">
 <arg>about:blank</arg>
 <arg>chrome</arg>
+<arg>options=${options}</arg>
 <doc>Opens a new browser instance to the optional ``url``.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.400392" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.195381" elapsed="0.000000"/>
 </kw>
+<status status="PASS" start="2025-11-21T21:35:41.195381" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<kw name="Evaluate" owner="BuiltIn">
+<var>${headless_options}</var>
+<arg>sys.modules['selenium.webdriver'].ChromeOptions()</arg>
+<arg>sys, selenium.webdriver</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.195381" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${headless_options}</arg>
+<arg>add_argument</arg>
+<arg>--headless\=new</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.195381" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${headless_options}</arg>
+<arg>add_argument</arg>
+<arg>--no-sandbox</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.195381" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${headless_options}</arg>
+<arg>add_argument</arg>
+<arg>--disable-dev-shm-usage</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.195381" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${headless_options}</arg>
+<arg>add_argument</arg>
+<arg>--disable-gpu</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.195381" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${headless_options}</arg>
+<arg>add_experimental_option</arg>
+<arg>prefs</arg>
+<arg>${prefs}</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.196382" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${headless_options}</arg>
+<arg>add_experimental_option</arg>
+<arg>excludeSwitches</arg>
+<arg>${exclude_switches}</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.196382" elapsed="0.000000"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${headless_options}</arg>
+<arg>add_experimental_option</arg>
+<arg>useAutomationExtension</arg>
+<arg>${use_automation_extension}</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.196382" elapsed="0.000000"/>
+</kw>
+<kw name="Open Browser" owner="SeleniumLibrary">
+<arg>about:blank</arg>
+<arg>chrome</arg>
+<arg>options=${headless_options}</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.196382" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.195381" elapsed="0.001001"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.195381" elapsed="0.001001"/>
+</try>
+<kw name="Set Selenium Timeout" owner="SeleniumLibrary">
+<arg>30 seconds</arg>
+<doc>Sets the timeout that is used by various keywords.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.196382" elapsed="0.000000"/>
+</kw>
+<kw name="Set Selenium Implicit Wait" owner="SeleniumLibrary">
+<arg>10 seconds</arg>
+<doc>Sets the implicit wait value used by Selenium.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.196382" elapsed="0.000000"/>
+</kw>
+<try>
+<branch type="TRY">
 <kw name="Maximize Browser Window" owner="SeleniumLibrary">
 <doc>Maximizes current browser window.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.402411" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.196382" elapsed="0.000000"/>
 </kw>
-<status status="PASS" start="2025-10-17T22:24:23.400392" elapsed="0.002019"/>
+<status status="PASS" start="2025-11-21T21:35:41.196382" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.197382" elapsed="0.000000"/>
 </kw>
-<kw name="Login To e-Cargo" owner="pod_download">
+<status status="NOT RUN" start="2025-11-21T21:35:41.197382" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.196382" elapsed="0.001000"/>
+</try>
+<kw name="Evaluate" owner="BuiltIn">
+<var>${none_value}</var>
+<arg>None</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.197382" elapsed="0.000000"/>
+</kw>
+<kw name="Set Screenshot Directory" owner="SeleniumLibrary">
+<arg>${none_value}</arg>
+<doc>Sets the directory for captured screenshots.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.197382" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.189304" elapsed="0.008078"/>
+</kw>
+<kw name="Login To e-Cargo" owner="protocolo_devolucao_keywords">
 <kw name="Go To" owner="SeleniumLibrary">
-<arg>${base_url}</arg>
+<arg>${BASE_URL}</arg>
 <doc>Navigates the current browser window to the provided ``url``.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.402411" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.198379" elapsed="0.000000"/>
 </kw>
+<kw name="Sleep" owner="BuiltIn">
+<arg>3s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.198379" elapsed="0.000000"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<var>${email_selector}</var>
+<arg>css=#email</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.198379" elapsed="0.000000"/>
+</kw>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
 <kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
-<arg>css=#email</arg>
-<arg>timeout=15s</arg>
+<arg>${email_selector}</arg>
+<arg>timeout=10s</arg>
 <doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.402411" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.198379" elapsed="0.000000"/>
 </kw>
+<var>${email_found}</var>
+<arg>Wait Until Element Is Visible</arg>
+<arg>${email_selector}</arg>
+<arg>timeout=10s</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.198379" elapsed="0.000000"/>
+</kw>
+<if>
+<branch type="IF" condition="not ${email_found}">
+<kw name="Set Variable" owner="BuiltIn">
+<var>${email_selector}</var>
+<arg>css=input[type="email"]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.199416" elapsed="0.000000"/>
+</kw>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${email_selector}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.199416" elapsed="0.000000"/>
+</kw>
+<var>${email_found}</var>
+<arg>Wait Until Element Is Visible</arg>
+<arg>${email_selector}</arg>
+<arg>timeout=5s</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.199416" elapsed="0.000000"/>
+</kw>
+<if>
+<branch type="IF" condition="not ${email_found}">
+<kw name="Set Variable" owner="BuiltIn">
+<var>${email_selector}</var>
+<arg>css=input[name="email"]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.199416" elapsed="0.000000"/>
+</kw>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${email_selector}</arg>
+<arg>timeout=5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.199416" elapsed="0.000000"/>
+</kw>
+<var>${email_found}</var>
+<arg>Wait Until Element Is Visible</arg>
+<arg>${email_selector}</arg>
+<arg>timeout=5s</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.199416" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.199416" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.199416" elapsed="0.000000"/>
+</if>
+<status status="PASS" start="2025-11-21T21:35:41.199416" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.198379" elapsed="0.001037"/>
+</if>
+<if>
+<branch type="IF" condition="not ${email_found}">
+<kw name="Fail" owner="BuiltIn">
+<arg>Email field not found on login page after 20 seconds. Please check if the page loaded correctly.</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.199416" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.199416" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.199416" elapsed="0.000000"/>
+</if>
 <kw name="Input Text" owner="SeleniumLibrary">
-<arg>css=#email</arg>
+<arg>${email_selector}</arg>
 <arg>${USUARIO}</arg>
 <doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.402411" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.199416" elapsed="0.000000"/>
 </kw>
 <kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
 <arg>css=#password</arg>
-<arg>timeout=15s</arg>
+<arg>timeout=30s</arg>
 <doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.404486" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.199416" elapsed="0.001512"/>
 </kw>
 <kw name="Input Text" owner="SeleniumLibrary">
 <arg>css=#password</arg>
 <arg>${SENHA}</arg>
 <doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.404486" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.200928" elapsed="0.000000"/>
 </kw>
 <kw name="Wait Until Element Is Enabled" owner="SeleniumLibrary">
 <arg>css=#login</arg>
-<arg>timeout=15s</arg>
+<arg>timeout=30s</arg>
 <doc>Waits until the element ``locator`` is enabled.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.404486" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.200928" elapsed="0.000000"/>
 </kw>
 <kw name="Click Element" owner="SeleniumLibrary">
 <arg>css=#login</arg>
 <doc>Click the element identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.404486" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.200928" elapsed="0.000000"/>
 </kw>
 <kw name="Sleep" owner="BuiltIn">
 <arg>2s</arg>
 <doc>Pauses the test executed for the given time.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.404486" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.200928" elapsed="0.000000"/>
 </kw>
-<status status="PASS" start="2025-10-17T22:24:23.402411" elapsed="0.002075"/>
+<status status="PASS" start="2025-11-21T21:35:41.198379" elapsed="0.002549"/>
 </kw>
-<kw name="Open Operacional Menu" owner="pod_download">
+<kw name="Open Operacional Menu" owner="protocolo_devolucao_keywords">
+<kw name="Wait For Element And Click" owner="ui_keywords">
 <kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
-<arg>xpath=//*[contains(text(),'Operacional')]</arg>
-<arg>timeout=10s</arg>
+<arg>${locator}</arg>
+<arg>timeout=${timeout}</arg>
 <doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.404486" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.201993" elapsed="0.000000"/>
 </kw>
 <kw name="Click Element" owner="SeleniumLibrary">
-<arg>xpath=//*[contains(text(),'Operacional')]</arg>
+<arg>${locator}</arg>
 <doc>Click the element identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.404486" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.201993" elapsed="0.000000"/>
 </kw>
-<kw name="Sleep" owner="BuiltIn">
-<arg>3s</arg>
-<doc>Pauses the test executed for the given time.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.406497" elapsed="0.000000"/>
+<arg>xpath=${XPATH_OPERACIONAL_MENU}</arg>
+<doc>Wait for element to be visible and click it.</doc>
+<status status="PASS" start="2025-11-21T21:35:41.200928" elapsed="0.001065"/>
 </kw>
-<status status="PASS" start="2025-10-17T22:24:23.404486" elapsed="0.002011"/>
+<status status="PASS" start="2025-11-21T21:35:41.200928" elapsed="0.001065"/>
 </kw>
-<kw name="Open Registro De Canhotos Submenu" owner="pod_download">
+<kw name="Open Registro De Canhotos Submenu" owner="protocolo_devolucao_keywords">
+<try>
+<branch type="TRY">
+<kw name="Wait For Element And Click" owner="ui_keywords">
 <kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
-<arg>xpath=//div[@class='v-list__tile__title' and text()='Registro de Canhotos']</arg>
-<arg>timeout=10s</arg>
+<arg>${locator}</arg>
+<arg>timeout=${timeout}</arg>
 <doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.406497" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.201993" elapsed="0.000000"/>
 </kw>
 <kw name="Click Element" owner="SeleniumLibrary">
-<arg>xpath=//div[@class='v-list__tile__title' and text()='Registro de Canhotos']</arg>
+<arg>${locator}</arg>
 <doc>Click the element identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.406497" elapsed="0.001146"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.201993" elapsed="0.000000"/>
+</kw>
+<arg>xpath=${XPATH_REGISTRO_CANHOTOS}</arg>
+<doc>Wait for element to be visible and click it.</doc>
+<status status="PASS" start="2025-11-21T21:35:41.201993" elapsed="0.000000"/>
 </kw>
 <kw name="Sleep" owner="BuiltIn">
-<arg>5s</arg>
+<arg>2s</arg>
 <doc>Pauses the test executed for the given time.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.407643" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.203008" elapsed="0.000000"/>
 </kw>
-<status status="PASS" start="2025-10-17T22:24:23.406497" elapsed="0.001146"/>
+<status status="PASS" start="2025-11-21T21:35:41.201993" elapsed="0.001015"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<kw name="Set Variable" owner="BuiltIn">
+<var>${error_msg}</var>
+<arg>Failed to open Registro de Canhotos: ${error}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.203008" elapsed="0.000000"/>
 </kw>
-<kw name="Process Nota Fiscal Array From Variables" owner="pod_download">
+<kw name="Fail" owner="BuiltIn">
+<arg>${error_msg}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.203008" elapsed="0.000634"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.203008" elapsed="0.000634"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.201993" elapsed="0.001649"/>
+</try>
+<status status="PASS" start="2025-11-21T21:35:41.201993" elapsed="0.001649"/>
+</kw>
+<kw name="Process Nota Fiscal Array From Variables" owner="protocolo_devolucao_keywords">
 <kw name="Run Keyword And Return Status" owner="BuiltIn">
 <kw name="Variable Should Exist" owner="BuiltIn">
-<arg>${rpa_request}</arg>
+<arg>${data}</arg>
 <doc>Fails unless the given variable exists within the current scope.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.408347" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.204653" elapsed="0.000000"/>
 </kw>
-<var>${has_rpa_request}</var>
+<var>${has_data}</var>
 <arg>Variable Should Exist</arg>
-<arg>${rpa_request}</arg>
+<arg>${data}</arg>
 <doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.408347" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.204653" elapsed="0.000000"/>
 </kw>
 <if>
-<branch type="IF" condition="${has_rpa_request}">
-<kw name="Log" owner="BuiltIn">
-<arg>Processing Nota Fiscal array from rpa_request variable</arg>
-<doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.408347" elapsed="0.000000"/>
+<branch type="IF" condition="not ${has_data}">
+<kw name="Fail" owner="BuiltIn">
+<arg>data variable not found. Expected SAGA data object with doc_transportes_list.</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.204653" elapsed="0.000000"/>
 </kw>
+<status status="PASS" start="2025-11-21T21:35:41.204653" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.204653" elapsed="0.000000"/>
+</if>
+<try>
+<branch type="TRY">
 <kw name="Get Value From Json" owner="JSONLibrary">
-<var>${nota_fiscal_array}</var>
-<arg>${rpa_request}</arg>
-<arg>$.nota_fiscal</arg>
+<var>${doc_transportes_list}</var>
+<arg>${data}</arg>
+<arg>$.doc_transportes_list[*]</arg>
 <doc>Get Value From JSON using JSONPath</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.408347" elapsed="0.001387"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.204653" elapsed="0.000000"/>
 </kw>
+<kw name="Get Length" owner="BuiltIn">
+<var>${doc_transportes_list_len}</var>
+<arg>${doc_transportes_list}</arg>
+<doc>Returns and logs the length of the given item as an integer.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.204653" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.204653" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
 <kw name="Log" owner="BuiltIn">
-<arg>Raw nota_fiscal_array: ${nota_fiscal_array}</arg>
+<arg>Failed to parse doc_transportes_list from data: ${error}. data type: ${data.__class__.__name__}</arg>
+<arg>level=WARN</arg>
 <doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.409734" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.204653" elapsed="0.001005"/>
 </kw>
 <kw name="Set Variable" owner="BuiltIn">
-<var>${actual_array}</var>
-<arg>${nota_fiscal_array[0]}</arg>
+<var>${doc_transportes_list_len}</var>
+<arg>0</arg>
 <doc>Returns the given values which can then be assigned to a variables.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.409734" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.205658" elapsed="0.000000"/>
 </kw>
+<kw name="Create List" owner="BuiltIn">
+<var>${doc_transportes_list}</var>
+<doc>Returns a list containing given items.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.205658" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.204653" elapsed="0.001005"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.204653" elapsed="0.001005"/>
+</try>
+<kw name="Create List" owner="BuiltIn">
+<var>${actual_array}</var>
+<doc>Returns a list containing given items.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.205658" elapsed="0.000000"/>
+</kw>
+<if>
+<branch type="IF" condition="${doc_transportes_list_len} &gt; 0">
+<for flavor="IN RANGE">
+<iter>
+<try>
+<branch type="TRY">
+<kw name="Get Value From Json" owner="JSONLibrary">
+<var>${doc_transportes_entry}</var>
+<arg>${data}</arg>
+<arg>$.doc_transportes_list[${index}]</arg>
+<doc>Get Value From JSON using JSONPath</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.205658" elapsed="0.000000"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<var>${doc_transportes_entry_dict}</var>
+<arg>${doc_transportes_entry[0]}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.206658" elapsed="0.000000"/>
+</kw>
+<kw name="Get Value From Json" owner="JSONLibrary">
+<var>${nf_e}</var>
+<arg>${doc_transportes_entry_dict}</arg>
+<arg>$.nf_e</arg>
+<doc>Get Value From JSON using JSONPath</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.206658" elapsed="0.000000"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<var>${nf_e_array}</var>
+<arg>${nf_e[0]}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.206658" elapsed="0.000000"/>
+</kw>
+<kw name="Get Length" owner="BuiltIn">
+<var>${nf_e_len}</var>
+<arg>${nf_e_array}</arg>
+<doc>Returns and logs the length of the given item as an integer.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.206658" elapsed="0.000000"/>
+</kw>
+<if>
+<branch type="IF" condition="${nf_e_len} &gt; 0">
+<for flavor="IN RANGE">
+<iter>
+<kw name="Set Variable" owner="BuiltIn">
+<var>${current_nf}</var>
+<arg>${nf_e_array[${nf_index}]}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.206658" elapsed="0.000000"/>
+</kw>
+<kw name="Append To List" owner="Collections">
+<arg>${actual_array}</arg>
+<arg>${current_nf}</arg>
+<doc>Adds ``values`` to the end of ``list``.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.206658" elapsed="0.000000"/>
+</kw>
+<var name="${nf_index}"/>
+<status status="PASS" start="2025-11-21T21:35:41.206658" elapsed="0.000000"/>
+</iter>
+<var>${nf_index}</var>
+<value>0</value>
+<value>${nf_e_len}</value>
+<status status="PASS" start="2025-11-21T21:35:41.206658" elapsed="0.001000"/>
+</for>
+<status status="PASS" start="2025-11-21T21:35:41.206658" elapsed="0.001000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.206658" elapsed="0.001000"/>
+</if>
+<status status="PASS" start="2025-11-21T21:35:41.205658" elapsed="0.002000"/>
+</branch>
+<branch type="EXCEPT" assign="${entry_error}">
+<kw name="Log" owner="BuiltIn">
+<arg>Failed to process doc_transportes entry ${index}: ${entry_error}</arg>
+<arg>level=WARN</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.207658" elapsed="0.000000"/>
+</kw>
+<continue>
+<status status="NOT RUN" start="2025-11-21T21:35:41.207658" elapsed="0.000000"/>
+</continue>
+<status status="NOT RUN" start="2025-11-21T21:35:41.207658" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.205658" elapsed="0.002000"/>
+</try>
+<var name="${index}"/>
+<status status="PASS" start="2025-11-21T21:35:41.205658" elapsed="0.002000"/>
+</iter>
+<var>${index}</var>
+<value>0</value>
+<value>${doc_transportes_list_len}</value>
+<status status="PASS" start="2025-11-21T21:35:41.205658" elapsed="0.002000"/>
+</for>
+<status status="PASS" start="2025-11-21T21:35:41.205658" elapsed="0.002000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.205658" elapsed="0.002000"/>
+</if>
 <kw name="Get Length" owner="BuiltIn">
 <var>${array_length}</var>
 <arg>${actual_array}</arg>
 <doc>Returns and logs the length of the given item as an integer.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.409734" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.207658" elapsed="0.000000"/>
+</kw>
+<if>
+<branch type="IF" condition="${array_length} == 0">
+<kw name="Set Variable" owner="BuiltIn">
+<var>${error_msg}</var>
+<arg>No notas fiscais found in SAGA data (doc_transportes_list). SAGA input is required - no default values allowed.</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.207658" elapsed="0.000000"/>
 </kw>
 <kw name="Log" owner="BuiltIn">
-<arg>Processing ${array_length} Nota Fiscal values</arg>
+<arg>${error_msg}</arg>
+<arg>level=ERROR</arg>
 <doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.409734" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.207658" elapsed="0.000000"/>
+</kw>
+<kw name="Fail" owner="BuiltIn">
+<arg>${error_msg}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.209001" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.207658" elapsed="0.001343"/>
+</branch>
+<branch type="ELSE">
+<kw name="Log" owner="BuiltIn">
+<arg>Processing ${array_length} notas fiscais from SAGA data (doc_transportes_list)</arg>
+<arg>level=INFO</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.209001" elapsed="0.000000"/>
 </kw>
 <for flavor="IN RANGE">
 <iter>
-<kw name="Get Value From Json" owner="JSONLibrary">
+<kw name="Set Variable" owner="BuiltIn">
 <var>${current_nota_fiscal}</var>
-<arg>${rpa_request}</arg>
-<arg>$.nota_fiscal[${index}]</arg>
-<doc>Get Value From JSON using JSONPath</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.409734" elapsed="0.000000"/>
+<arg>${actual_array[${index}]}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.209001" elapsed="0.000000"/>
 </kw>
-<kw name="Log" owner="BuiltIn">
-<arg>Processing Nota Fiscal: ${current_nota_fiscal[0]}</arg>
-<doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.409734" elapsed="0.000000"/>
+<kw name="Process Single Nota Fiscal" owner="protocolo_devolucao_keywords">
+<kw name="Input Nota Fiscal And Search" owner="protocolo_devolucao_keywords">
+<if>
+<branch type="IF" condition="'${nota_fiscal}' == '${EMPTY}' or '${nota_fiscal}' == ''">
+<kw name="Fail" owner="BuiltIn">
+<arg>nota_fiscal argument is required and must come from SAGA input data</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.210011" elapsed="0.000000"/>
 </kw>
-<kw name="Process Single Nota Fiscal" owner="pod_download">
-<kw name="Log" owner="BuiltIn">
-<arg>Processing Nota Fiscal: ${nota_fiscal}</arg>
-<doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.411150" elapsed="0.000000"/>
+<status status="PASS" start="2025-11-21T21:35:41.210011" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.210011" elapsed="0.000000"/>
+</if>
+<kw name="Input Nota Fiscal" owner="protocolo_devolucao_keywords">
+<if>
+<branch type="IF" condition="'${nota_fiscal}' == '${EMPTY}' or '${nota_fiscal}' == ''">
+<kw name="Fail" owner="BuiltIn">
+<arg>nota_fiscal argument is required and must come from SAGA input data</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.210011" elapsed="0.000000"/>
 </kw>
-<kw name="Input Nota Fiscal And Search" owner="pod_download">
+<status status="PASS" start="2025-11-21T21:35:41.210011" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.210011" elapsed="0.000000"/>
+</if>
+<kw name="Unselect Frame" owner="SeleniumLibrary">
+<doc>Sets the main frame as the current frame.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.211010" elapsed="0.000000"/>
+</kw>
 <kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
 <arg>css=iframe#frame</arg>
 <arg>timeout=15s</arg>
 <doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.411150" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.211010" elapsed="0.000000"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.211010" elapsed="0.000000"/>
 </kw>
 <kw name="Select Frame" owner="SeleniumLibrary">
 <arg>css=iframe#frame</arg>
 <doc>Sets frame identified by ``locator`` as the current frame.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.411150" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.211010" elapsed="0.000505"/>
 </kw>
 <kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
 <arg>css=input[name="txtNotaFiscal"]</arg>
 <arg>timeout=15s</arg>
 <doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.411150" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.211515" elapsed="0.000000"/>
 </kw>
-<kw name="Click Element" owner="SeleniumLibrary">
+<kw name="Clear Element Text" owner="SeleniumLibrary">
 <arg>css=input[name="txtNotaFiscal"]</arg>
-<doc>Click the element identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.411150" elapsed="0.000000"/>
+<doc>Clears the value of the text-input-element identified by ``locator``.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.211515" elapsed="0.000000"/>
 </kw>
 <kw name="Input Text" owner="SeleniumLibrary">
 <arg>css=input[name="txtNotaFiscal"]</arg>
 <arg>${nota_fiscal}</arg>
 <doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.411150" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.211515" elapsed="0.000000"/>
 </kw>
+<arg>${nota_fiscal}</arg>
+<status status="PASS" start="2025-11-21T21:35:41.210011" elapsed="0.001504"/>
+</kw>
+<kw name="Search Nota Fiscal" owner="protocolo_devolucao_keywords">
+<if>
+<branch type="IF" condition="'${nota_fiscal}' == '${EMPTY}' or '${nota_fiscal}' == ''">
+<kw name="Fail" owner="BuiltIn">
+<arg>nota_fiscal argument is required and must come from SAGA input data</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.212517" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.211515" elapsed="0.001002"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.211515" elapsed="0.001002"/>
+</if>
+<try>
+<branch type="TRY">
 <kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
-<arg>xpath=/html/body/div/div/div[3]/form/div[1]/div[6]/div/div[1]/button</arg>
+<arg>xpath=${XPATH_SEARCH_BUTTON}</arg>
 <arg>timeout=10s</arg>
 <doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.411150" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.212517" elapsed="0.000000"/>
 </kw>
 <kw name="Click Element" owner="SeleniumLibrary">
-<arg>xpath=/html/body/div/div/div[3]/form/div[1]/div[6]/div/div[1]/button</arg>
+<arg>xpath=${XPATH_SEARCH_BUTTON}</arg>
 <doc>Click the element identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.412656" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.212517" elapsed="0.000000"/>
 </kw>
+<kw name="Sleep" owner="BuiltIn">
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.212517" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.212517" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<kw name="Set Variable" owner="BuiltIn">
+<var>${error_msg}</var>
+<arg>Search button not found: ${error}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.212517" elapsed="0.000000"/>
+</kw>
+<kw name="Append Error Result" owner="protocolo_devolucao_keywords">
+<kw name="Set Variable" owner="BuiltIn">
+<var>${simplified_msg}</var>
+<arg>${message}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.212517" elapsed="0.000000"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<var>${msg_length}</var>
+<arg>len('${message}')</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.212517" elapsed="0.000000"/>
+</kw>
+<if>
+<branch type="IF" condition="${msg_length} &gt; 200">
+<kw name="Evaluate" owner="BuiltIn">
+<var>${simplified_msg}</var>
+<arg>'${message}'[:200] + '...'</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.213714" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.213714" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.212517" elapsed="0.001197"/>
+</if>
+<kw name="Create Dictionary" owner="BuiltIn">
+<var>${entry}</var>
+<arg>nota_fiscal=${nota_fiscal}</arg>
+<arg>message=${simplified_msg}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.213714" elapsed="0.000000"/>
+</kw>
+<kw name="Append To List" owner="Collections">
+<arg>${ERROR_RESULTS}</arg>
+<arg>${entry}</arg>
+<doc>Adds ``values`` to the end of ``list``.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.213714" elapsed="0.000000"/>
+</kw>
+<arg>${nota_fiscal}</arg>
+<arg>${error_msg}</arg>
+<status status="PASS" start="2025-11-21T21:35:41.212517" elapsed="0.001197"/>
+</kw>
+<kw name="Unselect Frame" owner="SeleniumLibrary">
+<doc>Sets the main frame as the current frame.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.213714" elapsed="0.000000"/>
+</kw>
+<return>
+<value>${False}</value>
+<status status="NOT RUN" start="2025-11-21T21:35:41.213714" elapsed="0.000000"/>
+</return>
+<status status="NOT RUN" start="2025-11-21T21:35:41.212517" elapsed="0.001197"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.212517" elapsed="0.001197"/>
+</try>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
 <kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
-<arg>xpath=/html/body/div/div/div[3]/form/div[2]/div[2]/table/tbody/tr[1]/td[10]/i</arg>
-<arg>timeout=10s</arg>
+<arg>xpath=${XPATH_ERROR_MODAL}</arg>
+<arg>timeout=3s</arg>
 <doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.412656" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.213714" elapsed="0.000000"/>
+</kw>
+<var>${has_error_modal}</var>
+<arg>Wait Until Element Is Visible</arg>
+<arg>xpath=${XPATH_ERROR_MODAL}</arg>
+<arg>timeout=3s</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.213714" elapsed="0.001008"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<var>${search_success}</var>
+<arg>${True}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.214722" elapsed="0.000000"/>
+</kw>
+<if>
+<branch type="IF" condition="${has_error_modal}">
+<try>
+<branch type="TRY">
+<kw name="Get Text" owner="SeleniumLibrary">
+<var>${error_msg}</var>
+<arg>xpath=${XPATH_ERROR_MSG}</arg>
+<doc>Returns the text value of the element identified by ``locator``.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.214722" elapsed="0.000000"/>
+</kw>
+<kw name="Append Error Result" owner="protocolo_devolucao_keywords">
+<kw name="Set Variable" owner="BuiltIn">
+<var>${simplified_msg}</var>
+<arg>${message}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.214722" elapsed="0.000000"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<var>${msg_length}</var>
+<arg>len('${message}')</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.214722" elapsed="0.000000"/>
+</kw>
+<if>
+<branch type="IF" condition="${msg_length} &gt; 200">
+<kw name="Evaluate" owner="BuiltIn">
+<var>${simplified_msg}</var>
+<arg>'${message}'[:200] + '...'</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.214722" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.214722" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.214722" elapsed="0.000000"/>
+</if>
+<kw name="Create Dictionary" owner="BuiltIn">
+<var>${entry}</var>
+<arg>nota_fiscal=${nota_fiscal}</arg>
+<arg>message=${simplified_msg}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.215722" elapsed="0.000000"/>
+</kw>
+<kw name="Append To List" owner="Collections">
+<arg>${ERROR_RESULTS}</arg>
+<arg>${entry}</arg>
+<doc>Adds ``values`` to the end of ``list``.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.215722" elapsed="0.000000"/>
+</kw>
+<arg>${nota_fiscal}</arg>
+<arg>${error_msg}</arg>
+<status status="PASS" start="2025-11-21T21:35:41.214722" elapsed="0.001000"/>
 </kw>
 <kw name="Click Element" owner="SeleniumLibrary">
-<arg>xpath=/html/body/div/div/div[3]/form/div[2]/div[2]/table/tbody/tr[1]/td[10]/i</arg>
+<arg>xpath=${XPATH_ERROR_CLOSE}</arg>
 <doc>Click the element identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.412656" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.215722" elapsed="0.000000"/>
 </kw>
+<kw name="Sleep" owner="BuiltIn">
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.215722" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.214722" elapsed="0.001000"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<kw name="Set Variable" owner="BuiltIn">
+<var>${error_msg}</var>
+<arg>Error modal detected but could not read message: ${error}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.215722" elapsed="0.000000"/>
+</kw>
+<kw name="Append Error Result" owner="protocolo_devolucao_keywords">
+<kw name="Set Variable" owner="BuiltIn">
+<var>${simplified_msg}</var>
+<arg>${message}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.215722" elapsed="0.000000"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<var>${msg_length}</var>
+<arg>len('${message}')</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.215722" elapsed="0.000000"/>
+</kw>
+<if>
+<branch type="IF" condition="${msg_length} &gt; 200">
+<kw name="Evaluate" owner="BuiltIn">
+<var>${simplified_msg}</var>
+<arg>'${message}'[:200] + '...'</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.216722" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.216722" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.216722" elapsed="0.000000"/>
+</if>
+<kw name="Create Dictionary" owner="BuiltIn">
+<var>${entry}</var>
+<arg>nota_fiscal=${nota_fiscal}</arg>
+<arg>message=${simplified_msg}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.216722" elapsed="0.000000"/>
+</kw>
+<kw name="Append To List" owner="Collections">
+<arg>${ERROR_RESULTS}</arg>
+<arg>${entry}</arg>
+<doc>Adds ``values`` to the end of ``list``.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.216722" elapsed="0.000000"/>
+</kw>
+<arg>${nota_fiscal}</arg>
+<arg>${error_msg}</arg>
+<status status="PASS" start="2025-11-21T21:35:41.215722" elapsed="0.001000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.215722" elapsed="0.001000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.214722" elapsed="0.002000"/>
+</try>
+<kw name="Unselect Frame" owner="SeleniumLibrary">
+<doc>Sets the main frame as the current frame.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.216722" elapsed="0.000000"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<var>${search_success}</var>
+<arg>${False}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.216722" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.214722" elapsed="0.002000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.214722" elapsed="0.002000"/>
+</if>
+<return>
+<value>${search_success}</value>
+<status status="PASS" start="2025-11-21T21:35:41.216722" elapsed="0.000000"/>
+</return>
+<var>${search_success}</var>
+<arg>${nota_fiscal}</arg>
+<status status="PASS" start="2025-11-21T21:35:41.211515" elapsed="0.005207"/>
+</kw>
+<if>
+<branch type="IF" condition="not ${search_success}">
+<kw name="Fail" owner="BuiltIn">
+<arg>Failed to search for nota fiscal ${nota_fiscal}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.216722" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.216722" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.216722" elapsed="0.000000"/>
+</if>
+<kw name="Click First Plus Icon With Fallback" owner="protocolo_devolucao_keywords">
+<kw name="Create List" owner="BuiltIn">
+<var>${candidates}</var>
+<arg>//table//tbody/tr[1]//i[contains(@class,'mdi-plus')]</arg>
+<arg>//table//tbody/tr[1]//i[contains(@class,'fa-plus')]</arg>
+<arg>//table//tbody/tr[1]//i[contains(@class,'icon-plus')]</arg>
+<arg>/html/body/div/div/div[3]/form/div[2]/div[2]/table/tbody/tr[1]/td[10]/i</arg>
+<doc>Returns a list containing given items.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.217722" elapsed="0.000000"/>
+</kw>
+<for flavor="IN">
+<iter>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
 <kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
-<arg>xpath=/html/body/div/div/div[3]/form/div[2]/div[2]/table/tbody/tr[2]/td/div/div[2]/div[3]/button</arg>
-<arg>timeout=10s</arg>
+<arg>xpath=${xp}</arg>
+<arg>timeout=5s</arg>
 <doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.412656" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.217722" elapsed="0.000000"/>
+</kw>
+<var>${visible}</var>
+<arg>Wait Until Element Is Visible</arg>
+<arg>xpath=${xp}</arg>
+<arg>timeout=5s</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.217722" elapsed="0.000000"/>
+</kw>
+<if>
+<branch type="IF" condition="${visible}">
+<kw name="Scroll Element Into View" owner="ui_keywords">
+<kw name="Scroll Element Into View" owner="SeleniumLibrary">
+<arg>${locator}</arg>
+<doc>Scrolls the element identified by ``locator`` into view.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.217722" elapsed="0.001000"/>
+</kw>
+<arg>xpath=${xp}</arg>
+<doc>Scroll element into view.</doc>
+<status status="PASS" start="2025-11-21T21:35:41.217722" elapsed="0.001000"/>
+</kw>
+<kw name="Wait Until Element Is Enabled" owner="SeleniumLibrary">
+<arg>xpath=${xp}</arg>
+<arg>timeout=2s</arg>
+<doc>Waits until the element ``locator`` is enabled.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.218722" elapsed="0.000000"/>
 </kw>
 <kw name="Click Element" owner="SeleniumLibrary">
-<arg>xpath=/html/body/div/div/div[3]/form/div[2]/div[2]/table/tbody/tr[2]/td/div/div[2]/div[3]/button</arg>
+<arg>xpath=${xp}</arg>
 <doc>Click the element identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.412656" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.218722" elapsed="0.000000"/>
+</kw>
+<return>
+<status status="PASS" start="2025-11-21T21:35:41.218722" elapsed="0.000564"/>
+</return>
+<status status="PASS" start="2025-11-21T21:35:41.217722" elapsed="0.001564"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.217722" elapsed="0.001564"/>
+</if>
+<var name="${xp}"/>
+<status status="PASS" start="2025-11-21T21:35:41.217722" elapsed="0.001564"/>
+</iter>
+<var>${xp}</var>
+<value>@{candidates}</value>
+<status status="PASS" start="2025-11-21T21:35:41.217722" elapsed="0.001564"/>
+</for>
+<status status="PASS" start="2025-11-21T21:35:41.217722" elapsed="0.001564"/>
 </kw>
 <kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
-<arg>xpath=//*[@id="ModalCanhotoNf"]</arg>
+<arg>xpath=${XPATH_CANHOTO_BUTTON}</arg>
 <arg>timeout=10s</arg>
 <doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.412656" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.219286" elapsed="0.000000"/>
 </kw>
-<kw name="Download All PDF Files" owner="pod_download">
+<kw name="Click Element" owner="SeleniumLibrary">
+<arg>xpath=${XPATH_CANHOTO_BUTTON}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.219286" elapsed="0.000000"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.219286" elapsed="0.000000"/>
+</kw>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=${XPATH_ERROR_MODAL}</arg>
+<arg>timeout=3s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.219286" elapsed="0.001004"/>
+</kw>
+<var>${has_error_modal}</var>
+<arg>Wait Until Element Is Visible</arg>
+<arg>xpath=${XPATH_ERROR_MODAL}</arg>
+<arg>timeout=3s</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.219286" elapsed="0.001004"/>
+</kw>
+<if>
+<branch type="IF" condition="${has_error_modal}">
+<kw name="Get Text" owner="SeleniumLibrary">
+<var>${error_msg}</var>
+<arg>xpath=${XPATH_ERROR_MSG}</arg>
+<doc>Returns the text value of the element identified by ``locator``.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.220290" elapsed="0.000000"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<arg>xpath=${XPATH_ERROR_CLOSE}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.220290" elapsed="0.000000"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.220290" elapsed="0.000000"/>
+</kw>
+<kw name="Unselect Frame" owner="SeleniumLibrary">
+<doc>Sets the main frame as the current frame.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.220290" elapsed="0.000000"/>
+</kw>
+<kw name="Fail" owner="BuiltIn">
+<arg>Error modal appeared: ${error_msg}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.221292" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.220290" elapsed="0.001002"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.220290" elapsed="0.001002"/>
+</if>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=${XPATH_MODAL_CANHOTO}</arg>
+<arg>timeout=10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.221292" elapsed="0.000000"/>
+</kw>
+<kw name="Download All PDF Files" owner="protocolo_devolucao_keywords">
 <kw name="Get Element Count" owner="SeleniumLibrary">
 <var>${pdf_buttons_count}</var>
-<arg>xpath=//*[@id="ModalCanhotoNf"]//button[contains(@ng-click, 'buscarArquivo') and contains(., 'Pdf')]</arg>
+<arg>xpath=${XPATH_MODAL_CANHOTO}//button[contains(@ng-click, 'buscarArquivo') and contains(., 'Pdf')]</arg>
 <doc>Returns the number of elements matching ``locator``.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.413961" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.221796" elapsed="0.000000"/>
 </kw>
-<kw name="Log" owner="BuiltIn">
-<arg>Found ${pdf_buttons_count} PDF download buttons</arg>
-<doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.413961" elapsed="0.000000"/>
+<kw name="Evaluate" owner="BuiltIn">
+<var>${download_dir}</var>
+<arg>os.path.abspath(os.path.normpath(os.path.join(r"C:\\Users\\caiqu\\Documents\\workspace\\rpa-airflow-seed\\rpa-robots\\robot\\resources\\domain", "..", "..", "..", "..", "shared", "downloads")))</arg>
+<arg>os</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.221796" elapsed="0.000000"/>
+</kw>
+<kw name="Ensure Directory Exists" owner="filesystem_keywords">
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
+<kw name="Directory Should Exist" owner="OperatingSystem">
+<arg>${directory_path}</arg>
+<doc>Fails unless the given path points to an existing directory.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.221796" elapsed="0.000000"/>
+</kw>
+<var>${exists}</var>
+<arg>Directory Should Exist</arg>
+<arg>${directory_path}</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.221796" elapsed="0.000000"/>
+</kw>
+<if>
+<branch type="IF" condition="not ${exists}">
+<kw name="Create Directory" owner="OperatingSystem">
+<arg>${directory_path}</arg>
+<doc>Creates the specified directory.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.222802" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.222802" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.222802" elapsed="0.000000"/>
+</if>
+<arg>${download_dir}</arg>
+<doc>Create directory if it does not exist.</doc>
+<status status="PASS" start="2025-11-21T21:35:41.221796" elapsed="0.001006"/>
 </kw>
 <for flavor="IN RANGE">
 <iter>
 <kw name="Set Variable" owner="BuiltIn">
 <var>${button_xpath}</var>
-<arg>(//*[@id="ModalCanhotoNf"]//button[contains(@ng-click, 'buscarArquivo') and contains(., 'Pdf')])[${index}]</arg>
+<arg>(${XPATH_MODAL_CANHOTO}//button[contains(@ng-click, 'buscarArquivo') and contains(., 'Pdf')])[${index}]</arg>
 <doc>Returns the given values which can then be assigned to a variables.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.413961" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.222802" elapsed="0.000000"/>
 </kw>
 <kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
 <arg>xpath=${button_xpath}</arg>
 <arg>timeout=5s</arg>
 <doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.413961" elapsed="0.001023"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.222802" elapsed="0.000000"/>
 </kw>
 <kw name="Run Keyword And Return Status" owner="BuiltIn">
 <kw name="Element Should Be Enabled" owner="SeleniumLibrary">
 <arg>xpath=${button_xpath}</arg>
 <doc>Verifies that element identified by ``locator`` is enabled.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.414984" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.222802" elapsed="0.000000"/>
 </kw>
 <var>${is_enabled}</var>
 <arg>Element Should Be Enabled</arg>
 <arg>xpath=${button_xpath}</arg>
 <doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.414984" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.222802" elapsed="0.000000"/>
 </kw>
 <if>
 <branch type="IF" condition="${is_enabled}">
-<kw name="Log" owner="BuiltIn">
-<arg>Clicking PDF download button ${index}</arg>
-<doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.415486" elapsed="0.000000"/>
+<kw name="Evaluate" owner="BuiltIn">
+<var>${existing_files}</var>
+<arg>set([f for f in os.listdir(r"${download_dir}") if f.endswith('.pdf')])</arg>
+<arg>os</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.223800" elapsed="0.000000"/>
 </kw>
 <kw name="Click Element" owner="SeleniumLibrary">
 <arg>xpath=${button_xpath}</arg>
 <doc>Click the element identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.415486" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.223800" elapsed="0.000000"/>
+</kw>
+<kw name="Wait For Download To Complete" owner="protocolo_devolucao_keywords">
+<kw name="Evaluate" owner="BuiltIn">
+<var>${timeout_seconds}</var>
+<arg>int('${timeout}'.replace('s', '')) if 's' in '${timeout}' else int('${timeout}')</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.223800" elapsed="0.000000"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<var>${max_iterations}</var>
+<arg>${timeout_seconds} * 2</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.224800" elapsed="0.000000"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<var>${new_file_found}</var>
+<arg>${False}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.224800" elapsed="0.000000"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<var>${downloaded_file}</var>
+<arg>${EMPTY}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.224800" elapsed="0.000000"/>
+</kw>
+<for flavor="IN RANGE">
+<iter>
+<kw name="Evaluate" owner="BuiltIn">
+<var>${all_files_set}</var>
+<arg>set([f for f in os.listdir(r"${download_dir}") if f.endswith('.pdf')])</arg>
+<arg>os</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.224800" elapsed="0.001000"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<var>${new_files}</var>
+<arg>list(${all_files_set} - ${existing_files_set})</arg>
+<arg>os</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.225800" elapsed="0.000000"/>
+</kw>
+<if>
+<branch type="IF" condition="len(${new_files}) &gt; 0">
+<kw name="Evaluate" owner="BuiltIn">
+<var>${latest_file}</var>
+<arg>max([os.path.join(r"${download_dir}", f) for f in ${new_files}], key=lambda p: os.path.getmtime(p))</arg>
+<arg>os</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.225800" elapsed="0.000000"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<var>${current_size}</var>
+<arg>os.path.getsize(r"${latest_file}")</arg>
+<arg>os</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.225800" elapsed="0.000000"/>
 </kw>
 <kw name="Sleep" owner="BuiltIn">
-<arg>2s</arg>
+<arg>0.5s</arg>
 <doc>Pauses the test executed for the given time.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.226800" elapsed="0.000000"/>
 </kw>
-<status status="PASS" start="2025-10-17T22:24:23.415486" elapsed="0.000605"/>
-</branch>
-<branch type="ELSE">
-<kw name="Log" owner="BuiltIn">
-<arg>PDF download button ${index} is disabled, skipping</arg>
-<doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+<kw name="Evaluate" owner="BuiltIn">
+<var>${new_size}</var>
+<arg>os.path.getsize(r"${latest_file}")</arg>
+<arg>os</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.226800" elapsed="0.000000"/>
 </kw>
-<status status="PASS" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+<if>
+<branch type="IF" condition="${current_size} == ${new_size} and ${current_size} &gt; 0">
+<kw name="Set Variable" owner="BuiltIn">
+<var>${new_file_found}</var>
+<arg>${True}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.226800" elapsed="0.000000"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<var>${downloaded_file}</var>
+<arg>${latest_file}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.226800" elapsed="0.000000"/>
+</kw>
+<break>
+<status status="PASS" start="2025-11-21T21:35:41.226800" elapsed="0.000000"/>
+</break>
+<status status="PASS" start="2025-11-21T21:35:41.226800" elapsed="0.000000"/>
 </branch>
-<status status="PASS" start="2025-10-17T22:24:23.415486" elapsed="0.000605"/>
+<status status="PASS" start="2025-11-21T21:35:41.226800" elapsed="0.000000"/>
+</if>
+<status status="PASS" start="2025-11-21T21:35:41.225800" elapsed="0.001000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.225800" elapsed="0.001000"/>
+</if>
+<kw name="Sleep" owner="BuiltIn">
+<arg>0.5s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.226800" elapsed="0.000000"/>
+</kw>
+<var name="${i}"/>
+<status status="PASS" start="2025-11-21T21:35:41.224800" elapsed="0.002000"/>
+</iter>
+<var>${i}</var>
+<value>${max_iterations}</value>
+<status status="PASS" start="2025-11-21T21:35:41.224800" elapsed="0.002000"/>
+</for>
+<if>
+<branch type="IF" condition="not ${new_file_found}">
+<kw name="Fail" owner="BuiltIn">
+<arg>Download timeout: No new PDF file appeared in ${download_dir} within ${timeout}</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.226800" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.226800" elapsed="0.001000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.226800" elapsed="0.001000"/>
+</if>
+<return>
+<value>${downloaded_file}</value>
+<status status="PASS" start="2025-11-21T21:35:41.227800" elapsed="0.000000"/>
+</return>
+<var>${downloaded_file}</var>
+<arg>${download_dir}</arg>
+<arg>${existing_files}</arg>
+<arg>timeout=30s</arg>
+<status status="PASS" start="2025-11-21T21:35:41.223800" elapsed="0.004000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.223800" elapsed="0.004000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.223800" elapsed="0.004000"/>
 </if>
 <var name="${index}"/>
-<status status="PASS" start="2025-10-17T22:24:23.413961" elapsed="0.002130"/>
+<status status="PASS" start="2025-11-21T21:35:41.222802" elapsed="0.004998"/>
 </iter>
 <var>${index}</var>
 <value>1</value>
 <value>${pdf_buttons_count} + 1</value>
-<status status="PASS" start="2025-10-17T22:24:23.413961" elapsed="0.002130"/>
+<status status="PASS" start="2025-11-21T21:35:41.222802" elapsed="0.004998"/>
 </for>
-<status status="PASS" start="2025-10-17T22:24:23.412656" elapsed="0.003435"/>
+<status status="PASS" start="2025-11-21T21:35:41.221796" elapsed="0.006004"/>
 </kw>
 <kw name="Sleep" owner="BuiltIn">
-<arg>10s</arg>
+<arg>0.5s</arg>
 <doc>Pauses the test executed for the given time.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.227800" elapsed="0.000000"/>
 </kw>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=${XPATH_MODAL_CANHOTO}//button[contains(@class,'close') or contains(@ng-click,'close')]</arg>
+<arg>timeout=2s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.227800" elapsed="0.000000"/>
+</kw>
+<var>${close_button}</var>
+<arg>Wait Until Element Is Visible</arg>
+<arg>xpath=${XPATH_MODAL_CANHOTO}//button[contains(@class,'close') or contains(@ng-click,'close')]</arg>
+<arg>timeout=2s</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.227800" elapsed="0.000000"/>
+</kw>
+<if>
+<branch type="IF" condition="${close_button}">
+<kw name="Click Element" owner="SeleniumLibrary">
+<arg>xpath=${XPATH_MODAL_CANHOTO}//button[contains(@class,'close') or contains(@ng-click,'close')]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.227800" elapsed="0.000000"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<arg>0.5s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.227800" elapsed="0.001000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.227800" elapsed="0.001000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.227800" elapsed="0.001000"/>
+</if>
 <kw name="Unselect Frame" owner="SeleniumLibrary">
 <doc>Sets the main frame as the current frame.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.228800" elapsed="0.000000"/>
 </kw>
 <arg>${nota_fiscal}</arg>
-<status status="PASS" start="2025-10-17T22:24:23.411150" elapsed="0.004941"/>
+<status status="PASS" start="2025-11-21T21:35:41.210011" elapsed="0.018789"/>
 </kw>
-<arg>${current_nota_fiscal[0]}</arg>
-<status status="PASS" start="2025-10-17T22:24:23.409734" elapsed="0.006357"/>
+<arg>${current_nota_fiscal}</arg>
+<status status="PASS" start="2025-11-21T21:35:41.209001" elapsed="0.019799"/>
 </kw>
 <var name="${index}"/>
-<status status="PASS" start="2025-10-17T22:24:23.409734" elapsed="0.006357"/>
+<status status="PASS" start="2025-11-21T21:35:41.209001" elapsed="0.019799"/>
 </iter>
 <var>${index}</var>
 <value>0</value>
 <value>${array_length}</value>
-<status status="PASS" start="2025-10-17T22:24:23.409734" elapsed="0.006357"/>
+<status status="PASS" start="2025-11-21T21:35:41.209001" elapsed="0.019799"/>
 </for>
-<status status="PASS" start="2025-10-17T22:24:23.408347" elapsed="0.007744"/>
+<status status="PASS" start="2025-11-21T21:35:41.209001" elapsed="0.019799"/>
 </branch>
-<branch type="ELSE">
-<kw name="Log" owner="BuiltIn">
-<arg>No rpa_request variable found, using default Nota Fiscal</arg>
-<doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
-</kw>
-<kw name="Process Single Nota Fiscal" owner="pod_download">
-<kw name="Log" owner="BuiltIn">
-<arg>Processing Nota Fiscal: ${nota_fiscal}</arg>
-<doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
-</kw>
-<kw name="Input Nota Fiscal And Search" owner="pod_download">
-<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
-<arg>css=iframe#frame</arg>
-<arg>timeout=15s</arg>
-<doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
-</kw>
-<kw name="Select Frame" owner="SeleniumLibrary">
-<arg>css=iframe#frame</arg>
-<doc>Sets frame identified by ``locator`` as the current frame.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
-</kw>
-<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
-<arg>css=input[name="txtNotaFiscal"]</arg>
-<arg>timeout=15s</arg>
-<doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
-</kw>
-<kw name="Click Element" owner="SeleniumLibrary">
-<arg>css=input[name="txtNotaFiscal"]</arg>
-<doc>Click the element identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
-</kw>
-<kw name="Input Text" owner="SeleniumLibrary">
-<arg>css=input[name="txtNotaFiscal"]</arg>
-<arg>${nota_fiscal}</arg>
-<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
-</kw>
-<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
-<arg>xpath=/html/body/div/div/div[3]/form/div[1]/div[6]/div/div[1]/button</arg>
-<arg>timeout=10s</arg>
-<doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
-</kw>
-<kw name="Click Element" owner="SeleniumLibrary">
-<arg>xpath=/html/body/div/div/div[3]/form/div[1]/div[6]/div/div[1]/button</arg>
-<doc>Click the element identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
-</kw>
-<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
-<arg>xpath=/html/body/div/div/div[3]/form/div[2]/div[2]/table/tbody/tr[1]/td[10]/i</arg>
-<arg>timeout=10s</arg>
-<doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
-</kw>
-<kw name="Click Element" owner="SeleniumLibrary">
-<arg>xpath=/html/body/div/div/div[3]/form/div[2]/div[2]/table/tbody/tr[1]/td[10]/i</arg>
-<doc>Click the element identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
-</kw>
-<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
-<arg>xpath=/html/body/div/div/div[3]/form/div[2]/div[2]/table/tbody/tr[2]/td/div/div[2]/div[3]/button</arg>
-<arg>timeout=10s</arg>
-<doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
-</kw>
-<kw name="Click Element" owner="SeleniumLibrary">
-<arg>xpath=/html/body/div/div/div[3]/form/div[2]/div[2]/table/tbody/tr[2]/td/div/div[2]/div[3]/button</arg>
-<doc>Click the element identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
-</kw>
-<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
-<arg>xpath=//*[@id="ModalCanhotoNf"]</arg>
-<arg>timeout=10s</arg>
-<doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
-</kw>
-<kw name="Download All PDF Files" owner="pod_download">
-<kw name="Get Element Count" owner="SeleniumLibrary">
-<var>${pdf_buttons_count}</var>
-<arg>xpath=//*[@id="ModalCanhotoNf"]//button[contains(@ng-click, 'buscarArquivo') and contains(., 'Pdf')]</arg>
-<doc>Returns the number of elements matching ``locator``.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
-</kw>
-<kw name="Log" owner="BuiltIn">
-<arg>Found ${pdf_buttons_count} PDF download buttons</arg>
-<doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
-</kw>
-<for flavor="IN RANGE">
-<iter>
-<kw name="Set Variable" owner="BuiltIn">
-<var>${button_xpath}</var>
-<arg>(//*[@id="ModalCanhotoNf"]//button[contains(@ng-click, 'buscarArquivo') and contains(., 'Pdf')])[${index}]</arg>
-<doc>Returns the given values which can then be assigned to a variables.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
-</kw>
-<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
-<arg>xpath=${button_xpath}</arg>
-<arg>timeout=5s</arg>
-<doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.000000"/>
-</kw>
-<kw name="Run Keyword And Return Status" owner="BuiltIn">
-<kw name="Element Should Be Enabled" owner="SeleniumLibrary">
-<arg>xpath=${button_xpath}</arg>
-<doc>Verifies that element identified by ``locator`` is enabled.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.422793" elapsed="0.000000"/>
-</kw>
-<var>${is_enabled}</var>
-<arg>Element Should Be Enabled</arg>
-<arg>xpath=${button_xpath}</arg>
-<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.416091" elapsed="0.006702"/>
-</kw>
-<if>
-<branch type="IF" condition="${is_enabled}">
-<kw name="Log" owner="BuiltIn">
-<arg>Clicking PDF download button ${index}</arg>
-<doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.422793" elapsed="0.000000"/>
-</kw>
-<kw name="Click Element" owner="SeleniumLibrary">
-<arg>xpath=${button_xpath}</arg>
-<doc>Click the element identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.422793" elapsed="0.000000"/>
-</kw>
-<kw name="Sleep" owner="BuiltIn">
-<arg>2s</arg>
-<doc>Pauses the test executed for the given time.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.423314" elapsed="0.000000"/>
-</kw>
-<status status="PASS" start="2025-10-17T22:24:23.422793" elapsed="0.000521"/>
-</branch>
-<branch type="ELSE">
-<kw name="Log" owner="BuiltIn">
-<arg>PDF download button ${index} is disabled, skipping</arg>
-<doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.423314" elapsed="0.000000"/>
-</kw>
-<status status="PASS" start="2025-10-17T22:24:23.423314" elapsed="0.000000"/>
-</branch>
-<status status="PASS" start="2025-10-17T22:24:23.422793" elapsed="0.000521"/>
+<status status="PASS" start="2025-11-21T21:35:41.207658" elapsed="0.021142"/>
 </if>
-<var name="${index}"/>
-<status status="PASS" start="2025-10-17T22:24:23.416091" elapsed="0.007223"/>
-</iter>
-<var>${index}</var>
-<value>1</value>
-<value>${pdf_buttons_count} + 1</value>
-<status status="PASS" start="2025-10-17T22:24:23.416091" elapsed="0.007223"/>
-</for>
-<status status="PASS" start="2025-10-17T22:24:23.416091" elapsed="0.007223"/>
+<status status="PASS" start="2025-11-21T21:35:41.203642" elapsed="0.025158"/>
 </kw>
-<kw name="Sleep" owner="BuiltIn">
-<arg>10s</arg>
-<doc>Pauses the test executed for the given time.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.423314" elapsed="0.000510"/>
+<kw name="Close Browser" owner="browser_keywords">
+<try>
+<branch type="TRY">
+<kw name="Set Screenshot Directory" owner="SeleniumLibrary">
+<arg>${None}</arg>
+<doc>Sets the directory for captured screenshots.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.228800" elapsed="0.000000"/>
 </kw>
-<kw name="Unselect Frame" owner="SeleniumLibrary">
-<doc>Sets the main frame as the current frame.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.423824" elapsed="0.000000"/>
-</kw>
-<arg>${nota_fiscal}</arg>
-<status status="PASS" start="2025-10-17T22:24:23.416091" elapsed="0.007733"/>
-</kw>
-<arg>${NOTA_FISCAL}</arg>
-<status status="PASS" start="2025-10-17T22:24:23.416091" elapsed="0.007733"/>
-</kw>
-<status status="PASS" start="2025-10-17T22:24:23.416091" elapsed="0.007733"/>
+<status status="PASS" start="2025-11-21T21:35:41.228800" elapsed="0.000000"/>
 </branch>
-<status status="PASS" start="2025-10-17T22:24:23.408347" elapsed="0.015477"/>
-</if>
-<status status="PASS" start="2025-10-17T22:24:23.408347" elapsed="0.015477"/>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.228800" elapsed="0.000000"/>
 </kw>
-<kw name="Close Browser" owner="browser">
+<status status="NOT RUN" start="2025-11-21T21:35:41.228800" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.228800" elapsed="0.001000"/>
+</try>
+<try>
+<branch type="TRY">
 <kw name="Close All Browsers" owner="SeleniumLibrary">
 <doc>Closes all open browsers and resets the browser cache.</doc>
-<status status="NOT RUN" start="2025-10-17T22:24:23.424911" elapsed="0.000000"/>
+<status status="NOT RUN" start="2025-11-21T21:35:41.229800" elapsed="0.000000"/>
 </kw>
-<status status="PASS" start="2025-10-17T22:24:23.424911" elapsed="0.000000"/>
+<status status="PASS" start="2025-11-21T21:35:41.229800" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<try>
+<branch type="TRY">
+<kw name="Close Browser" owner="browser_keywords">
+<try>
+<branch type="TRY">
+<kw name="Set Screenshot Directory" owner="SeleniumLibrary">
+<arg>${None}</arg>
+<doc>Sets the directory for captured screenshots.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.229800" elapsed="0.000000"/>
 </kw>
-<status status="PASS" start="2025-10-17T22:24:23.399372" elapsed="0.025539"/>
+<status status="PASS" start="2025-11-21T21:35:41.229800" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.229800" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.229800" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.229800" elapsed="0.000000"/>
+</try>
+<try>
+<branch type="TRY">
+<kw name="Close All Browsers" owner="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.230803" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.229800" elapsed="0.001003"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<try>
+<branch type="TRY">
+<kw name="Close Browser" owner="browser_keywords">
+<try>
+<branch type="TRY">
+<kw name="Set Screenshot Directory" owner="SeleniumLibrary">
+<arg>${None}</arg>
+<doc>Sets the directory for captured screenshots.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.230803" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.230803" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.230803" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.230803" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.230803" elapsed="0.000000"/>
+</try>
+<try>
+<branch type="TRY">
+<kw name="Close All Browsers" owner="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.231802" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.230803" elapsed="0.000999"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<try>
+<branch type="TRY">
+<kw name="Close Browser" owner="browser_keywords">
+<try>
+<branch type="TRY">
+<kw name="Set Screenshot Directory" owner="SeleniumLibrary">
+<arg>${None}</arg>
+<doc>Sets the directory for captured screenshots.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.232307" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.232307" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.232307" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.232307" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.232307" elapsed="0.000000"/>
+</try>
+<try>
+<branch type="TRY">
+<kw name="Close All Browsers" owner="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.232307" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.232307" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<try>
+<branch type="TRY">
+<kw name="Close Browser" owner="browser_keywords">
+<try>
+<branch type="TRY">
+<kw name="Set Screenshot Directory" owner="SeleniumLibrary">
+<arg>${None}</arg>
+<doc>Sets the directory for captured screenshots.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.233313" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.232307" elapsed="0.001006"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.233313" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.233313" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.232307" elapsed="0.001006"/>
+</try>
+<try>
+<branch type="TRY">
+<kw name="Close All Browsers" owner="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.233313" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.233313" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<try>
+<branch type="TRY">
+<kw name="Close Browser" owner="browser_keywords">
+<try>
+<branch type="TRY">
+<kw name="Set Screenshot Directory" owner="SeleniumLibrary">
+<arg>${None}</arg>
+<doc>Sets the directory for captured screenshots.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.234312" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.234312" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.234312" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.234312" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.234312" elapsed="0.000543"/>
+</try>
+<try>
+<branch type="TRY">
+<kw name="Close All Browsers" owner="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.234855" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.234855" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<try>
+<branch type="TRY">
+<kw name="Close Browser" owner="browser_keywords">
+<try>
+<branch type="TRY">
+<kw name="Set Screenshot Directory" owner="SeleniumLibrary">
+<arg>${None}</arg>
+<doc>Sets the directory for captured screenshots.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.234855" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.234855" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.234855" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.234855" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.234855" elapsed="0.000000"/>
+</try>
+<try>
+<branch type="TRY">
+<kw name="Close All Browsers" owner="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.235861" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.234855" elapsed="0.001006"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<try>
+<branch type="TRY">
+<kw name="Close Browser" owner="browser_keywords">
+<try>
+<branch type="TRY">
+<kw name="Set Screenshot Directory" owner="SeleniumLibrary">
+<arg>${None}</arg>
+<doc>Sets the directory for captured screenshots.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.235861" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.235861" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.235861" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.235861" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.235861" elapsed="0.000000"/>
+</try>
+<try>
+<branch type="TRY">
+<kw name="Close All Browsers" owner="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.235861" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.235861" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<try>
+<branch type="TRY">
+<kw name="Close Browser" owner="browser_keywords">
+<try>
+<branch type="TRY">
+<kw name="Set Screenshot Directory" owner="SeleniumLibrary">
+<arg>${None}</arg>
+<doc>Sets the directory for captured screenshots.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.236861" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.236861" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.236861" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.236861" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.236861" elapsed="0.000000"/>
+</try>
+<try>
+<branch type="TRY">
+<kw name="Close All Browsers" owner="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.236861" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.236861" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<try>
+<branch type="TRY">
+<kw name="Close Browser" owner="browser_keywords">
+<try>
+<branch type="TRY">
+<kw name="Set Screenshot Directory" owner="SeleniumLibrary">
+<arg>${None}</arg>
+<doc>Sets the directory for captured screenshots.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.236861" elapsed="0.001000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.236861" elapsed="0.001000"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.237861" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.237861" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.236861" elapsed="0.001000"/>
+</try>
+<try>
+<branch type="TRY">
+<kw name="Close All Browsers" owner="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.237861" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.237861" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<try>
+<branch type="TRY">
+<kw name="Close Browser" owner="browser_keywords">
+<try>
+<branch type="TRY">
+<kw name="Set Screenshot Directory" owner="SeleniumLibrary">
+<arg>${None}</arg>
+<doc>Sets the directory for captured screenshots.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.237861" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.237861" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.237861" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.237861" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.237861" elapsed="0.000000"/>
+</try>
+<try>
+<branch type="TRY">
+<kw name="Close All Browsers" owner="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.237861" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.237861" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<try>
+<branch type="TRY">
+<kw name="Close Browser" owner="browser_keywords">
+<try>
+<branch type="TRY">
+<kw name="Set Screenshot Directory" owner="SeleniumLibrary">
+<arg>${None}</arg>
+<doc>Sets the directory for captured screenshots.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.237861" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.237861" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.237861" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.237861" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.237861" elapsed="0.000000"/>
+</try>
+<try>
+<branch type="TRY">
+<kw name="Close All Browsers" owner="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.237861" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.237861" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<try>
+<branch type="TRY">
+<kw name="Close Browser" owner="browser_keywords">
+<try>
+<branch type="TRY">
+<kw name="Set Screenshot Directory" owner="SeleniumLibrary">
+<arg>${None}</arg>
+<doc>Sets the directory for captured screenshots.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.237861" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.237861" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.237861" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.237861" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.237861" elapsed="0.000000"/>
+</try>
+<try>
+<branch type="TRY">
+<kw name="Close All Browsers" owner="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.237861" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.237861" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<try>
+<branch type="TRY">
+<kw name="Close Browser" owner="browser_keywords">
+<try>
+<branch type="TRY">
+<kw name="Set Screenshot Directory" owner="SeleniumLibrary">
+<arg>${None}</arg>
+<doc>Sets the directory for captured screenshots.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.241308" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.241308" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.241942" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.241308" elapsed="0.000634"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.241308" elapsed="0.000634"/>
+</try>
+<try>
+<branch type="TRY">
+<kw name="Close All Browsers" owner="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.241942" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.241942" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<try>
+<branch type="TRY">
+<kw name="Close Browser" owner="browser_keywords">
+<try>
+<branch type="TRY">
+<kw name="Set Screenshot Directory" owner="SeleniumLibrary">
+<arg>${None}</arg>
+<doc>Sets the directory for captured screenshots.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.242549" elapsed="0.000522"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.242549" elapsed="0.000522"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.243071" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.243071" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.242549" elapsed="0.000522"/>
+</try>
+<try>
+<branch type="TRY">
+<kw name="Close All Browsers" owner="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.243071" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.243071" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<try>
+<branch type="TRY">
+<kw name="Close Browser" owner="browser_keywords">
+<try>
+<branch type="TRY">
+<kw name="Set Screenshot Directory" owner="SeleniumLibrary">
+<arg>${None}</arg>
+<doc>Sets the directory for captured screenshots.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.243071" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.243071" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.243071" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.243071" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.243071" elapsed="0.000000"/>
+</try>
+<try>
+<branch type="TRY">
+<kw name="Close All Browsers" owner="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.243071" elapsed="0.001431"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<try>
+<branch type="TRY">
+<kw name="Close Browser" owner="browser_keywords">
+<try>
+<branch type="TRY">
+<kw name="Set Screenshot Directory" owner="SeleniumLibrary">
+<arg>${None}</arg>
+<doc>Sets the directory for captured screenshots.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</try>
+<try>
+<branch type="TRY">
+<kw name="Close All Browsers" owner="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<try>
+<branch type="TRY">
+<kw name="Close Browser" owner="browser_keywords">
+<try>
+<branch type="TRY">
+<kw name="Set Screenshot Directory" owner="SeleniumLibrary">
+<arg>${None}</arg>
+<doc>Sets the directory for captured screenshots.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</try>
+<try>
+<branch type="TRY">
+<kw name="Close All Browsers" owner="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<try>
+<branch type="TRY">
+<kw name="Close Browser" owner="browser_keywords">
+<try>
+<branch type="TRY">
+<kw name="Set Screenshot Directory" owner="SeleniumLibrary">
+<arg>${None}</arg>
+<doc>Sets the directory for captured screenshots.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</try>
+<try>
+<branch type="TRY">
+<kw name="Close All Browsers" owner="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<try>
+<branch type="TRY">
+<kw name="Close Browser" owner="browser_keywords">
+<try>
+<branch type="TRY">
+<kw name="Set Screenshot Directory" owner="SeleniumLibrary">
+<arg>${None}</arg>
+<doc>Sets the directory for captured screenshots.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</try>
+<try>
+<branch type="TRY">
+<kw name="Close All Browsers" owner="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT" assign="${error}">
+<try>
+<branch type="TRY">
+<msg time="2025-11-21T21:35:41.244502" level="FAIL">Maximum limit of started keywords and control structures exceeded.</msg>
+<status status="FAIL" start="2025-11-21T21:35:41.244502" elapsed="0.000000">Maximum limit of started keywords and control structures exceeded.</status>
+</branch>
+<msg time="2025-11-21T21:35:41.244502" level="FAIL">Maximum limit of started keywords and control structures exceeded.</msg>
+<status status="FAIL" start="2025-11-21T21:35:41.244502" elapsed="0.000000">Maximum limit of started keywords and control structures exceeded.</status>
+</try>
+<status status="FAIL" start="2025-11-21T21:35:41.244502" elapsed="0.000000">Maximum limit of started keywords and control structures exceeded.</status>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</try>
+<status status="PASS" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</try>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</try>
+<status status="PASS" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</try>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</try>
+<status status="PASS" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</try>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</try>
+<status status="PASS" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</try>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.243071" elapsed="0.001431"/>
+</try>
+<status status="PASS" start="2025-11-21T21:35:41.243071" elapsed="0.001431"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.243071" elapsed="0.001431"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<status status="NOT RUN" start="2025-11-21T21:35:41.243071" elapsed="0.001431"/>
+</try>
+<status status="NOT RUN" start="2025-11-21T21:35:41.243071" elapsed="0.001431"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.243071" elapsed="0.001431"/>
+</try>
+<status status="PASS" start="2025-11-21T21:35:41.242549" elapsed="0.001953"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.241942" elapsed="0.002560"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<status status="NOT RUN" start="2025-11-21T21:35:41.241942" elapsed="0.002560"/>
+</try>
+<status status="NOT RUN" start="2025-11-21T21:35:41.241942" elapsed="0.002560"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.241942" elapsed="0.002560"/>
+</try>
+<status status="PASS" start="2025-11-21T21:35:41.241308" elapsed="0.003194"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.241308" elapsed="0.003194"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<status status="NOT RUN" start="2025-11-21T21:35:41.241308" elapsed="0.003194"/>
+</try>
+<status status="NOT RUN" start="2025-11-21T21:35:41.241308" elapsed="0.003194"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.237861" elapsed="0.006641"/>
+</try>
+<status status="PASS" start="2025-11-21T21:35:41.237861" elapsed="0.006641"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.237861" elapsed="0.006641"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<status status="NOT RUN" start="2025-11-21T21:35:41.237861" elapsed="0.006641"/>
+</try>
+<status status="NOT RUN" start="2025-11-21T21:35:41.237861" elapsed="0.006641"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.237861" elapsed="0.006641"/>
+</try>
+<status status="PASS" start="2025-11-21T21:35:41.237861" elapsed="0.006641"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.237861" elapsed="0.006641"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<status status="NOT RUN" start="2025-11-21T21:35:41.237861" elapsed="0.006641"/>
+</try>
+<status status="NOT RUN" start="2025-11-21T21:35:41.237861" elapsed="0.006641"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.237861" elapsed="0.006641"/>
+</try>
+<status status="PASS" start="2025-11-21T21:35:41.237861" elapsed="0.006641"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.237861" elapsed="0.006641"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<status status="NOT RUN" start="2025-11-21T21:35:41.237861" elapsed="0.006641"/>
+</try>
+<status status="NOT RUN" start="2025-11-21T21:35:41.237861" elapsed="0.006641"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.237861" elapsed="0.006641"/>
+</try>
+<status status="PASS" start="2025-11-21T21:35:41.236861" elapsed="0.007641"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.236861" elapsed="0.007641"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<status status="NOT RUN" start="2025-11-21T21:35:41.236861" elapsed="0.007641"/>
+</try>
+<status status="NOT RUN" start="2025-11-21T21:35:41.236861" elapsed="0.007641"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.236861" elapsed="0.007641"/>
+</try>
+<status status="PASS" start="2025-11-21T21:35:41.236861" elapsed="0.007641"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.235861" elapsed="0.008641"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<status status="NOT RUN" start="2025-11-21T21:35:41.235861" elapsed="0.008641"/>
+</try>
+<status status="NOT RUN" start="2025-11-21T21:35:41.235861" elapsed="0.008641"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.235861" elapsed="0.008641"/>
+</try>
+<status status="PASS" start="2025-11-21T21:35:41.235861" elapsed="0.008641"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.235861" elapsed="0.008641"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<status status="NOT RUN" start="2025-11-21T21:35:41.235861" elapsed="0.008641"/>
+</try>
+<status status="NOT RUN" start="2025-11-21T21:35:41.235861" elapsed="0.008641"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.234855" elapsed="0.009647"/>
+</try>
+<status status="PASS" start="2025-11-21T21:35:41.234855" elapsed="0.009647"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.234855" elapsed="0.009647"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.244502" elapsed="0.000000"/>
+</branch>
+<status status="NOT RUN" start="2025-11-21T21:35:41.234855" elapsed="0.009647"/>
+</try>
+<status status="NOT RUN" start="2025-11-21T21:35:41.234855" elapsed="0.009647"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.234855" elapsed="0.009647"/>
+</try>
+<status status="PASS" start="2025-11-21T21:35:41.234312" elapsed="0.010190"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.233313" elapsed="0.019203"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.252516" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.252516" elapsed="0.000000"/>
+</branch>
+<status status="NOT RUN" start="2025-11-21T21:35:41.233313" elapsed="0.019203"/>
+</try>
+<status status="NOT RUN" start="2025-11-21T21:35:41.233313" elapsed="0.019203"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.233313" elapsed="0.019203"/>
+</try>
+<status status="PASS" start="2025-11-21T21:35:41.232307" elapsed="0.020209"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.232307" elapsed="0.020209"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.252516" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.252516" elapsed="0.000000"/>
+</branch>
+<status status="NOT RUN" start="2025-11-21T21:35:41.232307" elapsed="0.020209"/>
+</try>
+<status status="NOT RUN" start="2025-11-21T21:35:41.232307" elapsed="0.020209"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.232307" elapsed="0.020209"/>
+</try>
+<status status="PASS" start="2025-11-21T21:35:41.231802" elapsed="0.020714"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.231802" elapsed="0.020714"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.252516" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.252516" elapsed="0.000000"/>
+</branch>
+<status status="NOT RUN" start="2025-11-21T21:35:41.231802" elapsed="0.020714"/>
+</try>
+<status status="NOT RUN" start="2025-11-21T21:35:41.231802" elapsed="0.020714"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.230803" elapsed="0.021713"/>
+</try>
+<status status="PASS" start="2025-11-21T21:35:41.230803" elapsed="0.021713"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.230803" elapsed="0.021713"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.252516" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.252516" elapsed="0.000000"/>
+</branch>
+<status status="NOT RUN" start="2025-11-21T21:35:41.230803" elapsed="0.021713"/>
+</try>
+<status status="NOT RUN" start="2025-11-21T21:35:41.230803" elapsed="0.021713"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.229800" elapsed="0.022716"/>
+</try>
+<status status="PASS" start="2025-11-21T21:35:41.229800" elapsed="0.022716"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.229800" elapsed="0.022716"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="No Operation" owner="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="NOT RUN" start="2025-11-21T21:35:41.252516" elapsed="0.000000"/>
+</kw>
+<status status="NOT RUN" start="2025-11-21T21:35:41.252516" elapsed="0.000000"/>
+</branch>
+<status status="NOT RUN" start="2025-11-21T21:35:41.229800" elapsed="0.022716"/>
+</try>
+<status status="NOT RUN" start="2025-11-21T21:35:41.229800" elapsed="0.022716"/>
+</branch>
+<status status="PASS" start="2025-11-21T21:35:41.229800" elapsed="0.022716"/>
+</try>
+<status status="PASS" start="2025-11-21T21:35:41.228800" elapsed="0.023716"/>
+</kw>
+<doc>Execute pod download.</doc>
+<status status="PASS" start="2025-11-21T21:35:41.189304" elapsed="0.063212"/>
 </test>
-<status status="PASS" start="2025-10-17T22:24:23.027786" elapsed="0.398134"/>
+<status status="PASS" start="2025-11-21T21:35:40.814893" elapsed="0.437623"/>
 </suite>
 <statistics>
 <total>
@@ -536,7 +2460,7 @@
 <tag>
 </tag>
 <suite>
-<stat pass="1" fail="0" skip="0" id="s1" name="Ecargo Pod Download">Ecargo Pod Download</stat>
+<stat pass="1" fail="0" skip="0" id="s1" name="Protocolo Devolucao Main">Protocolo Devolucao Main</stat>
 </suite>
 </statistics>
 <errors>

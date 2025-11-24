@@ -107,7 +107,7 @@ class TestGetExecution:
             "exec_id": 1,
             "rpa_key_id": "test_rpa",
             "exec_status": "SUCCESS",
-            "rpa_request": '{"dt_list": []}',
+            "rpa_request": '{"doc_transportes_list": []}',
             "rpa_response": '{"result": "ok"}',
             "callback_url": "http://example.com",
             "created_at": datetime.utcnow(),

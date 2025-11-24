@@ -15,7 +15,7 @@ class RobotFrameworkOperator(BaseOperator):
     Operator for executing Robot Framework tasks via RPA API.
     
     Args:
-        robot_test_file: Robot Framework test file name (e.g., "ecargo_pod_download.robot")
+        robot_test_file: Robot Framework test file name (e.g., "protocolo_devolucao_main.robot")
         rpa_api_conn_id: Connection ID for RPA API
         api_endpoint: API endpoint for robot execution
         callback_path: Optional callback path for webhook

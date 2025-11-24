@@ -40,13 +40,14 @@ def _build_rabbitmq_payload(saga, robot_saga_dict: Dict[str, Any]) -> Dict[str, 
     robot_test_file = saga.data.get("robot_test_file") or f"{saga.robot_operator_id}.robot"
     
     # Build payload for listener
+    # Pass data directly (no rpa_request wrapper) - robot expects data object with doc_transportes_list
     payload = {
         "robot_operator_saga_id": saga.robot_operator_saga_id,
         "saga_id": saga.saga_id,
         "robot_operator_id": saga.robot_operator_id,
         "robot_test_file": robot_test_file,
         "callback_path": saga.data.get("callback_path"),
-        "rpa_request": saga.data,
+        "data": saga.data,  # Pass data directly for robot to access
         "robot_saga": robot_saga_dict
     }
     

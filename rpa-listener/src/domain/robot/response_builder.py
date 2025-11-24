@@ -10,8 +10,14 @@ def build_rpa_response(message: Dict, results_dir: Path, success: bool) -> Dict:
     if not success:
         return {"error": extract_error_detail_from_output(results_dir)}
     
-    rpa_request = message.get('rpa_request', {})
-    notas_fiscais = rpa_request.get('notas_fiscais', [])
+    # Get data directly (no rpa_request wrapper) - robot receives data object with doc_transportes_list
+    data = message.get('data', {})
+    # Extract all nf_e values from doc_transportes_list
+    notas_fiscais = []
+    doc_transportes_list = data.get('doc_transportes_list', [])
+    for doc_transporte_entry in doc_transportes_list:
+        nf_e = doc_transporte_entry.get('nf_e', [])
+        notas_fiscais.extend(nf_e)
     errors_map = _extract_errors_from_output(results_dir, notas_fiscais)
     
     return {

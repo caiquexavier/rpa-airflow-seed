@@ -36,25 +36,23 @@ class TestXlsToRpaRequest:
             result = xls_to_rpa_request(tmp_path)
 
             assert "rpa_key_id" in result
-            assert "rpa_request_object" in result
-            assert "events" in result
-            assert "current_state" in result
+            assert "data" in result
             assert result["rpa_key_id"] == "rpa_protocolo_devolucao"
             
-            dt_list = result["rpa_request_object"]["dt_list"]
-            assert len(dt_list) == 2  # Two unique DTs
+            doc_transportes_list = result["data"]["doc_transportes_list"]
+            assert len(doc_transportes_list) == 2  # Two unique DTs
             
             # Check DT001
-            dt001 = next((dt for dt in dt_list if dt["dt_id"] == "DT001"), None)
+            dt001 = next((dt for dt in doc_transportes_list if dt["doc_transportes"] == "DT001"), None)
             assert dt001 is not None
-            assert "NF001" in dt001["notas_fiscais"]
-            assert "NF002" in dt001["notas_fiscais"]
+            assert "NF001" in dt001["nf_e"]
+            assert "NF002" in dt001["nf_e"]
             
             # Check DT002
-            dt002 = next((dt for dt in dt_list if dt["dt_id"] == "DT002"), None)
+            dt002 = next((dt for dt in doc_transportes_list if dt["doc_transportes"] == "DT002"), None)
             assert dt002 is not None
-            assert "NF001" in dt002["notas_fiscais"]
-            assert "NF003" in dt002["notas_fiscais"]
+            assert "NF001" in dt002["nf_e"]
+            assert "NF003" in dt002["nf_e"]
         finally:
             os.unlink(tmp_path)
 
@@ -125,8 +123,8 @@ class TestXlsToRpaRequest:
 
         try:
             result = xls_to_rpa_request(tmp_path)
-            assert "rpa_request_object" in result
-            assert len(result["rpa_request_object"]["dt_list"]) > 0
+            assert "data" in result
+            assert len(result["data"]["doc_transportes_list"]) > 0
         finally:
             os.unlink(tmp_path)
 
@@ -143,8 +141,8 @@ class TestXlsToRpaRequest:
 
         try:
             result = xls_to_rpa_request(tmp_path)
-            assert "rpa_request_object" in result
-            assert len(result["rpa_request_object"]["dt_list"]) > 0
+            assert "data" in result
+            assert len(result["data"]["doc_transportes_list"]) > 0
         finally:
             os.unlink(tmp_path)
 

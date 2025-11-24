@@ -186,7 +186,8 @@ def cleanup_shared_folders() -> None:
     """
     folders_to_clean = [
         Path("/opt/airflow/downloads"),
-        Path("/opt/airflow/data/processar")
+        Path("/opt/airflow/data/processar"),
+        Path("/opt/airflow/data/processado"),
     ]
     
     for folder_path in folders_to_clean:

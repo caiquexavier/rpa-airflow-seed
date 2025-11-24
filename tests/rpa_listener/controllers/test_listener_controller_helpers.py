@@ -185,7 +185,9 @@ class TestBuildRpaResponse:
             
             message = {
                 "rpa_request": {
-                    "notas_fiscais": ["NF001", "NF002"]
+                    "doc_transportes_list": [
+                        {"doc_transportes": "DT001", "nf_e": ["NF001", "NF002"]}
+                    ]
                 }
             }
             
@@ -208,7 +210,13 @@ class TestBuildRpaResponse:
             tree = ET.ElementTree(root)
             tree.write(str(output_xml), encoding='utf-8', xml_declaration=True)
             
-            message = {"rpa_request": {"notas_fiscais": ["NF001"]}}
+            message = {
+                "rpa_request": {
+                    "doc_transportes_list": [
+                        {"doc_transportes": "DT001", "nf_e": ["NF001"]}
+                    ]
+                }
+            }
             
             result = _build_rpa_response(message, results_dir, success=False)
             assert "error" in result
@@ -232,7 +240,9 @@ class TestBuildRpaResponse:
             
             message = {
                 "rpa_request": {
-                    "notas_fiscais": ["NF001"]
+                    "doc_transportes_list": [
+                        {"doc_transportes": "DT001", "nf_e": ["NF001"]}
+                    ]
                 }
             }
             

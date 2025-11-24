@@ -1,7 +1,7 @@
 """SAGA repository - Database implementation."""
 import json
 import logging
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 from ...domain.entities.saga import Saga, SagaState, SagaEvent
@@ -75,6 +75,40 @@ def get_saga(saga_id: int) -> Optional[Saga]:
         return None
     
     return _row_to_saga(result[0])
+
+
+def get_all_sagas(limit: Optional[int] = None, offset: Optional[int] = None) -> List[Saga]:
+    """
+    Get all SAGAs from database.
+    
+    Args:
+        limit: Maximum number of SAGAs to return
+        offset: Number of SAGAs to skip
+        
+    Returns:
+        List of Saga entities
+    """
+    sql = """
+        SELECT saga_id, rpa_key_id, data, current_state,
+               events, created_at, updated_at
+        FROM saga
+        ORDER BY created_at DESC
+    """
+    
+    params = []
+    if limit is not None:
+        sql += " LIMIT %s"
+        params.append(limit)
+    if offset is not None:
+        sql += " OFFSET %s"
+        params.append(offset)
+    
+    result = execute_query(sql, tuple(params) if params else None)
+    
+    if not result:
+        return []
+    
+    return [_row_to_saga(row) for row in result]
 
 
 def _row_to_saga(row: dict) -> Saga:

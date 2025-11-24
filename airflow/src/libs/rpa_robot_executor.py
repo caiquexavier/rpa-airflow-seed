@@ -65,6 +65,16 @@ def build_request_payload(
     # Extract saga data (rpa_request_object was replaced by 'data')
     saga_data = saga.get("data") or saga.get("rpa_request") or {}
     
+    # Normalize saga_data to dictionary shape for downstream consumers
+    if isinstance(saga_data, list):
+        saga_data = {"data": saga_data}
+    
+    if not isinstance(saga_data, dict):
+        raise ValueError(
+            "SAGA data must be a dict or list convertible to dict. "
+            f"Received type: {type(saga_data).__name__}"
+        )
+    
     # Include robot_test_file in saga data if provided
     if robot_test_file:
         saga_data = saga_data.copy()
@@ -135,7 +145,7 @@ def execute_robot_business_flow(
         callback_url: Deprecated - use callback_path instead
         callback_path: Callback path (e.g., '/trigger/upload_nf_files_to_s3')
         robot_operator_id: Robot operator identifier (e.g., task_id or robot_test_file)
-        robot_test_file: Robot test file name (e.g., 'ecargo_pod_download.robot')
+        robot_test_file: Robot test file name (e.g., 'protocolo_devolucao_main.robot')
         timeout: Request timeout
     """
     validate_saga(saga)

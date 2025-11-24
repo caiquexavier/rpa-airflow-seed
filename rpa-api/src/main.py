@@ -14,6 +14,7 @@ from .presentation.dtos.errors import create_validation_error_response, create_i
 from .presentation.routers.saga_router import router as saga_router
 from .presentation.routers.robot_operator_saga_router import router as robot_operator_saga_router
 from .presentation.routers.gpt_pdf_router import router as gpt_pdf_router
+from .presentation.routers.extracted_data_router import router as extracted_data_router
 
 # Configure logging
 logging.basicConfig(
@@ -30,6 +31,7 @@ app = FastAPI(title="rpa-api")
 app.include_router(saga_router)
 app.include_router(robot_operator_saga_router)
 app.include_router(gpt_pdf_router)
+app.include_router(extracted_data_router)
 
 
 @app.exception_handler(ValidationError)

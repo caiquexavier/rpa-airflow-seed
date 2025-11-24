@@ -25,9 +25,33 @@ def execute_robot_tests(
     """Execute Robot Framework tests with optional variable file."""
     process = None
     try:
-        results_dir.mkdir(exist_ok=True)
+        # Resolve all paths to absolute
+        project_path = project_path.resolve()
+        test_file_path = test_file_path.resolve()
+        results_dir = results_dir.resolve()
+        robot_exe = robot_exe.resolve()
+        if message_data:
+            saga_id = message_data.get("saga_id")
+            if not saga_id:
+                print("WARNING: saga_id not present in message_data; robot tests depend on saga_id.", flush=True)
+            else:
+                print(f"Robot execution saga_id: {saga_id}", flush=True)
+        
+        # Validate required files exist
+        env_var_file = project_path / 'robot' / 'variables' / 'env_vars.py'
+        if not env_var_file.exists():
+            raise FileNotFoundError(
+                f"Required env_vars.py not found at: {env_var_file}\n"
+                f"Project path: {project_path}"
+            )
+        if not test_file_path.exists():
+            raise FileNotFoundError(f"Test file not found: {test_file_path}")
+        if not robot_exe.exists():
+            raise FileNotFoundError(f"Robot executable not found: {robot_exe}")
+        
+        results_dir.mkdir(parents=True, exist_ok=True)
         variable_file = _create_variable_file(message_data, results_dir)
-        cmd = _build_robot_command(robot_exe, results_dir, test_file_path, variable_file)
+        cmd = _build_robot_command(robot_exe, results_dir, test_file_path, variable_file, None, project_path)
         env = _build_robot_environment()
         sys.stdout.flush()
         process = subprocess.Popen(
@@ -70,13 +94,42 @@ def _build_robot_command(
     robot_exe: Path,
     results_dir: Path,
     test_file_path: Path,
-    variable_file: Optional[Path]
+    variable_file: Optional[Path],
+    env_var_file: Optional[Path],
+    project_path: Path
 ) -> list:
     """Build robot command arguments."""
+    # Ensure all paths are absolute and resolved
+    project_path = project_path.resolve()
+    test_file_path = test_file_path.resolve()
+    results_dir = results_dir.resolve()
+    
     cmd = [str(robot_exe), "--outputdir", str(results_dir)]
+    
+    # Load environment variable file (env_vars.py) - REQUIRED, must be first
+    env_var_file = (project_path / 'robot' / 'variables' / 'env_vars.py').resolve()
+    if not env_var_file.exists():
+        raise FileNotFoundError(
+            f"Required env_vars.py not found at: {env_var_file}\n"
+            f"Project path: {project_path} (exists: {project_path.exists()})"
+        )
+    # Use absolute path with forward slashes (Robot Framework compatible on all platforms)
+    env_var_path = str(env_var_file).replace('\\', '/')
+    cmd.extend(["--variablefile", env_var_path])
+    
+    # Then load message data variable file (saga context) if provided
     if variable_file:
+        variable_file = variable_file.resolve()
         cmd.extend(["--variablefile", str(variable_file)])
-    cmd.append(str(test_file_path))
+    
+    # Test file path - use relative to project_path since cwd is project_path
+    try:
+        test_file_relative = test_file_path.relative_to(project_path)
+        cmd.append(str(test_file_relative).replace('\\', '/'))
+    except ValueError:
+        # If not relative, use absolute path
+        cmd.append(str(test_file_path).replace('\\', '/'))
+    
     return cmd
 
 

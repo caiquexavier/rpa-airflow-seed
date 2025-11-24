@@ -29,9 +29,9 @@ def sample_datetime() -> datetime:
 def sample_rpa_request() -> Dict[str, Any]:
     """Provide a sample RPA request payload."""
     return {
-        "dt_list": [
-            {"dt_id": "DT001", "notas_fiscais": ["NF001", "NF002"]},
-            {"dt_id": "DT002", "notas_fiscais": ["NF003"]}
+        "doc_transportes_list": [
+            {"doc_transportes": "DT001", "nf_e": ["NF001", "NF002"]},
+            {"doc_transportes": "DT002", "nf_e": ["NF003"]}
         ]
     }
 

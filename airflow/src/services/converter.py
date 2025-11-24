@@ -75,13 +75,13 @@ def xls_to_rpa_request(xlsx_path: Union[str, Path]) -> Dict[str, Any]:
         raise ValueError("No rows with both DT and NOTA FISCAL values found")
     
     # Group by DT and collect unique notas fiscais for each DT
-    dt_list = []
-    for dt_id, group in df_filtered.groupby(dt_col):
+    doc_transportes_list = []
+    for doc_transportes, group in df_filtered.groupby(dt_col):
         # Get unique notas fiscais for this DT, preserving order
-        notas_fiscais = group[nota_fiscal_col].drop_duplicates(keep='first').tolist()
-        dt_list.append({
-            "dt_id": dt_id,
-            "notas_fiscais": notas_fiscais
+        nf_e = group[nota_fiscal_col].drop_duplicates(keep='first').tolist()
+        doc_transportes_list.append({
+            "doc_transportes": doc_transportes,
+            "nf_e": nf_e
         })
     
     # Return RPA request data (not SAGA structure)
@@ -89,7 +89,7 @@ def xls_to_rpa_request(xlsx_path: Union[str, Path]) -> Dict[str, Any]:
     return {
         "rpa_key_id": "rpa_protocolo_devolucao",
         "data": {
-            "dt_list": dt_list
+            "doc_transportes_list": doc_transportes_list
         }
     }
 
