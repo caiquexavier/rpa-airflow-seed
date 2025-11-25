@@ -176,3 +176,48 @@ def complete_saga_task(**context):
     
     return {"status": "completed", "saga_id": saga.get("saga_id"), "events_count": len(saga.get("events", []))}
 
+
+def extract_doc_transportes_list(**context):
+    """Extract doc_transportes_list from saga and return items for dynamic mapping."""
+    ti = context["task_instance"]
+    saga = ti.xcom_pull(task_ids="read_input_xls", key="saga", default=None)
+    
+    if not saga:
+        raise AirflowException("SAGA not found from read_input_xls task")
+    
+    data = saga.get("data", {})
+    doc_transportes_list = data.get("doc_transportes_list", [])
+    
+    if not doc_transportes_list:
+        raise AirflowException("doc_transportes_list is empty or not found in saga data")
+    
+    logger.info(f"Extracted {len(doc_transportes_list)} items from doc_transportes_list")
+    
+    # Push full saga to XCom for later use
+    ti.xcom_push(key="saga", value=saga)
+    
+    return doc_transportes_list
+
+
+def prepare_saga_for_item(item: Dict[str, Any], **context):
+    """Prepare saga with single item for dynamic task execution."""
+    ti = context["task_instance"]
+    
+    # Get full saga from upstream
+    saga = ti.xcom_pull(task_ids="read_input_xls", key="saga", default=None)
+    if not saga:
+        raise AirflowException("SAGA not found from read_input_xls task")
+    
+    # Create saga copy with single item
+    item_saga = saga.copy()
+    item_saga["data"] = {
+        "doc_transportes_list": [item]
+    }
+    
+    # Push item-specific saga to XCom for operators to use
+    ti.xcom_push(key="saga", value=item_saga)
+    ti.xcom_push(key="rpa_payload", value=item_saga)
+    
+    logger.info(f"Prepared saga for item: doc_transportes={item.get('doc_transportes')}, nf_e={item.get('nf_e')}")
+    
+    return item_saga
