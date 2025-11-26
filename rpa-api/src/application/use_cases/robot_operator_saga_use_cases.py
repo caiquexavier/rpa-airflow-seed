@@ -1,7 +1,7 @@
 """RobotOperatorSaga use cases - Functional programming style."""
 import logging
 from datetime import datetime
-from typing import Optional, Callable
+from typing import Optional, Callable, Dict, Any
 
 from ...domain.entities.robot_operator_saga import RobotOperatorSaga, RobotOperatorSagaState, RobotOperatorSagaEvent
 from ...domain.events.robot_operator_events import RobotOperatorStepEvent
@@ -46,7 +46,7 @@ def create_robot_operator_saga(
         robot_operator_saga_id=0,  # Will be set by repository
         saga_id=command.saga_id,
         robot_operator_id=command.robot_operator_id,
-        data=command.data,
+        data=command.data.copy() if isinstance(command.data, dict) else command.data,
         current_state=RobotOperatorSagaState.PENDING,
         events=[start_event],
         created_at=now,

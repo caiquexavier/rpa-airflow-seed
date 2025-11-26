@@ -85,3 +85,9 @@ class SagaResponse(BaseModel):
     events_count: int = Field(..., description="Number of events")
     message: str = Field(..., description="Operation message")
 
+
+class UpdateSagaDataRequest(BaseModel):
+    """Request model for updating Saga data payload."""
+    saga_id: int = Field(..., description="Saga ID")
+    data: Dict[str, Any] = Field(..., description="Updated saga data payload")
+

@@ -59,30 +59,48 @@ def xls_to_rpa_request(xlsx_path: Union[str, Path]) -> Dict[str, Any]:
     if dt_col is None:
         raise ValueError("DT column not found")
     
+    # Find STATUS RPA column
+    status_col = None
+    for col in df.columns:
+        if col.strip().upper() == "STATUS RPA":
+            status_col = col
+            break
+    
+    if status_col is None:
+        raise ValueError("STATUS RPA column not found")
+    
     # Prepare data: convert to string, strip, and filter out empty values
     df[dt_col] = df[dt_col].astype(str).str.strip()
     df[nota_fiscal_col] = df[nota_fiscal_col].astype(str).str.strip()
+    df[status_col] = df[status_col].astype(str).str.strip().str.upper()
     
     # Filter rows that have both DT and NOTA FISCAL values
     df_filtered = df[
         (df[dt_col] != "") & 
         (df[dt_col].notna()) & 
         (df[nota_fiscal_col] != "") & 
-        (df[nota_fiscal_col].notna())
+        (df[nota_fiscal_col].notna()) &
+        # Only rows marked to be processed by RPA should be considered
+        (df[status_col] == "PROCESSAR")
     ]
     
     if len(df_filtered) == 0:
         raise ValueError("No rows with both DT and NOTA FISCAL values found")
     
-    # Group by DT and collect unique notas fiscais for each DT
+    # Group by DT and collect unique notas fiscais (NOTA FISCAL) for each DT
     doc_transportes_list = []
     for doc_transportes, group in df_filtered.groupby(dt_col):
         # Get unique notas fiscais for this DT, preserving order
-        nf_e = group[nota_fiscal_col].drop_duplicates(keep='first').tolist()
-        doc_transportes_list.append({
-            "doc_transportes": doc_transportes,
-            "nf_e": nf_e
-        })
+        nf_e_values = group[nota_fiscal_col].drop_duplicates(keep="first").tolist()
+        if not nf_e_values:
+            continue
+        doc_transportes_list.append(
+            {
+                "doc_transportes": doc_transportes,
+                # Keep full list of NOTA FISCAL values for this DT
+                "nf_e": nf_e_values,
+            }
+        )
     
     # Return RPA request data (not SAGA structure)
     # Uses 'data' field (rpa_request_object was replaced)

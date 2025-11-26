@@ -5,21 +5,11 @@ Library           Collections
 Library           OperatingSystem
 Library           ${CURDIR}/../../libs/saga_client.py
 Library           ${CURDIR}/../../libs/path_config.py
+Variables        ${CURDIR}/../../variables/env_vars.py
+Variables        ${CURDIR}/../../libs/xpath_locators.py
 
 *** Variables ***
-${BASE_URL}   https://ecargo.mercosulline.com.br/
-${USUARIO}     RPA001
-${SENHA}       Mercosul@25@25
 ${JSON_DATA}    ${EMPTY}
-
-${XPATH_OPERACIONAL_MENU}    //*[@id="app"]/div[6]/div[1]/aside/div[1]/div[2]/div[5]/div[1]
-${XPATH_REGISTRO_CANHOTOS}    //div[@class='v-list__tile__title' and text()='Registro de Canhotos']
-${XPATH_SEARCH_BUTTON}    /html/body/div/div/div[3]/form/div[1]/div[6]/div/div[1]/button
-${XPATH_ERROR_MODAL}    //*[@id="modalMensagem"]/div/div/div
-${XPATH_ERROR_MSG}    //*[@id="modalMensagem"]/div/div/div/div[1]
-${XPATH_ERROR_CLOSE}    //*[@id="modalMensagem"]/div/div/div/div[2]/button
-${XPATH_CANHOTO_BUTTON}    /html/body/div/div/div[3]/form/div[2]/div[2]/table/tbody/tr[2]/td/div/div[2]/div[3]/button
-${XPATH_MODAL_CANHOTO}    //*[@id="ModalCanhotoNf"]
 
 *** Keywords ***
 Load JSON Data
@@ -137,7 +127,8 @@ Open Nota Fiscal Modal
     RETURN    ${success_result}
 
 Download Nota Fiscal Pdfs
-    Download All PDF Files
+    [Arguments]    ${nota_fiscal}=${None}
+    Download All PDF Files    ${nota_fiscal}
     Sleep    0.5s
 
 Close Nota Fiscal Modal
@@ -168,6 +159,7 @@ Click Nota Fiscal Expand Button
     Sleep    0.5s
 
 Download All PDF Files
+    [Arguments]    ${nota_fiscal}=${None}
     ${download_dir}=    Evaluate    path_config.get_downloads_dir()    modules=path_config
     ${download_dir_exists}=    Run Keyword And Return Status    Directory Should Exist    ${download_dir}
     IF    not ${download_dir_exists}
@@ -176,6 +168,22 @@ Download All PDF Files
     ${pdf_buttons_count}=    Get Element Count    xpath=${XPATH_MODAL_CANHOTO}//button[contains(@ng-click, 'buscarArquivo') and contains(., 'Pdf')]
     FOR    ${index}    IN RANGE    1    ${pdf_buttons_count} + 1
         ${button_xpath}=    Set Variable    (${XPATH_MODAL_CANHOTO}//button[contains(@ng-click, 'buscarArquivo') and contains(., 'Pdf')])[${index}]
+        ${ng_click_value}=    Get Element Attribute    xpath=${button_xpath}    attribute=ng-click
+        ${ng_click_repr}=    Evaluate    repr("""${ng_click_value}""")
+        ${has_nf}=    Run Keyword And Return Status    Should Not Be Equal    ${nota_fiscal}    ${None}
+        IF    ${has_nf}
+            ${fallback_arg}=    Evaluate    repr("""${nota_fiscal}""")
+        ELSE
+            ${fallback_arg}=    Set Variable    ${None}
+        END
+        ${expected_pdf}=    Evaluate    path_config.extract_pdf_basename(${ng_click_repr}, fallback=${fallback_arg})    modules=path_config
+        ${download_dir_repr}=    Evaluate    repr(r"""${download_dir}""")
+        ${expected_pdf_repr}=    Evaluate    repr("""${expected_pdf}""")
+        ${already_downloaded}=    Evaluate    path_config.pdf_already_downloaded(${download_dir_repr}, ${expected_pdf_repr})    modules=path_config
+        IF    ${already_downloaded}
+            Log    PDF ${expected_pdf} já existe em ${download_dir}, pulando download.    level=INFO
+            Continue For Loop
+        END
         Wait Until Element Is Visible    xpath=${button_xpath}    timeout=5s
         Wait Until Element Is Enabled    xpath=${button_xpath}    timeout=2s
         Click Element    xpath=${button_xpath}

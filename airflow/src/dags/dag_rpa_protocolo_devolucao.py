@@ -16,9 +16,6 @@ from tasks.tasks_rpa_protocolo_devolucao import (
 
 logger = logging.getLogger(__name__)
 
-# Feature flag to enable/disable GPT PDF extractor task
-ENABLE_GPT_PDF_EXTRACTOR = False
-
 default_args = {
     "owner": "airflow",
     "depends_on_past": False,
@@ -77,24 +74,21 @@ split_files_task = PdfFunctionsOperator(
     task_id="split_pdf_files",
     folder_path="/opt/airflow/downloads",
     output_dir="/opt/airflow/data/processar",
+    # Split documents, then rotate them. OCR-based NF-e rename is available as 'ocr_nf'.
     functions=["split", "rotate"],
     overwrite=True,  # Always overwrite existing files
     dag=dag,
 )
 
-# GPT PDF Extractor task: extracts all fields using GPT (expects rotation already done)
-# Uses default field_map from libs.pdf_field_map (30 predefined fields)
-# To let GPT suggest all fields, set field_map={}
-if ENABLE_GPT_PDF_EXTRACTOR:
-    gpt_pdf_extractor_task = GptPdfExtractorOperator(
-        task_id="extract_pdf_fields",
-        folder_path="/opt/airflow/data/processar",
-        output_dir="/opt/airflow/data/processado",
-        rpa_api_conn_id="rpa_api",
-        timeout=300,
-        save_extracted_data=True,
-        dag=dag,
-    )
+gpt_pdf_extractor_task = GptPdfExtractorOperator(
+    task_id="extract_pdf_fields",
+    folder_path="/opt/airflow/data/processar",
+    output_dir="/opt/airflow/data/processado",
+    rpa_api_conn_id="rpa_api",
+    timeout=300,
+    save_extracted_data=True,
+    dag=dag,
+)
 
 # Final task to mark SAGA as completed
 complete_saga_task_op = SagaOperator(
@@ -103,20 +97,11 @@ complete_saga_task_op = SagaOperator(
     dag=dag,
 )
 
-# Define task dependencies
-if ENABLE_GPT_PDF_EXTRACTOR:
-    (start_saga_task
-     >> convert_task
-     >> robotFramework_task
-     >> wait_for_webhook
-     >> split_files_task
-     >> gpt_pdf_extractor_task
-     >> complete_saga_task_op)
-else:
-    (start_saga_task
-     >> convert_task
-     >> robotFramework_task
-     >> wait_for_webhook
-     >> split_files_task
-     >> complete_saga_task_op)
+(start_saga_task
+ >> convert_task
+ >> robotFramework_task
+ >> wait_for_webhook
+ >> split_files_task
+ >> gpt_pdf_extractor_task
+ >> complete_saga_task_op)
 

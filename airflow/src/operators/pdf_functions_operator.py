@@ -20,6 +20,7 @@ from services.saga import (
 )
 
 from .plugins import rotate_pdf_with_ocr
+from libs.pdf_nf_ocr import extract_nf_value_from_pdf
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +41,8 @@ class PdfFunctionsOperator(BaseOperator):
     SUPPORTED_FUNCTIONS: dict[str, str] = {
         "split": "_split_pdfs",
         "rotate": "_rotate_pdfs",
+        # Run OCR after rotation to read NF-e-like values and rename files accordingly.
+        "ocr_nf": "_ocr_nf_and_rename",
     }
 
     def __init__(
@@ -237,6 +240,53 @@ class PdfFunctionsOperator(BaseOperator):
             rotated_paths.append(Path(rotated))
 
         return rotated_paths
+
+    def _ocr_nf_and_rename(self, files: Sequence[Path]) -> List[Path]:
+        """Read NF-e value via OCR and rename files to the detected number.
+
+        The output filename becomes '<NF-e>.pdf' (with leading zeros trimmed).
+        If no NF-e value is detected, the original filename is preserved.
+        """
+        if not files:
+            return []
+
+        renamed_paths: List[Path] = []
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+
+        for pdf_path in files:
+            pdf_path = Path(pdf_path)
+            nf_value = None
+            try:
+                nf_value = extract_nf_value_from_pdf(pdf_path)
+            except FileNotFoundError:
+                logger.warning("PDF not found during OCR step: %s", pdf_path)
+            except Exception as exc:
+                logger.warning("NF-e OCR failed for %s: %s", pdf_path, exc)
+
+            if not nf_value:
+                logger.warning(
+                    "NF-e value not detected in %s; keeping original filename.", pdf_path
+                )
+                renamed_paths.append(pdf_path)
+                continue
+
+            target_path = self.output_dir / f"{nf_value}.pdf"
+
+            # Avoid unnecessary rename when name is already correct.
+            if target_path == pdf_path:
+                renamed_paths.append(pdf_path)
+                continue
+
+            if target_path.exists() and not self.overwrite:
+                raise AirflowException(
+                    f"Target file {target_path} exists. Set overwrite=True to replace."
+                )
+
+            logger.info("Renaming %s -> %s based on NF-e OCR result", pdf_path, target_path)
+            pdf_path.rename(target_path)
+            renamed_paths.append(target_path)
+
+        return renamed_paths
 
 
 

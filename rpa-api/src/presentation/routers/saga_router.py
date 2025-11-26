@@ -9,11 +9,13 @@ from ..controllers.saga_controller import (
     handle_update_saga_event,
     handle_list_sagas,
     handle_get_saga_by_id,
+    handle_update_saga_data,
     # handle_request_robot_execution  # TODO: Re-enable after refactoring finishes
 )
 from ..dtos.saga_models import (
     CreateSagaRequest,
     UpdateSagaEventRequest,
+    UpdateSagaDataRequest,
     # RequestRobotExecutionRequest  # TODO: Re-enable after refactoring finishes
 )
 
@@ -88,6 +90,21 @@ async def get_saga(saga_id: int) -> Dict[str, Any]:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         logger.error(f"Error in get_saga: {e}")
+        raise HTTPException(status_code=500, detail="Internal error")
+
+
+@router.put("/data", status_code=200)
+async def update_saga_data(payload: UpdateSagaDataRequest) -> Dict[str, Any]:
+    """
+    Update Saga data payload.
+    """
+    try:
+        return handle_update_saga_data(payload)
+    except ValueError as e:
+        logger.warning(f"Validation error in update_saga_data: {e}")
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        logger.error(f"Error in update_saga_data: {e}")
         raise HTTPException(status_code=500, detail="Internal error")
 
 

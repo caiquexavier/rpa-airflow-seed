@@ -11,7 +11,7 @@ Initialize Saga Context From Arguments
     
     # Check for robot_operator_saga_id (from listener message)
     ${exec_id}=    Get Variable Value    $robot_operator_saga_id    ${None}
-    IF    ${exec_id} is not ${None}
+    IF    ${exec_id} != ${None}
         Log    robot_operator_saga_id=${exec_id}    level=INFO
     ELSE
         Log    robot_operator_saga_id not provided    level=WARN
@@ -19,7 +19,7 @@ Initialize Saga Context From Arguments
     
     # Check for robot_operator_id (from listener message)
     ${rpa_key_id}=    Get Variable Value    $robot_operator_id    ${None}
-    IF    ${rpa_key_id} is not ${None}
+    IF    ${rpa_key_id} != ${None}
         Log    robot_operator_id=${rpa_key_id}    level=INFO
     ELSE
         Log    robot_operator_id not provided    level=WARN
@@ -27,7 +27,7 @@ Initialize Saga Context From Arguments
     
     # Check for saga_id (from listener message)
     ${saga_id_value}=    Get Variable Value    $saga_id    ${None}
-    IF    ${saga_id_value} is not ${None}
+    IF    ${saga_id_value} != ${None}
         Log    saga_id=${saga_id_value}    level=INFO
     ELSE
         Log    saga_id not provided    level=WARN
@@ -35,7 +35,7 @@ Initialize Saga Context From Arguments
     
     # Check for data (from listener message)
     ${data_value}=    Get Variable Value    $data    ${None}
-    IF    ${data_value} is not ${None}
+    IF    ${data_value} != ${None}
         TRY
             ${data_keys}=    Get Dictionary Keys    ${data_value}
             Log    data variable found with keys: ${data_keys}    level=INFO

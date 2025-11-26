@@ -9,9 +9,10 @@ from ...application.commands.create_saga_command import CreateSagaCommand
 from ...application.commands.add_saga_event_command import AddSagaEventCommand
 from ...application.services.saga_structure_builder import build_complete_saga_structure
 from ...infrastructure.repositories.saga_repository import save_saga, get_saga as get_saga_repo, get_all_sagas as get_all_sagas_repo
+from ...domain.entities.saga import Saga
 from ...infrastructure.event_store.event_store import save_event
 from ...infrastructure.messaging.event_publisher import publish_task_event
-from ..dtos.saga_models import CreateSagaRequest, UpdateSagaEventRequest, SagaResponse
+from ..dtos.saga_models import CreateSagaRequest, UpdateSagaEventRequest, SagaResponse, UpdateSagaDataRequest
 # from ..dtos.saga_models import RequestRobotExecutionRequest  # TODO: Re-enable after refactoring finishes
 # from ...infrastructure.adapters.rabbitmq_service import publish_execution_message  # TODO: Re-enable after refactoring finishes
 
@@ -251,6 +252,39 @@ def handle_get_saga_by_id(saga_id: int) -> Dict[str, Any]:
         "events_count": len(saga.events),
         "created_at": saga.created_at.isoformat() if saga.created_at else None,
         "updated_at": saga.updated_at.isoformat() if saga.updated_at else None
+    }
+
+
+def handle_update_saga_data(payload: UpdateSagaDataRequest) -> Dict[str, Any]:
+    """
+    Update Saga data payload (command side).
+    """
+    saga = get_saga_repo(payload.saga_id)
+    if not saga:
+        raise ValueError(f"Saga {payload.saga_id} not found")
+
+    # Create updated Saga with new data, preserving other fields
+    updated_saga = Saga(
+        saga_id=saga.saga_id,
+        rpa_key_id=saga.rpa_key_id,
+        data=payload.data,
+        current_state=saga.current_state,
+        events=saga.events,
+        created_at=saga.created_at,
+        updated_at=datetime.utcnow(),
+    )
+
+    save_saga(updated_saga)
+
+    logger.info(f"Updated data for SAGA {payload.saga_id}")
+
+    return {
+        "saga_id": updated_saga.saga_id,
+        "rpa_key_id": updated_saga.rpa_key_id,
+        "data": updated_saga.data,
+        "current_state": updated_saga.current_state.value if updated_saga.current_state else None,
+        "events_count": len(updated_saga.events),
+        "updated_at": updated_saga.updated_at.isoformat() if updated_saga.updated_at else None,
     }
 
 

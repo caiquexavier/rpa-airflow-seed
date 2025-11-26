@@ -255,6 +255,59 @@ def send_saga_event_to_api(
     if not saga_id:
         logger.error("Cannot send event: saga missing saga_id")
         return False
+
+
+def update_saga_data_in_api(
+    saga: Dict[str, Any],
+    rpa_api_conn_id: str = "rpa_api",
+    timeout: int = 30
+) -> bool:
+    """
+    Update saga data payload in rpa-api.
+    """
+    saga_id = saga.get("saga_id")
+    data = saga.get("data")
+
+    if not saga_id:
+        logger.error("Cannot update saga data: saga missing saga_id")
+        return False
+
+    if data is None:
+        logger.warning("Saga has no data field to update in API")
+        return False
+
+    try:
+        conn = BaseHook.get_connection(rpa_api_conn_id)
+        schema = conn.schema or "http"
+        host = conn.host
+        port = conn.port or 3000
+        api_url = f"{schema}://{host}:{port}/api/v1/saga/data"
+
+        payload = {
+            "saga_id": saga_id,
+            "data": data,
+        }
+
+        response = requests.put(
+            api_url,
+            json=payload,
+            headers={"Content-Type": "application/json"},
+            timeout=timeout,
+        )
+
+        if response.status_code in [200]:
+            logger.info("Successfully updated saga %s data in rpa-api", saga_id)
+            return True
+
+        logger.warning(
+            "Failed to update saga data in rpa-api: status %s, response: %s",
+            response.status_code,
+            response.text,
+        )
+        return False
+    except Exception as exc:
+        logger.error("Error updating saga data in rpa-api: %s", exc)
+        return False
     
     try:
         conn = BaseHook.get_connection(rpa_api_conn_id)

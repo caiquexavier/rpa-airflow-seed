@@ -133,6 +133,31 @@ def _determine_rotation_with_ocr(page) -> int:
         logger.error("Failed to convert page to image: %s", exc)
         return 0
 
+    # 1) Try a direct OSD pass on the original image. If confidence is good,
+    #    trust Tesseract's suggested rotation.
+    try:
+        base_osd = pytesseract.image_to_osd(
+            base_image, output_type=pytesseract.Output.DICT
+        )
+        base_rotate = int(base_osd.get("rotate", 0))
+        base_conf = float(base_osd.get("script_conf", 0))
+        logger.info(
+            "Base OSD rotation=%s confidence=%.2f", base_rotate, base_conf
+        )
+        if base_conf > 2.0 and base_rotate in (0, 90, 180, 270):
+            # Tesseract's rotate value is the angle required to deskew the text.
+            # We want the final upright orientation.
+            best_rotation = (360 - base_rotate) % 360
+            logger.info(
+                "Using direct OSD-based rotation: %s° (from rotate=%s)",
+                best_rotation,
+                base_rotate,
+            )
+            return best_rotation
+    except Exception as exc:
+        logger.debug("Direct OSD rotation detection failed: %s", exc)
+
+    # 2) Fallback: evaluate candidate rotations and score them.
     rotations = [0, 90, 180, 270]
     rotation_scores: dict[int, int] = {}
     logger.info("Testing rotations with OCR to find readable position...")
@@ -158,15 +183,15 @@ def _determine_rotation_with_ocr(page) -> int:
             has_letters = any(c.isalpha() for c in text_clean)
 
             osd_rotation = None
-            osd_confidence = 0
+            osd_confidence = 0.0
             try:
                 osd = pytesseract.image_to_osd(
                     test_image, output_type=pytesseract.Output.DICT
                 )
-                osd_rotation = osd.get("rotate", 0)
-                osd_confidence = osd.get("script_conf", 0)
+                osd_rotation = int(osd.get("rotate", 0))
+                osd_confidence = float(osd.get("script_conf", 0))
                 logger.debug(
-                    "Rotation %s° OSD rotate=%s confidence=%s",
+                    "Rotation %s° OSD rotate=%s confidence=%.2f",
                     rotation,
                     osd_rotation,
                     osd_confidence,
@@ -174,25 +199,29 @@ def _determine_rotation_with_ocr(page) -> int:
             except Exception as osd_exc:
                 logger.debug("OSD detection failed for rotation %s°: %s", rotation, osd_exc)
 
+            # Base score from visible text.
+            score = word_count * 5 + char_count
+            if has_numbers:
+                score += 30
+            if has_letters:
+                score += 30
+            if word_count > 5:
+                score += 40
+
+            # Use OSD to strongly prefer orientations that appear upright.
             if osd_rotation is not None and osd_confidence > 1.0:
-                if osd_rotation == 0:
-                    score = 10000 + word_count * 10 + char_count
+                # Effective upright angle combining our trial rotation and OSD's suggestion.
+                upright_angle = (rotation + osd_rotation) % 360
+                if upright_angle == 0:
+                    score += 5000
                     logger.info(
-                        "Rotation %s° confirmed upright via OSD (confidence %.2f)",
+                        "Rotation %s° looks upright via combined OSD (conf=%.2f)",
                         rotation,
                         osd_confidence,
                     )
                 else:
-                    score = word_count * 10 + char_count - (osd_rotation * 10)
-            else:
-                score = word_count * 10 + char_count
-
-            if has_numbers and has_letters:
-                score += 100
-            if word_count > 5:
-                score += 50
-            if word_count < 3:
-                score = max(0, score - 200)
+                    # Penalise angles that are far from upright.
+                    score -= int(abs(upright_angle) * 5)
 
             rotation_scores[rotation] = score
             logger.info(

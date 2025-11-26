@@ -6,6 +6,7 @@ It automatically detects the project root by searching for 'rpa-airflow-seed' in
 ensuring consistent path resolution regardless of where the code is executed from.
 """
 import os
+import re
 from pathlib import Path
 from typing import Optional
 
@@ -195,4 +196,53 @@ def get_file_size_from_path_str(file_path_str: str) -> int:
     """
     # Path handles both forward and backward slashes correctly on all platforms
     return Path(file_path_str).stat().st_size
+
+
+def _normalize_pdf_name(candidate: Optional[str]) -> Optional[str]:
+    """Normalize candidate value into a pdf filename."""
+    if not candidate:
+        return None
+    normalized = str(candidate).strip()
+    if not normalized:
+        return None
+    if not normalized.lower().endswith(".pdf"):
+        normalized = f"{normalized}.pdf"
+    return normalized
+
+
+def extract_pdf_basename(ng_click_value: Optional[str], fallback: Optional[str] = None) -> Optional[str]:
+    """
+    Try to infer the expected PDF filename from an ng-click attribute.
+
+    Args:
+        ng_click_value: The raw ng-click attribute string.
+        fallback: Value to use if parsing fails (e.g., nota fiscal identifier).
+
+    Returns:
+        Normalized PDF filename or None.
+    """
+    if ng_click_value:
+        matches = re.findall(r"'([^']+)'", ng_click_value)
+        if matches:
+            normalized = _normalize_pdf_name(matches[0])
+            if normalized:
+                return normalized
+    return _normalize_pdf_name(fallback)
+
+
+def pdf_already_downloaded(download_dir: str, filename: Optional[str]) -> bool:
+    """
+    Check if a PDF filename already exists in the download directory.
+
+    Args:
+        download_dir: Directory where files are stored.
+        filename: Filename to search for.
+
+    Returns:
+        True if the file exists, False otherwise.
+    """
+    if not filename:
+        return False
+    candidate_path = Path(download_dir).joinpath(filename)
+    return candidate_path.exists()
 

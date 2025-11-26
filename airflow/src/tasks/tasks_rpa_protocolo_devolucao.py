@@ -13,7 +13,8 @@ from services.saga import (
     log_saga,
     build_saga_event,
     send_saga_event_to_api,
-    get_saga_from_context
+    get_saga_from_context,
+    update_saga_data_in_api,
 )
 
 logger = logging.getLogger(__name__)
@@ -25,7 +26,7 @@ def convert_xls_to_json_task(**context):
     if not xlsx_path:
         raise AirflowException("ECARGO_XLSX_PATH Airflow Variable is required")
     
-    logger.info(f"Converting XLSX file: {xlsx_path}")
+    logger.info("Converting XLSX file at path configured via ECARGO_XLSX_PATH")
     rpa_data = xls_to_rpa_request(xlsx_path)
     
     # Get existing SAGA from StartSagaOperator (upstream task)
@@ -33,20 +34,24 @@ def convert_xls_to_json_task(**context):
     dag_run = context.get("dag_run")
     run_id = dag_run.run_id if dag_run else None
     
-    logger.info(f"Retrieving SAGA from 'start_saga' task. Run ID: {run_id}")
+    logger.debug("Retrieving SAGA from 'start_saga' task (run_id=%s)", run_id)
     
     # Pull from upstream task 'start_saga'
     saga = ti.xcom_pull(task_ids="start_saga", key="saga", default=None)
     if saga:
-        logger.info(f"Retrieved SAGA from 'start_saga' with {len(saga) if isinstance(saga, dict) else 0} keys")
-        logger.info(f"SAGA keys: {list(saga.keys()) if isinstance(saga, dict) else 'Not a dict'}")
-        logger.info(f"SAGA saga_id: {saga.get('saga_id') if isinstance(saga, dict) else 'N/A'}")
+        logger.debug(
+            "Retrieved SAGA from 'start_saga' with saga_id=%s",
+            saga.get("saga_id") if isinstance(saga, dict) else "N/A",
+        )
     else:
         logger.warning("SAGA not found with task_ids='start_saga', trying fallback")
         # Fallback: try without task_ids (current task)
         saga = ti.xcom_pull(key="saga", default=None)
         if saga:
-            logger.info(f"Retrieved SAGA from fallback with {len(saga) if isinstance(saga, dict) else 0} keys")
+            logger.debug(
+                "Retrieved SAGA from fallback with saga_id=%s",
+                saga.get("saga_id") if isinstance(saga, dict) else "N/A",
+            )
     
     if saga:
         # Validate saga has required fields (saga_id must be present from saga creation)
@@ -66,6 +71,14 @@ def convert_xls_to_json_task(**context):
         if "events" not in saga:
             saga["events"] = []
         
+        # Persist updated saga data in rpa-api before recording the event
+        updated_in_api = update_saga_data_in_api(saga, rpa_api_conn_id="rpa_api")
+        if not updated_in_api:
+            logger.warning(
+                "Failed to persist updated saga data for saga_id=%s in rpa-api",
+                saga.get("saga_id"),
+            )
+
         # Add conversion event with complete DAG and operator context
         event = build_saga_event(
             event_type="TaskCompleted",

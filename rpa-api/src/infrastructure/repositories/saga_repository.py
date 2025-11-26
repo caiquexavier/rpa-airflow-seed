@@ -37,11 +37,12 @@ def save_saga(saga: Saga) -> int:
         saga_id = execute_insert(sql, params)
         return saga_id if saga_id else 0
     else:
-        # Update existing saga
+        # Update existing saga (state, events and data)
         sql = """
             UPDATE saga 
             SET current_state = %s,
                 events = %s,
+                data = %s,
                 updated_at = %s
             WHERE saga_id = %s
         """
@@ -49,6 +50,7 @@ def save_saga(saga: Saga) -> int:
         params = (
             saga.current_state.value,
             events_json,
+            json.dumps(saga.data),
             saga.updated_at,
             saga.saga_id
         )
