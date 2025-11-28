@@ -3,7 +3,8 @@ import logging
 from typing import Any, Dict
 
 from ...application.services.gpt_pdf_service import gpt_pdf_extractor
-from ..dtos.gpt_pdf_extraction_models import GptPdfExtractionInput
+from ...infrastructure.llm.pdf_extractor import detect_rotation_with_vision
+from ..dtos.gpt_pdf_extraction_models import GptPdfExtractionInput, GptPdfRotationInput
 
 logger = logging.getLogger(__name__)
 
@@ -74,4 +75,18 @@ def handle_extract_pdf_fields(payload: GptPdfExtractionInput) -> Dict[str, Any]:
     except Exception as exc:
         logger.error("Unexpected error extracting PDF fields: %s", exc)
         raise ValueError(f"Failed to extract PDF fields: {exc}") from exc
+
+
+def handle_detect_rotation(payload: GptPdfRotationInput) -> Dict[str, Any]:
+    """
+    Handle GPT PDF rotation detection.
+    """
+    logger.info("Detecting PDF rotation using GPT Vision")
+    
+    try:
+        result = detect_rotation_with_vision(payload.page_image_base64)
+        return result
+    except Exception as exc:
+        logger.error("Unexpected error detecting rotation: %s", exc)
+        raise ValueError(f"Failed to detect rotation: {exc}") from exc
 

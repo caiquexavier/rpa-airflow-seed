@@ -54,8 +54,8 @@ robot -d results robot/tests/
 # Run specific test file
 robot -d results robot/tests/protocolo_devolucao_main.robot
 
-# Run specific test file
-robot -d results robot/tests/protocolo_devolucao_main.robot
+# Run upload-multi-cte test
+robot -d results robot/tests/upload-multi-cte.robot
 
 # Run with saga variables (from Airflow/listener)
 robot -d results -v EXEC_ID:123 -v RPA_KEY_ID:456 -v STEP_ID:step-01 robot/tests/protocolo_devolucao_main.robot
@@ -71,6 +71,7 @@ The project follows a clean, layered architecture:
 robot/
   tests/              # Test suites organized by domain
     protocolo_devolucao_main.robot
+    upload-multi-cte.robot
   resources/
     infra/             # Infrastructure keywords (HTTP, browser, filesystem, UI, Windows)
       browser_keywords.robot
@@ -83,6 +84,7 @@ robot/
       saga_lifecycle_keywords.robot
     domain/            # Domain-specific business keywords
       protocolo_devolucao_keywords.robot
+      multicte_keywords.robot
   libs/                # Python libraries (pure functions)
     saga_client.py
     rpa_api_client.py
@@ -100,6 +102,7 @@ results/               # Test execution results
 
 ## Available Tests
 - `protocolo_devolucao` - Protocolo de devolução automation (e-Cargo pod download)
+- `upload-multi-cte` - MultiCTE upload automation (canhoto file upload for emissor)
 
 ## Test Results
 After execution, check the `results/` directory for:

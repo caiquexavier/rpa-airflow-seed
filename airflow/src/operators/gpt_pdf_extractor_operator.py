@@ -72,6 +72,9 @@ class GptPdfExtractorOperator(BaseOperator):
         # Ensure output directory exists
         self.output_dir.mkdir(parents=True, exist_ok=True)
         
+        # Read saga data and create folders for each doc_transportes
+        doc_transportes_map = self._setup_output_folders(saga)
+        
         # Find all PDF files
         pdf_files = sorted(self.folder_path.glob("*.pdf"))
         if not pdf_files:
@@ -91,7 +94,7 @@ class GptPdfExtractorOperator(BaseOperator):
         
         for pdf_file in pdf_files:
             try:
-                result = self._process_pdf(pdf_file, api_url)
+                result = self._process_pdf(pdf_file, api_url, doc_transportes_map)
                 results.append(result)
                 processed_count += 1
                 logger.info("Successfully processed PDF: %s", pdf_file.name)
@@ -126,31 +129,86 @@ class GptPdfExtractorOperator(BaseOperator):
             "results": results
         }
     
-    def _process_pdf(self, pdf_file: Path, api_url: str) -> Dict[str, Any]:
+    def _setup_output_folders(self, saga: Optional[Dict[str, Any]]) -> Dict[str, str]:
+        """
+        Read saga data and create folders for each doc_transportes.
+        Also creates "Nao processados" folder for unprocessed files.
+        
+        Args:
+            saga: Saga dictionary with data.doc_transportes_list
+            
+        Returns:
+            Dictionary mapping nf_e values to doc_transportes values
+        """
+        nf_to_doc_map: Dict[str, str] = {}
+        
+        # Create "Nao processados" folder
+        nao_processados_dir = self.output_dir / "Nao processados"
+        nao_processados_dir.mkdir(parents=True, exist_ok=True)
+        logger.info("Created 'Nao processados' folder: %s", nao_processados_dir)
+        
+        if not saga or not saga.get("data"):
+            logger.warning("Saga data not available, will save all files to 'Nao processados'")
+            return nf_to_doc_map
+        
+        doc_transportes_list = saga["data"].get("doc_transportes_list", [])
+        if not doc_transportes_list:
+            logger.warning("doc_transportes_list not found in saga data")
+            return nf_to_doc_map
+        
+        logger.info("Setting up output folders for %d doc_transportes entries", len(doc_transportes_list))
+        
+        for doc_entry in doc_transportes_list:
+            doc_transportes = doc_entry.get("doc_transportes")
+            nf_e_list = doc_entry.get("nf_e", [])
+            
+            if not doc_transportes:
+                logger.warning("Found doc_transportes entry without doc_transportes value, skipping")
+                continue
+            
+            # Create folder for this doc_transportes
+            doc_folder = self.output_dir / str(doc_transportes)
+            doc_folder.mkdir(parents=True, exist_ok=True)
+            logger.info("Created folder for doc_transportes %s: %s", doc_transportes, doc_folder)
+            
+            # Map each nf_e to its doc_transportes
+            for nf_e in nf_e_list:
+                if nf_e:
+                    nf_key = str(nf_e).strip()
+                    if nf_key:
+                        nf_to_doc_map[nf_key] = str(doc_transportes)
+                        logger.debug("Mapped nf_e %s to doc_transportes %s", nf_key, doc_transportes)
+        
+        logger.info("Created %d folder mappings (nf_e -> doc_transportes)", len(nf_to_doc_map))
+        return nf_to_doc_map
+    
+    def _process_pdf(self, pdf_file: Path, api_url: str, doc_transportes_map: Dict[str, str]) -> Dict[str, Any]:
         """
         Process a single PDF file using GPT extraction service.
 
         Args:
             pdf_file: Path to PDF file
             api_url: Full API URL for extraction endpoint
+            doc_transportes_map: Dictionary mapping nf_e values to doc_transportes values
 
         Returns:
             Dictionary with extraction results
         """
         file_path = str(pdf_file.absolute())
-        output_file_path = str(self.output_dir / pdf_file.name)
+        # Temporary output path (will be renamed after extraction)
+        temp_output_file_path = str(self.output_dir / pdf_file.name)
         
         logger.info("Processing PDF %s with GPT extraction service (endpoint: %s)", pdf_file.name, api_url)
         
         try:
             payload = {
                 "file_path": file_path,
-                "output_path": output_file_path,
+                "output_path": temp_output_file_path,
                 "field_map": self.field_map if self.field_map else None
             }
             
             logger.debug("Request payload: file_path=%s, output_path=%s, field_map_size=%s", 
-                        file_path, output_file_path, len(self.field_map) if self.field_map else 0)
+                        file_path, temp_output_file_path, len(self.field_map) if self.field_map else 0)
             
             response = requests.post(
                 api_url,
@@ -163,7 +221,19 @@ class GptPdfExtractorOperator(BaseOperator):
             
             status = result.get("status", "FAIL")
             extracted_data = result.get("extracted") or result.get("extracted_data", {})
-            organized_file_path = result.get("organized_file_path") or output_file_path
+            service_output_path = result.get("organized_file_path") or temp_output_file_path
+            
+            # Clean nf_e value: remove all non-numeric characters
+            if "nf_e" in extracted_data and extracted_data["nf_e"]:
+                original_nf_e = extracted_data["nf_e"]
+                cleaned_nf_e = self._clean_nf_e_value(original_nf_e)
+                if cleaned_nf_e != original_nf_e:
+                    logger.info(
+                        "Cleaned nf_e value: '%s' -> '%s'",
+                        original_nf_e,
+                        cleaned_nf_e
+                    )
+                extracted_data["nf_e"] = cleaned_nf_e
             
             # Log extracted data to Airflow logs for observability
             extracted_json = json.dumps(extracted_data, indent=2, ensure_ascii=False)
@@ -177,9 +247,16 @@ class GptPdfExtractorOperator(BaseOperator):
             if not success:
                 logger.warning("Service returned status: %s (expected SUCCESS)", status)
             
+            # Determine final output path based on extracted nf_e
+            final_output_path = self._determine_output_path(
+                extracted_data, 
+                doc_transportes_map, 
+                Path(service_output_path)
+            )
+            
             return {
                 "file_path": file_path,
-                "output_file_path": organized_file_path,
+                "output_file_path": str(final_output_path),
                 "success": success,
                 "status": status,
                 "extracted_data": extracted_data
@@ -355,4 +432,90 @@ class GptPdfExtractorOperator(BaseOperator):
         except Exception as e:
             logger.error("Unexpected error saving extracted data for NF-e %s: %s", nf_key, e)
             # Don't raise - allow operator to continue even if API save fails
+    
+    def _clean_nf_e_value(self, nf_e_value: Any) -> str:
+        """
+        Clean nf_e value by removing all non-numeric characters.
+        
+        Args:
+            nf_e_value: Original nf_e value (can be string, number, etc.)
+            
+        Returns:
+            String containing only numeric characters, or empty string if no digits found
+        """
+        if nf_e_value is None:
+            return ""
+        
+        # Convert to string and extract only digits
+        nf_e_str = str(nf_e_value)
+        cleaned = "".join(c for c in nf_e_str if c.isdigit())
+        
+        return cleaned
+    
+    def _determine_output_path(
+        self, 
+        extracted_data: Dict[str, Any], 
+        doc_transportes_map: Dict[str, str],
+        service_output_path: Path
+    ) -> Path:
+        """
+        Determine final output path based on extracted nf_e and saga data.
+        
+        Args:
+            extracted_data: Extracted data dictionary (should contain nf_e)
+            doc_transportes_map: Dictionary mapping nf_e values to doc_transportes values
+            service_output_path: Path where GPT service saved the file
+            
+        Returns:
+            Final Path where file should be saved (with proper name and folder)
+        """
+        import shutil
+        
+        nf_e_value = extracted_data.get("nf_e")
+        
+        if not nf_e_value:
+            # NF-e not identified, save to "Nao processados" folder
+            nao_processados_dir = self.output_dir / "Nao processados"
+            final_path = nao_processados_dir / service_output_path.name
+            logger.info(
+                "NF-e not identified for %s, saving to 'Nao processados': %s",
+                service_output_path.name,
+                final_path
+            )
+        else:
+            nf_key = str(nf_e_value).strip()
+            doc_transportes = doc_transportes_map.get(nf_key)
+            
+            if not doc_transportes:
+                # NF-e found but not in saga mapping, save to "Nao processados"
+                nao_processados_dir = self.output_dir / "Nao processados"
+                final_path = nao_processados_dir / service_output_path.name
+                logger.warning(
+                    "NF-e %s not found in saga doc_transportes_list, saving to 'Nao processados': %s",
+                    nf_key,
+                    final_path
+                )
+            else:
+                # NF-e found and mapped to doc_transportes, save with name: doc_transportes_nf_e.pdf
+                doc_folder = self.output_dir / doc_transportes
+                final_filename = f"{doc_transportes}_{nf_key}.pdf"
+                final_path = doc_folder / final_filename
+                logger.info(
+                    "NF-e %s mapped to doc_transportes %s, saving as: %s",
+                    nf_key,
+                    doc_transportes,
+                    final_path
+                )
+        
+        # Move/rename file if needed
+        if service_output_path.exists() and service_output_path != final_path:
+            final_path.parent.mkdir(parents=True, exist_ok=True)
+            if final_path.exists():
+                logger.warning("Target file already exists, overwriting: %s", final_path)
+            shutil.move(str(service_output_path), str(final_path))
+            logger.info("Moved file from %s to %s", service_output_path, final_path)
+        elif not service_output_path.exists():
+            logger.warning("Service output file does not exist: %s", service_output_path)
+        
+        return final_path
 

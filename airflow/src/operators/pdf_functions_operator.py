@@ -173,7 +173,7 @@ class PdfFunctionsOperator(BaseOperator):
         log_saga(saga, task_id=self.task_id)
 
     def _split_pdfs(self, files: Sequence[Path]) -> List[Path]:
-        """Split PDFs into single-page files."""
+        """Split PDFs into single-page files. Single-page PDFs are saved as-is."""
         if not files:
             return []
 
@@ -184,12 +184,18 @@ class PdfFunctionsOperator(BaseOperator):
             num_pages = len(reader.pages)
 
             if num_pages <= 1:
-                if self.include_single_page:
-                    target_path = self.output_dir / f"{pdf_path.stem}_1.pdf"
-                    self._write_pages(reader.pages[0:1], target_path)
-                    output_paths.append(target_path)
+                # Single-page PDF: save to output_dir with original filename (no _1 suffix)
+                target_path = self.output_dir / pdf_path.name
+                self._write_pages(reader.pages[0:1], target_path)
+                output_paths.append(target_path)
+                logger.info(
+                    "Single-page PDF %s saved to %s",
+                    pdf_path.name,
+                    target_path,
+                )
                 continue
 
+            # Multi-page PDF: split into individual pages
             for index, page in enumerate(reader.pages, start=1):
                 target_path = self.output_dir / f"{pdf_path.stem}_{index}.pdf"
                 self._write_pages([page], target_path)

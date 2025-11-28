@@ -3,8 +3,11 @@ import logging
 
 from fastapi import APIRouter
 
-from ..controllers.gpt_pdf_controller import handle_extract_pdf_fields
-from ..dtos.gpt_pdf_extraction_models import GptPdfExtractionInput, GptPdfExtractionOutput
+from ..controllers.gpt_pdf_controller import handle_extract_pdf_fields, handle_detect_rotation
+from ..dtos.gpt_pdf_extraction_models import (
+    GptPdfExtractionInput, GptPdfExtractionOutput,
+    GptPdfRotationInput, GptPdfRotationOutput
+)
 
 logger = logging.getLogger(__name__)
 
@@ -23,3 +26,17 @@ async def extract_pdf_fields_endpoint(payload: GptPdfExtractionInput) -> GptPdfE
     except Exception as exc:
         logger.error("Error in extract_pdf_fields: %s", exc)
         return GptPdfExtractionOutput(status="FAIL", extracted={}, raw_text=None)
+
+
+@router.post("/detect-rotation", response_model=GptPdfRotationOutput, status_code=200)
+async def detect_rotation_endpoint(payload: GptPdfRotationInput) -> GptPdfRotationOutput:
+    """Detect PDF page rotation/orientation using GPT Vision."""
+    try:
+        result = handle_detect_rotation(payload)
+        return GptPdfRotationOutput(**result)
+    except ValueError as exc:
+        logger.warning("Validation error in detect_rotation: %s", exc)
+        return GptPdfRotationOutput(rotation=0, confidence=0, reasoning=str(exc))
+    except Exception as exc:
+        logger.error("Error in detect_rotation: %s", exc)
+        return GptPdfRotationOutput(rotation=0, confidence=0, reasoning=f"Error: {str(exc)}")

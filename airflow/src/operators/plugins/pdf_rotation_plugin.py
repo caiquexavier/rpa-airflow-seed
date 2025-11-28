@@ -2,11 +2,19 @@
 
 from __future__ import annotations
 
+import base64
+import io
 import logging
 import os
 import shutil
 from pathlib import Path
 from typing import Optional
+
+try:
+    import requests
+    REQUESTS_AVAILABLE = True
+except ImportError:
+    REQUESTS_AVAILABLE = False
 
 try:
     import fitz  # PyMuPDF
@@ -52,7 +60,7 @@ def rotate_pdf_with_ocr(pdf_path: Path, output_path: Optional[Path] = None) -> P
 
         first_page = doc[0]
         current_rotation = first_page.rotation % 360
-        best_rotation = _determine_rotation_with_ocr(first_page)
+        best_rotation = _determine_rotation_mixed_ocr_llm(first_page)
         rotation_needed = (best_rotation - current_rotation) % 360
 
         logger.info(
@@ -242,5 +250,141 @@ def _determine_rotation_with_ocr(page) -> int:
         best_score,
     )
     return best_rotation
+
+
+def _call_gpt_rotation_api(page_image_base64: str, rpa_api_url: str = None) -> Optional[dict]:
+    """
+    Call rpa-api GPT endpoint to detect rotation.
+    
+    Args:
+        page_image_base64: Base64-encoded image of the page
+        rpa_api_url: Optional rpa-api base URL (defaults to http://rpa-api:3000)
+        
+    Returns:
+        Dict with 'rotation', 'confidence', 'reasoning' or None if API call fails
+    """
+    if not REQUESTS_AVAILABLE:
+        logger.warning("requests library not available, skipping GPT rotation detection")
+        return None
+    
+    if rpa_api_url is None:
+        rpa_api_url = os.getenv("RPA_API_BASE_URL", "http://rpa-api:3000")
+    
+    api_endpoint = f"{rpa_api_url}/rpa/pdf/detect-rotation"
+    
+    try:
+        payload = {"page_image_base64": page_image_base64}
+        response = requests.post(
+            api_endpoint,
+            json=payload,
+            headers={"Content-Type": "application/json"},
+            timeout=30
+        )
+        
+        if response.status_code == 200:
+            result = response.json()
+            rotation = int(result.get("rotation", 0))
+            confidence = float(result.get("confidence", 0))
+            reasoning = result.get("reasoning", "")
+            
+            # Validate rotation
+            if rotation not in [0, 90, 180, 270]:
+                logger.warning(f"Invalid rotation {rotation} from GPT API, defaulting to 0")
+                rotation = 0
+                confidence = 0
+            
+            logger.info(
+                f"GPT rotation detection: {rotation}° (confidence: {confidence:.1f}, "
+                f"reasoning: {reasoning[:80]})"
+            )
+            return {"rotation": rotation, "confidence": confidence, "reasoning": reasoning}
+        else:
+            logger.warning(
+                f"GPT rotation API returned status {response.status_code}: {response.text[:200]}"
+            )
+            return None
+    except Exception as exc:
+        logger.warning(f"Failed to call GPT rotation API: {exc}")
+        return None
+
+
+def _determine_rotation_mixed_ocr_llm(page) -> int:
+    """
+    Determine best rotation using mixed OCR + LLM approach.
+    
+    Combines OCR heuristics with GPT Vision API for better accuracy.
+    """
+    if not (TESSERACT_AVAILABLE and PIL_AVAILABLE):
+        logger.warning("OCR dependencies missing; defaulting to 0° rotation")
+        return 0
+    
+    import io
+    
+    logger.info("Converting PDF page to image for mixed OCR+LLM rotation detection...")
+    
+    try:
+        mat = fitz.Matrix(2.0, 2.0)
+        pix = page.get_pixmap(matrix=mat)
+        img_data = pix.tobytes("png")
+        base_image = Image.open(io.BytesIO(img_data))
+        logger.info(
+            "Converted page to image: %sx%s pixels",
+            base_image.size[0],
+            base_image.size[1],
+        )
+    except Exception as exc:
+        logger.error("Failed to convert page to image: %s", exc)
+        return 0
+    
+    # Get OCR-based rotation
+    ocr_rotation = _determine_rotation_with_ocr(page)
+    ocr_confidence = 50.0  # Default OCR confidence
+    
+    # Get GPT-based rotation
+    try:
+        img_buffer = io.BytesIO()
+        base_image.save(img_buffer, format='PNG')
+        img_base64 = base64.b64encode(img_buffer.getvalue()).decode('utf-8')
+        gpt_result = _call_gpt_rotation_api(img_base64)
+    except Exception as exc:
+        logger.warning(f"Failed to get GPT rotation: {exc}")
+        gpt_result = None
+    
+    # Combine results: prefer GPT if confidence is high, otherwise use OCR
+    if gpt_result and gpt_result.get("confidence", 0) >= 70.0:
+        gpt_rotation = gpt_result.get("rotation", 0)
+        gpt_confidence = gpt_result.get("confidence", 0)
+        logger.info(
+            f"Using GPT rotation {gpt_rotation}° (confidence: {gpt_confidence:.1f}) "
+            f"over OCR rotation {ocr_rotation}°"
+        )
+        return gpt_rotation
+    elif gpt_result and gpt_result.get("confidence", 0) >= 50.0:
+        # GPT has moderate confidence, check if it matches OCR
+        gpt_rotation = gpt_result.get("rotation", 0)
+        if gpt_rotation == ocr_rotation:
+            logger.info(
+                f"OCR and GPT agree on rotation {gpt_rotation}°, using it"
+            )
+            return gpt_rotation
+        else:
+            # Disagreement: prefer GPT if confidence is higher
+            gpt_confidence = gpt_result.get("confidence", 0)
+            if gpt_confidence > ocr_confidence:
+                logger.info(
+                    f"OCR and GPT disagree ({ocr_rotation}° vs {gpt_rotation}°), "
+                    f"preferring GPT {gpt_rotation}° (confidence: {gpt_confidence:.1f})"
+                )
+                return gpt_rotation
+            else:
+                logger.info(
+                    f"OCR and GPT disagree ({ocr_rotation}° vs {gpt_rotation}°), "
+                    f"preferring OCR {ocr_rotation}°"
+                )
+                return ocr_rotation
+    else:
+        # GPT failed or low confidence, use OCR
+        logger.info(f"Using OCR rotation {ocr_rotation}° (GPT unavailable or low confidence)")
+        return ocr_rotation
 
 

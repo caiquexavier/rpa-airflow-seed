@@ -96,6 +96,9 @@ Thumbs.db
 /cache/
 /.cache/
 
+# Shared data and downloads
+shared/
+
 # Ensure all Python bytecode cache directories are ignored everywhere
 **/__pycache__/
 

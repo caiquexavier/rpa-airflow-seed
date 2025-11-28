@@ -129,3 +129,27 @@ def build_vision_user_content(
 
     return content
 
+
+def build_rotation_detection_instruction() -> str:
+    """
+    Build instruction for GPT to detect PDF page rotation/orientation.
+    
+    Returns:
+        Instruction string for rotation detection
+    """
+    return (
+        "Analyze the document image and determine its current rotation/orientation.\n\n"
+        "INSTRUCTIONS:\n"
+        "- Examine the image carefully to determine if it is readable in its current orientation\n"
+        "- Check if text is readable left-to-right, top-to-bottom\n"
+        "- Look for headers, titles, or common document elements that indicate correct orientation\n"
+        "- Determine the rotation angle needed to make the document readable (0, 90, 180, or 270 degrees)\n"
+        "- Consider that 0° means the document is already correctly oriented (upright and readable)\n"
+        "- 90° means rotated clockwise (text would be sideways to the right)\n"
+        "- 180° means upside down\n"
+        "- 270° means rotated counter-clockwise (text would be sideways to the left)\n\n"
+        "Return a JSON object with:\n"
+        "- 'rotation': The rotation angle in degrees (0, 90, 180, or 270) that makes the document readable\n"
+        "- 'confidence': A number between 0 and 100 indicating your confidence in the rotation detection\n"
+        "- 'reasoning': A brief explanation of why you chose this rotation"
+    )

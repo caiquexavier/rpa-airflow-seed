@@ -11,6 +11,7 @@ from .prompts import (
     build_vision_field_map_instruction,
     build_vision_suggest_fields_instruction,
     build_vision_user_content,
+    build_rotation_detection_instruction,
 )
 
 logger = logging.getLogger(__name__)
@@ -176,4 +177,93 @@ def _save_llm_execution_result(
         logger.info(f"Saved LLM execution result to: {filename}")
     except Exception as e:
         logger.warning(f"Failed to save LLM execution result: {e}")
+
+
+def detect_rotation_with_vision(page_image: str) -> Dict[str, Any]:
+    """
+    Detect PDF page rotation/orientation using OpenAI Vision API.
+    
+    Args:
+        page_image: Base64-encoded image of the PDF page
+        
+    Returns:
+        Dictionary with 'rotation' (0, 90, 180, or 270), 'confidence' (0-100), and 'reasoning'
+        
+    Raises:
+        RuntimeError: If OpenAI API call fails
+        ValueError: If response cannot be parsed as JSON
+    """
+    client = get_openai_client()
+    model_name = get_openai_model()
+    
+    instruction = build_rotation_detection_instruction()
+    
+    content = [
+        {
+            "type": "text",
+            "text": instruction
+        },
+        {
+            "type": "image_url",
+            "image_url": {
+                "url": f"data:image/png;base64,{page_image}",
+                "detail": "high"
+            }
+        }
+    ]
+    
+    try:
+        logger.info(f"Calling OpenAI Vision model {model_name} to detect rotation")
+        
+        request_timestamp = datetime.utcnow().isoformat()
+        
+        response = client.chat.completions.create(
+            model=model_name,
+            messages=[
+                {"role": "system", "content": "You are a document orientation analyzer. Always return valid JSON."},
+                {"role": "user", "content": content}
+            ],
+            response_format={"type": "json_object"},
+            temperature=0.1
+        )
+        
+        response_timestamp = datetime.utcnow().isoformat()
+        usage = response.usage
+        logger.info(
+            f"LLM Rotation Detection - Model: {model_name}, "
+            f"Tokens: prompt={usage.prompt_tokens}, completion={usage.completion_tokens}, "
+            f"total={usage.total_tokens}"
+        )
+        
+        content_text = response.choices[0].message.content
+        if not content_text:
+            raise ValueError("Empty response from OpenAI")
+        
+        result = json.loads(content_text)
+        rotation = int(result.get("rotation", 0))
+        confidence = float(result.get("confidence", 0))
+        reasoning = result.get("reasoning", "")
+        
+        # Validate rotation is one of the allowed values
+        if rotation not in [0, 90, 180, 270]:
+            logger.warning(f"Invalid rotation value {rotation} from GPT, defaulting to 0")
+            rotation = 0
+            confidence = 0
+        
+        logger.info(f"GPT detected rotation: {rotation}° (confidence: {confidence}, reasoning: {reasoning[:100]})")
+        
+        return {
+            "rotation": rotation,
+            "confidence": confidence,
+            "reasoning": reasoning
+        }
+        
+    except json.JSONDecodeError as e:
+        logger.error(f"Failed to parse OpenAI rotation response as JSON: {e}")
+        logger.warning("Defaulting to 0° rotation")
+        return {"rotation": 0, "confidence": 0, "reasoning": "JSON parse error"}
+    except Exception as e:
+        logger.error(f"OpenAI API error during rotation detection: {e}")
+        logger.warning("Defaulting to 0° rotation")
+        return {"rotation": 0, "confidence": 0, "reasoning": f"API error: {str(e)}"}
 
