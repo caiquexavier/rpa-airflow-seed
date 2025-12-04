@@ -48,8 +48,8 @@ convert_task = PythonOperator(
     dag=dag,
 )
 
-robotFramework_task = RobotFrameworkOperator(
-    task_id="pod_download",
+robot_protocolo_devolucao_task = RobotFrameworkOperator(
+    task_id="robot_protocolo_devolucao",
     robot_test_file="protocolo_devolucao_main.robot",
     rpa_api_conn_id="rpa_api",
     api_endpoint="/api/v1/robot-operator-saga/start",
@@ -60,8 +60,8 @@ robotFramework_task = RobotFrameworkOperator(
 )
 
 # Sensor that waits for webhook and validates status
-wait_for_webhook = WebhookSensor(
-    task_id="wait_for_webhook",
+wait_for_protocolo_devolucao_webhook = WebhookSensor(
+    task_id="wait_for_protocolo_devolucao_webhook",
     target_task_id="split_pdf_files",
     poke_interval=5,  # Check every 5 seconds
     timeout=3600,  # Wait up to 1 hour
@@ -90,6 +90,48 @@ gpt_pdf_extractor_task = GptPdfExtractorOperator(
     dag=dag,
 )
 
+robot_upload_multi_cte_task = RobotFrameworkOperator(
+    task_id="robot_upload_multi_cte",
+    robot_test_file="upload-multi-cte.robot",
+    rpa_api_conn_id="rpa_api",
+    api_endpoint="/api/v1/robot-operator-saga/start",
+    callback_path="/trigger/robot_download_multi_cte_reports",
+    airflow_api_base_url_var="AIRFLOW_API_BASE_URL",
+    timeout=30,
+    dag=dag,
+)
+
+# Sensor that waits for webhook and validates status
+wait_for_upload_multi_cte_webhook = WebhookSensor(
+    task_id="wait_for_upload_multi_cte_webhook",
+    target_task_id="robot_download_multi_cte_reports",
+    poke_interval=5,  # Check every 5 seconds
+    timeout=3600,  # Wait up to 1 hour
+    mode='poke',
+    dag=dag,
+)
+
+robot_download_multi_cte_reports_task = RobotFrameworkOperator(
+    task_id="robot_download_multi_cte_reports",
+    robot_test_file="download-multi-cte-reports.robot",
+    rpa_api_conn_id="rpa_api",
+    api_endpoint="/api/v1/robot-operator-saga/start",
+    callback_path="/trigger/complete_saga",
+    airflow_api_base_url_var="AIRFLOW_API_BASE_URL",
+    timeout=30,
+    dag=dag,
+)
+
+# Sensor that waits for webhook and validates status
+wait_for_download_multi_cte_reports_webhook = WebhookSensor(
+    task_id="wait_for_download_multi_cte_reports_webhook",
+    target_task_id="complete_saga",
+    poke_interval=5,  # Check every 5 seconds
+    timeout=3600,  # Wait up to 1 hour
+    mode='poke',
+    dag=dag,
+)
+
 # Final task to mark SAGA as completed
 complete_saga_task_op = SagaOperator(
     task_id="complete_saga",
@@ -99,9 +141,13 @@ complete_saga_task_op = SagaOperator(
 
 (start_saga_task
  >> convert_task
- >> robotFramework_task
- >> wait_for_webhook
+ >> robot_protocolo_devolucao_task
+ >> wait_for_protocolo_devolucao_webhook
  >> split_files_task
  >> gpt_pdf_extractor_task
+ >> robot_upload_multi_cte_task
+ >> wait_for_upload_multi_cte_webhook
+ >> robot_download_multi_cte_reports_task
+ >> wait_for_download_multi_cte_reports_webhook
  >> complete_saga_task_op)
 

@@ -27,7 +27,8 @@ Navigate To Leitura De Canhotos
     Sleep    2s
 
 Click Emissor Search Button
-    [Documentation]    Click the search button to open emissor search modal. Uses multiple fallback strategies to handle dynamic IDs.
+    [Documentation]    Click the search button to open emissor search modal. Uses multiple fallback strategies to handle dynamic IDs. Waits for blockUI overlay to disappear before clicking.
+    Wait For BlockUI Overlay To Disappear
     ${search_button_xpath}=    Set Variable    xpath=//button[@aria-label="Buscar" and contains(@class, "btn-primary")]
     ${search_button_found}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${search_button_xpath}    timeout=10s
     IF    not ${search_button_found}
@@ -105,11 +106,16 @@ Click Selecionar Link
     Wait For Element And Click    ${table_link_xpath}
 
 Wait For BlockUI Overlay To Disappear
-    [Documentation]    Wait for blockUI overlay to disappear before attempting to click elements.
+    [Documentation]    Wait for blockUI overlay to disappear before attempting to click elements. Handles both blockUI and block-ui-custom overlays.
     ${blockui_overlay_xpath}=    Set Variable    xpath=//div[contains(@class, "blockUI") and contains(@class, "blockOverlay")]
+    ${blockui_custom_xpath}=    Set Variable    xpath=//div[contains(@class, "block-ui-custom")]
     ${overlay_visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${blockui_overlay_xpath}    timeout=2s
+    ${custom_overlay_visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${blockui_custom_xpath}    timeout=2s
     IF    ${overlay_visible}
         Wait Until Element Is Not Visible    ${blockui_overlay_xpath}    timeout=30s
+    END
+    IF    ${custom_overlay_visible}
+        Wait Until Element Is Not Visible    ${blockui_custom_xpath}    timeout=30s
     END
 
 Search And Select Emissor
@@ -156,4 +162,324 @@ Click Upload Button
     Scroll Element Into View    ${upload_button_xpath}
     Set Focus To Element    ${upload_button_xpath}
     Click Element    ${upload_button_xpath}
+
+Navigate To Canhotos Relatorios
+    [Documentation]    Navigate to Canhotos Relatorios menu.
+    Wait For Element And Click    xpath=//*[@id="js-nav-menu"]/li[6]/a
+    Sleep    1s
+    Wait For Element And Click    xpath=//*[@id="js-nav-menu"]/li[6]/ul/li[4]/a
+    Sleep    1s
+    Wait For Element And Click    xpath=//*[@id="js-nav-menu"]/li[6]/ul/li[4]/ul/li[1]/a
+    Sleep    2s
+
+Select Report Date
+    [Documentation]    Select report date in the date picker.
+    [Arguments]    ${report_date}=30/11/2025
+    Click Report Date Picker
+    Input Report Date    ${report_date}
+
+Click Report Date Picker
+    [Documentation]    Click the report date picker button to open date selection. Uses smart search for dynamic IDs.
+    ${date_picker_xpath}=    Set Variable    xpath=//div[contains(@id, "tempus-dominus-append-a5fb2e8910c25feec7d24f1f69e6707d5")]//span
+    ${date_picker_found}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${date_picker_xpath}    timeout=10s
+    IF    not ${date_picker_found}
+        ${alt_date_picker}=    Set Variable    xpath=//div[contains(@id, "tempus-dominus-append")]//span[contains(@class, "btn-primary")]//i[contains(@class, "fa-calendar")]
+        ${alt_found}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${alt_date_picker}    timeout=10s
+        IF    ${alt_found}
+            Scroll Element Into View    ${alt_date_picker}
+            Set Focus To Element    ${alt_date_picker}
+            Click Element    ${alt_date_picker}
+        ELSE
+            ${generic_date_picker}=    Set Variable    xpath=//div[contains(@id, "tempus-dominus-append")]//span
+            Wait Until Element Is Visible    ${generic_date_picker}    timeout=10s
+            Scroll Element Into View    ${generic_date_picker}
+            Set Focus To Element    ${generic_date_picker}
+            Click Element    ${generic_date_picker}
+        END
+    ELSE
+        Scroll Element Into View    ${date_picker_xpath}
+        Set Focus To Element    ${date_picker_xpath}
+        Click Element    ${date_picker_xpath}
+    END
+    Sleep    1s
+
+Input Report Date
+    [Documentation]    Input report date into the date picker input field.
+    [Arguments]    ${report_date}
+    ${date_input_xpath}=    Set Variable    xpath=//div[contains(@id, "tempus-dominus-append-a5fb2e8910c25feec7d24f1f69e6707d5")]/../input
+    ${input_found}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${date_input_xpath}    timeout=5s
+    IF    not ${input_found}
+        ${alt_date_input}=    Set Variable    xpath=//div[contains(@id, "tempus-dominus-append")]/../input
+        Wait Until Element Is Visible    ${alt_date_input}    timeout=5s
+        Wait For Element And Input Text    ${alt_date_input}    ${report_date}
+        Sleep    1s
+        Press Keys    ${alt_date_input}    RETURN
+    ELSE
+        Wait For Element And Input Text    ${date_input_xpath}    ${report_date}
+        Sleep    1s
+        Press Keys    ${date_input_xpath}    RETURN
+    END
+    Sleep    1s
+
+Select Report Campos
+    [Documentation]    Select report campos checkboxes. Uses smart search to find checkboxes by label text. Attempts to click select campos button if needed. Closes campos selection modal after selecting all campos.
+    Click Select Campos Button If Needed
+    Select Campo Checkbox    Data Digitalização
+    Select Campo Checkbox    Número
+    Select Campo Checkbox    Número da Carga
+    Select Campo Checkbox    Digitalização
+    Select Campo Checkbox    Situação
+    Select Campo Checkbox    Motivo da Rejeição
+    Click Select Campos Button To Close
+
+Click Select Campos Button If Needed
+    [Documentation]    Click the select campos button to open campos selection modal if it exists. Uses specific ID.
+    Wait For BlockUI Overlay To Disappear
+    ${select_campos_xpath}=    Set Variable    xpath=//*[@id="preferencias-gridPreviewRelatorio"]
+    Wait Until Element Is Visible    ${select_campos_xpath}    timeout=10s
+    Scroll Element Into View    ${select_campos_xpath}
+    Set Focus To Element    ${select_campos_xpath}
+    Click Element    ${select_campos_xpath}
+    Wait For BlockUI Overlay To Disappear
+    Sleep    1s
+
+Click Select Campos Button To Close
+    [Documentation]    Click the select campos button to close campos selection modal. Uses specific ID.
+    Wait For BlockUI Overlay To Disappear
+    ${select_campos_xpath}=    Set Variable    xpath=//*[@id="preferencias-gridPreviewRelatorio"]
+    Wait Until Element Is Visible    ${select_campos_xpath}    timeout=10s
+    Scroll Element Into View    ${select_campos_xpath}
+    Set Focus To Element    ${select_campos_xpath}
+    Click Element    ${select_campos_xpath}
+    Wait For BlockUI Overlay To Disappear
+    Sleep    0.5s
+
+Select Campo Checkbox
+    [Documentation]    Select a checkbox by its label text. Finds label by exact text match, then uses label's 'for' attribute to locate and click the checkbox input element directly.
+    [Arguments]    ${campo_label}
+    Wait For BlockUI Overlay To Disappear
+    ${label_xpath}=    Set Variable    xpath=//label[normalize-space(text())="${campo_label}"]
+    ${label_found}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${label_xpath}    timeout=15s
+    IF    ${label_found}
+        ${label_for}=    Get Element Attribute    ${label_xpath}    for
+        IF    "${label_for}" != "${None}" and "${label_for}" != ""
+            ${checkbox_xpath}=    Set Variable    xpath=//input[@type="checkbox" and @id="${label_for}" and contains(@class, "custom-control-input")]
+            ${checkbox_exists}=    Run Keyword And Return Status    Page Should Contain Element    ${checkbox_xpath}    timeout=10s
+            IF    ${checkbox_exists}
+                ${is_selected}=    Run Keyword And Return Status    Checkbox Should Be Selected    ${checkbox_xpath}
+                IF    not ${is_selected}
+                    ${checkbox_element}=    Get WebElement    ${checkbox_xpath}
+                    Execute Javascript    arguments[0].click();    ARGUMENTS    ${checkbox_element}
+                    Sleep    0.3s
+                    ${verify_selected}=    Run Keyword And Return Status    Checkbox Should Be Selected    ${checkbox_xpath}
+                    IF    not ${verify_selected}
+                        Scroll Element Into View    ${checkbox_xpath}
+                        Set Focus To Element    ${checkbox_xpath}
+                        Click Element    ${checkbox_xpath}
+                    END
+                END
+            ELSE
+                Scroll Element Into View    ${label_xpath}
+                Set Focus To Element    ${label_xpath}
+                Click Element    ${label_xpath}
+            END
+        ELSE
+            Scroll Element Into View    ${label_xpath}
+            Set Focus To Element    ${label_xpath}
+            Click Element    ${label_xpath}
+        END
+    ELSE
+        ${alt_label_xpath}=    Set Variable    xpath=//label[contains(text(), "${campo_label}")]
+        ${alt_label_found}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${alt_label_xpath}    timeout=10s
+        IF    ${alt_label_found}
+            ${alt_label_for}=    Get Element Attribute    ${alt_label_xpath}    for
+            IF    "${alt_label_for}" != "${None}" and "${alt_label_for}" != ""
+                ${alt_checkbox_xpath}=    Set Variable    xpath=//input[@type="checkbox" and @id="${alt_label_for}" and contains(@class, "custom-control-input")]
+                ${alt_checkbox_exists}=    Run Keyword And Return Status    Page Should Contain Element    ${alt_checkbox_xpath}    timeout=10s
+                IF    ${alt_checkbox_exists}
+                    ${is_selected}=    Run Keyword And Return Status    Checkbox Should Be Selected    ${alt_checkbox_xpath}
+                    IF    not ${is_selected}
+                        ${alt_checkbox_element}=    Get WebElement    ${alt_checkbox_xpath}
+                        Execute Javascript    arguments[0].click();    ARGUMENTS    ${alt_checkbox_element}
+                        Sleep    0.3s
+                        ${verify_selected}=    Run Keyword And Return Status    Checkbox Should Be Selected    ${alt_checkbox_xpath}
+                        IF    not ${verify_selected}
+                            Scroll Element Into View    ${alt_checkbox_xpath}
+                            Set Focus To Element    ${alt_checkbox_xpath}
+                            Click Element    ${alt_checkbox_xpath}
+                        END
+                    END
+                ELSE
+                    Scroll Element Into View    ${alt_label_xpath}
+                    Set Focus To Element    ${alt_label_xpath}
+                    Click Element    ${alt_label_xpath}
+                END
+            ELSE
+                Scroll Element Into View    ${alt_label_xpath}
+                Set Focus To Element    ${alt_label_xpath}
+                Click Element    ${alt_label_xpath}
+            END
+        ELSE
+            ${generic_checkbox}=    Set Variable    xpath=//input[@type="checkbox" and contains(@class, "custom-control-input")][@data-column[contains(., "${campo_label}")] or @name[contains(., "${campo_label}")] or @id[contains(., "${campo_label}")]]
+            ${generic_found}=    Run Keyword And Return Status    Page Should Contain Element    ${generic_checkbox}    timeout=10s
+            IF    ${generic_found}
+                ${is_selected}=    Run Keyword And Return Status    Checkbox Should Be Selected    ${generic_checkbox}
+                IF    not ${is_selected}
+                    ${generic_checkbox_element}=    Get WebElement    ${generic_checkbox}
+                    Execute Javascript    arguments[0].click();    ARGUMENTS    ${generic_checkbox_element}
+                    Sleep    0.3s
+                    ${verify_selected}=    Run Keyword And Return Status    Checkbox Should Be Selected    ${generic_checkbox}
+                    IF    not ${verify_selected}
+                        Scroll Element Into View    ${generic_checkbox}
+                        Set Focus To Element    ${generic_checkbox}
+                        Click Element    ${generic_checkbox}
+                    END
+                END
+            ELSE
+                Fail    Checkbox for "${campo_label}" not found
+            END
+        END
+    END
+    Sleep    0.5s
+
+Generate Excel Report
+    [Documentation]    Click the Generate Excel button. Uses smart search to find button by stable attributes.
+    Wait For BlockUI Overlay To Disappear
+    ${excel_button_xpath}=    Set Variable    xpath=//button[@id="a9cbbb64ad0bae8d8d3162877dd9e125f"]
+    ${button_found}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${excel_button_xpath}    timeout=10s
+    IF    not ${button_found}
+        ${alt_excel_button}=    Set Variable    xpath=//button[contains(@class, "btn-success") and .//i[contains(@class, "fa-file-excel")] and .//span[contains(text(), "Gerar Planilha Excel")]]
+        ${alt_found}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${alt_excel_button}    timeout=10s
+        IF    ${alt_found}
+            Scroll Element Into View    ${alt_excel_button}
+            Set Focus To Element    ${alt_excel_button}
+            Click Element    ${alt_excel_button}
+        ELSE
+            ${generic_excel_button}=    Set Variable    xpath=//button[contains(@class, "btn-success") and .//i[contains(@class, "fa-file-excel")]]
+            Wait Until Element Is Visible    ${generic_excel_button}    timeout=10s
+            Scroll Element Into View    ${generic_excel_button}
+            Set Focus To Element    ${generic_excel_button}
+            Click Element    ${generic_excel_button}
+        END
+    ELSE
+        Scroll Element Into View    ${excel_button_xpath}
+        Set Focus To Element    ${excel_button_xpath}
+        Click Element    ${excel_button_xpath}
+    END
+    Sleep    3s
+
+Generate PDF Report
+    [Documentation]    Click the Generate PDF button. Uses smart search to find button by stable attributes.
+    Wait For BlockUI Overlay To Disappear
+    ${pdf_button_xpath}=    Set Variable    xpath=//button[@id="a594409f5625e099ffab6bc85fee17d93"]
+    ${button_found}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${pdf_button_xpath}    timeout=10s
+    IF    not ${button_found}
+        ${alt_pdf_button}=    Set Variable    xpath=//button[contains(@class, "btn-success") and .//i[contains(@class, "fa-file-pdf")] and .//span[contains(text(), "Gerar PDF")]]
+        ${alt_found}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${alt_pdf_button}    timeout=10s
+        IF    ${alt_found}
+            Scroll Element Into View    ${alt_pdf_button}
+            Set Focus To Element    ${alt_pdf_button}
+            Click Element    ${alt_pdf_button}
+        ELSE
+            ${generic_pdf_button}=    Set Variable    xpath=//button[contains(@class, "btn-success") and .//i[contains(@class, "fa-file-pdf")]]
+            Wait Until Element Is Visible    ${generic_pdf_button}    timeout=10s
+            Scroll Element Into View    ${generic_pdf_button}
+            Set Focus To Element    ${generic_pdf_button}
+            Click Element    ${generic_pdf_button}
+        END
+    ELSE
+        Scroll Element Into View    ${pdf_button_xpath}
+        Set Focus To Element    ${pdf_button_xpath}
+        Click Element    ${pdf_button_xpath}
+    END
+    Sleep    3s
+
+Select Report
+    [Documentation]    Click search button, select relatorio padrao from table, and filter table to show only relatorio padrao.
+    Click Report Search Button
+    Select Relatorio Padrao
+    Filter Table To Relatorio Padrao
+
+Click Report Search Button
+    [Documentation]    Click the report search button. Uses multiple fallback strategies to handle dynamic IDs.
+    Wait For BlockUI Overlay To Disappear
+    ${search_button_xpath}=    Set Variable    xpath=//button[@class="btn btn-primary waves-effect waves-themed" and contains(@id, "ad5941114e868341d16c4a8f3a77f1c30") and @aria-label="Buscar"]
+    ${search_button_found}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${search_button_xpath}    timeout=10s
+    IF    not ${search_button_found}
+        ${alt_search_button}=    Set Variable    xpath=//button[@class="btn btn-primary waves-effect waves-themed" and @aria-label="Buscar" and .//i[contains(@class, "fa-search")]]
+        ${alt_found}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${alt_search_button}    timeout=10s
+        IF    ${alt_found}
+            Wait For Element And Click    ${alt_search_button}
+        ELSE
+            ${generic_search_button}=    Set Variable    xpath=//button[@type="button" and @aria-label="Buscar" and contains(@class, "btn-primary") and .//i[contains(@class, "fa-search")]]
+            Wait Until Element Is Visible    ${generic_search_button}    timeout=10s
+            Scroll Element Into View    ${generic_search_button}
+            Set Focus To Element    ${generic_search_button}
+            Click Element    ${generic_search_button}
+        END
+    ELSE
+        Wait For Element And Click    ${search_button_xpath}
+    END
+    Wait For BlockUI Overlay To Disappear
+    Sleep    1s
+
+Select Relatorio Padrao
+    [Documentation]    Select relatorio padrao from the table using XPath.
+    Wait For BlockUI Overlay To Disappear
+    ${relatorio_padrao_xpath}=    Set Variable    xpath=//*[@id="55"]/td[3]/a
+    Wait Until Element Is Visible    ${relatorio_padrao_xpath}    timeout=15s
+    Scroll Element Into View    ${relatorio_padrao_xpath}
+    Wait For Element And Click    ${relatorio_padrao_xpath}
+    Sleep    1s
+
+Filter Table To Relatorio Padrao
+    [Documentation]    Filter table to show only rows where value equals relatorio padrao.
+    Wait For BlockUI Overlay To Disappear
+    ${table_rows_xpath}=    Set Variable    xpath=//table//tbody//tr
+    ${table_visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${table_rows_xpath}    timeout=15s
+    IF    ${table_visible}
+        ${rows}=    Get WebElements    ${table_rows_xpath}
+        FOR    ${row}    IN    @{rows}
+            TRY
+                ${row_text_content}=    Get Text    ${row}
+                ${is_relatorio_padrao}=    Evaluate    "relatorio padrao" in "${row_text_content}".lower()
+                IF    not ${is_relatorio_padrao}
+                    ${row_visible}=    Run Keyword And Return Status    Element Should Be Visible    ${row}
+                    IF    ${row_visible}
+                        Execute Javascript    arguments[0].style.display = 'none';    ARGUMENTS    ${row}
+                    END
+                END
+            EXCEPT
+                Continue For Loop
+            END
+        END
+    END
+    Sleep    0.5s
+
+Preview
+    [Documentation]    Click the preview button. Uses direct ID match with fallback strategies. Waits for page to be ready after click.
+    Wait For BlockUI Overlay To Disappear
+    ${preview_button_xpath}=    Set Variable    xpath=//*[@id="abd66478a61f271bddb60c84ee1a5a8cd"]
+    ${preview_button_found}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${preview_button_xpath}    timeout=10s
+    IF    not ${preview_button_found}
+        ${alt_preview_button}=    Set Variable    xpath=//button[@class="btn btn-primary" and .//span[text()="Preview"] and .//i[contains(@class, "fa-search")]]
+        ${alt_found}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${alt_preview_button}    timeout=10s
+        IF    ${alt_found}
+            Scroll Element Into View    ${alt_preview_button}
+            Set Focus To Element    ${alt_preview_button}
+            Click Element    ${alt_preview_button}
+        ELSE
+            ${generic_preview_button}=    Set Variable    xpath=//button[@class="btn btn-primary" and .//span[text()="Preview"]]
+            Wait Until Element Is Visible    ${generic_preview_button}    timeout=10s
+            Scroll Element Into View    ${generic_preview_button}
+            Set Focus To Element    ${generic_preview_button}
+            Click Element    ${generic_preview_button}
+        END
+    ELSE
+        Scroll Element Into View    ${preview_button_xpath}
+        Set Focus To Element    ${preview_button_xpath}
+        Click Element    ${preview_button_xpath}
+    END
+    Wait For BlockUI Overlay To Disappear
+    Sleep    2s
 
