@@ -13,6 +13,12 @@ pypdf
 pymupdf
 pytesseract
 pillow
+fpdf2
+pdf2image
+numpy
+opencv-python
+paddleocr
+easyocr
 
 # HTTP & API
 requests

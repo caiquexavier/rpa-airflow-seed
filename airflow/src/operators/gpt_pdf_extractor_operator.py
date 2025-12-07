@@ -19,16 +19,17 @@ logger = logging.getLogger(__name__)
 
 class GptPdfExtractorOperator(BaseOperator):
     """
-    Operator for processing PDF files using unified GPT service.
+    Operator for processing PDF files using unified GPT service with integrated rotation detection.
     
     This operator:
-    1. Calls the GPT extraction endpoint `/rpa/pdf/extract-gpt`
-    2. Uploads extracted data / logs result for each PDF
-    3. Assumes rotation has already been handled upstream (e.g., PdfFunctionsOperator)
+    1. Converts PDF pages to PNG images
+    2. Detects and rotates PDFs to best readable position using GPT Vision
+    3. Extracts data from rotated images using GPT Vision
+    4. Saves renamed files with doc_transporte_nf_e.pdf naming convention
     
     Args:
         folder_path: Path to directory containing PDF files to process
-        output_dir: Path to directory where rotated PDFs will be saved
+        output_dir: Path to directory where processed PDFs will be saved
         field_map: Optional dictionary mapping field names to descriptions/instructions.
                   If None, uses the default PDF field map. If empty dict, GPT will identify all fields.
         rpa_api_conn_id: Connection ID for RPA API (default: "rpa_api")
@@ -60,7 +61,7 @@ class GptPdfExtractorOperator(BaseOperator):
         self.save_extracted_data = save_extracted_data
 
     def execute(self, context: Context) -> Dict[str, Any]:
-        """Process PDF files using unified GPT service for rotation and extraction."""
+        """Process PDF files using unified GPT service with integrated rotation detection and extraction."""
         logger.info("Starting GptPdfExtractorOperator for folder: %s", self.folder_path)
         
         # Get SAGA from context
@@ -172,9 +173,10 @@ class GptPdfExtractorOperator(BaseOperator):
             logger.info("Created folder for doc_transportes %s: %s", doc_transportes, doc_folder)
             
             # Map each nf_e to its doc_transportes
+            # CRITICAL: Clean nf_e values to match extraction cleaning logic
             for nf_e in nf_e_list:
                 if nf_e:
-                    nf_key = str(nf_e).strip()
+                    nf_key = self._clean_nf_e_value(nf_e)
                     if nf_key:
                         nf_to_doc_map[nf_key] = str(doc_transportes)
                         logger.debug("Mapped nf_e %s to doc_transportes %s", nf_key, doc_transportes)
@@ -221,7 +223,19 @@ class GptPdfExtractorOperator(BaseOperator):
             
             status = result.get("status", "FAIL")
             extracted_data = result.get("extracted") or result.get("extracted_data", {})
-            service_output_path = result.get("organized_file_path") or temp_output_file_path
+            service_output_path = result.get("organized_file_path") or result.get("rotated_file_path") or temp_output_file_path
+            
+            # Verify rotated file exists
+            rotated_path_obj = Path(service_output_path)
+            if not rotated_path_obj.exists():
+                logger.warning(
+                    "Rotated file does not exist at %s, using temp path %s",
+                    service_output_path,
+                    temp_output_file_path
+                )
+                service_output_path = temp_output_file_path
+            else:
+                logger.info("Rotated PDF file confirmed at: %s", service_output_path)
             
             # Clean nf_e value: remove all non-numeric characters
             if "nf_e" in extracted_data and extracted_data["nf_e"]:
@@ -234,6 +248,23 @@ class GptPdfExtractorOperator(BaseOperator):
                         cleaned_nf_e
                     )
                 extracted_data["nf_e"] = cleaned_nf_e
+            
+            # Also try to extract doc_transportes from extracted_data if available
+            # This helps with file organization even if not in saga mapping
+            doc_transportes_from_data = (
+                extracted_data.get("doc_transportes") or 
+                extracted_data.get("doc_transporte") or 
+                extracted_data.get("dt") or
+                extracted_data.get("documento_transportes") or
+                extracted_data.get("doc_transportes_numero")
+            )
+            if doc_transportes_from_data:
+                doc_transportes_cleaned = str(doc_transportes_from_data).strip()
+                # Clean to keep only digits/alphanumeric
+                doc_transportes_cleaned = "".join(c for c in doc_transportes_cleaned if c.isalnum())
+                if doc_transportes_cleaned:
+                    extracted_data["doc_transportes"] = doc_transportes_cleaned
+                    logger.info("Extracted doc_transportes from data: %s", doc_transportes_cleaned)
             
             # Log extracted data to Airflow logs for observability
             extracted_json = json.dumps(extracted_data, indent=2, ensure_ascii=False)
@@ -327,15 +358,66 @@ class GptPdfExtractorOperator(BaseOperator):
         # Log SAGA
         log_saga(saga, task_id=self.task_id)
 
+    def _clean_extracted_data(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Remove null and empty values from extracted data dictionary.
+        Recursively cleans nested dictionaries.
+        
+        Args:
+            data: Dictionary with extracted data (may contain null/empty values)
+            
+        Returns:
+            Cleaned dictionary with only meaningful values
+        """
+        if not isinstance(data, dict):
+            return data
+        
+        cleaned = {}
+        for key, value in data.items():
+            # Skip None values
+            if value is None:
+                continue
+            
+            # Skip empty strings
+            if isinstance(value, str) and not value.strip():
+                continue
+            
+            # Skip empty lists
+            if isinstance(value, list) and len(value) == 0:
+                continue
+            
+            # Skip empty dictionaries
+            if isinstance(value, dict) and len(value) == 0:
+                continue
+            
+            # Recursively clean nested dictionaries
+            if isinstance(value, dict):
+                cleaned_nested = self._clean_extracted_data(value)
+                # Only add if cleaned nested dict is not empty
+                if cleaned_nested:
+                    cleaned[key] = cleaned_nested
+            else:
+                cleaned[key] = value
+        
+        return cleaned
+
     def _store_extracted_data_in_saga(self, saga: Dict[str, Any], extracted_data: Dict[str, Any]) -> None:
         """
         Persist extracted data payloads inside saga.data.extracted_data keyed by nf_e.
         Avoids duplicates by skipping inserts when the nf_e key already exists.
+        Removes null and empty values before storing.
         """
         if not saga or not extracted_data:
             return
 
-        nf_value = extracted_data.get("nf_e")
+        # Clean extracted data: remove null and empty values
+        cleaned_data = self._clean_extracted_data(extracted_data)
+        
+        if not cleaned_data:
+            logger.warning("Extracted data is empty after cleaning; skipping saga persistence")
+            return
+
+        nf_value = cleaned_data.get("nf_e")
         if nf_value is None:
             logger.warning("Extracted data missing nf_e field; skipping saga persistence")
             return
@@ -347,7 +429,7 @@ class GptPdfExtractorOperator(BaseOperator):
 
         saga.setdefault("data", {})
         extracted_bucket = saga["data"].setdefault("extracted_data", {})
-
+        
         if not isinstance(extracted_bucket, dict):
             logger.warning(
                 "Unexpected saga.data.extracted_data type %s; resetting to dict for keyed storage",
@@ -360,8 +442,8 @@ class GptPdfExtractorOperator(BaseOperator):
             logger.info("Saga already has extracted data for NF-e %s; skipping duplicate insert", nf_key)
             return
 
-        extracted_bucket[nf_key] = extracted_data
-        logger.info("Stored extracted data for NF-e %s into saga.data.extracted_data", nf_key)
+        extracted_bucket[nf_key] = cleaned_data
+        logger.info("Stored cleaned extracted data for NF-e %s into saga.data.extracted_data", nf_key)
 
     def _save_extracted_data_to_api(self, saga: Dict[str, Any], extracted_data: Dict[str, Any]) -> None:
         """
@@ -382,8 +464,15 @@ class GptPdfExtractorOperator(BaseOperator):
             logger.warning("Cannot save extracted data: extracted_data is empty")
             return
         
+        # Clean extracted data: remove null and empty values
+        cleaned_data = self._clean_extracted_data(extracted_data)
+        
+        if not cleaned_data:
+            logger.warning("Extracted data is empty after cleaning; skipping API persistence")
+            return
+        
         # Apply same duplicate-removal logic as _store_extracted_data_in_saga
-        nf_value = extracted_data.get("nf_e")
+        nf_value = cleaned_data.get("nf_e")
         if nf_value is None:
             logger.warning("Extracted data missing nf_e field; skipping API persistence")
             return
@@ -406,7 +495,7 @@ class GptPdfExtractorOperator(BaseOperator):
             
             payload = {
                 "saga_id": saga_id,
-                "metadata": extracted_data
+                "metadata": cleaned_data
             }
             
             response = requests.post(
@@ -460,62 +549,181 @@ class GptPdfExtractorOperator(BaseOperator):
     ) -> Path:
         """
         Determine final output path based on extracted nf_e and saga data.
+        Files are saved rotated and renamed to doc_transportes_nf_e.pdf format.
         
         Args:
             extracted_data: Extracted data dictionary (should contain nf_e)
             doc_transportes_map: Dictionary mapping nf_e values to doc_transportes values
-            service_output_path: Path where GPT service saved the file
+            service_output_path: Path where GPT service saved the rotated file
             
         Returns:
             Final Path where file should be saved (with proper name and folder)
         """
         import shutil
         
+        # Clean and extract nf_e value
         nf_e_value = extracted_data.get("nf_e")
+        if nf_e_value:
+            nf_e_value = self._clean_nf_e_value(nf_e_value)
+        
+        # CRITICAL: Never use extracted doc_transportes values to create folders.
+        # Only use doc_transportes_list values from saga data (via doc_transportes_map).
         
         if not nf_e_value:
-            # NF-e not identified, save to "Nao processados" folder
+            # NF-e not identified - try to extract from filename or use fallback
+            # Check if filename contains a number that might be nf_e
+            filename_stem = service_output_path.stem
+            logger.warning(
+                "NF-e not identified in extracted data for %s. "
+                "Available fields: %s. Checking filename for fallback.",
+                service_output_path.name,
+                list(extracted_data.keys())
+            )
+            
+            # Try to find nf_e in filename (common patterns: _123456.pdf, 123456.pdf, etc.)
+            import re
+            numbers_in_filename = re.findall(r'\d+', filename_stem)
+            if numbers_in_filename:
+                # Use the longest number found as potential nf_e
+                potential_nf_e = max(numbers_in_filename, key=len)
+                if len(potential_nf_e) >= 5:  # NF-e numbers are typically 5+ digits
+                    logger.info(
+                        "Using potential nf_e from filename: %s (from %s)",
+                        potential_nf_e,
+                        filename_stem
+                    )
+                    nf_e_value = potential_nf_e
+        
+        if not nf_e_value:
+            # Still no nf_e found, save to "Nao processados" folder
             nao_processados_dir = self.output_dir / "Nao processados"
+            nao_processados_dir.mkdir(parents=True, exist_ok=True)
             final_path = nao_processados_dir / service_output_path.name
-            logger.info(
+            logger.warning(
                 "NF-e not identified for %s, saving to 'Nao processados': %s",
                 service_output_path.name,
                 final_path
             )
         else:
             nf_key = str(nf_e_value).strip()
+            # CRITICAL: Only use doc_transportes from saga mapping (doc_transportes_list).
+            # Never create folders from extracted values or filenames.
             doc_transportes = doc_transportes_map.get(nf_key)
             
+            # If exact match not found, try partial matching (handle cases where extracted nf_e 
+            # might be a substring of saga nf_e or vice versa, e.g., "491183" vs "4921183")
+            if not doc_transportes and nf_key and len(nf_key) >= 5:
+                logger.info(
+                    "Exact match not found for nf_e '%s'. Available saga nf_e values: %s. Trying partial matching...",
+                    nf_key,
+                    list(doc_transportes_map.keys())[:10]  # Show first 10 for logging
+                )
+                best_match = None
+                best_match_length = 0
+                for saga_nf_e, saga_doc_transportes in doc_transportes_map.items():
+                    # Check if nf_key is contained in saga_nf_e or saga_nf_e is contained in nf_key
+                    if nf_key in saga_nf_e or saga_nf_e in nf_key:
+                        # Use the longer matching substring for better accuracy
+                        match_length = min(len(nf_key), len(saga_nf_e))
+                        if match_length >= 5 and match_length > best_match_length:  # At least 5 digits
+                            best_match = saga_doc_transportes
+                            best_match_length = match_length
+                            logger.info(
+                                "Found partial match candidate: extracted nf_e '%s' matches saga nf_e '%s' (match length: %d) -> doc_transportes '%s'",
+                                nf_key, saga_nf_e, match_length, saga_doc_transportes
+                            )
+                if best_match:
+                    doc_transportes = best_match
+                    logger.info("Using best partial match: doc_transportes '%s'", doc_transportes)
+            
+            # If still no doc_transportes from mapping, try using extracted doc_transportes from PDF
             if not doc_transportes:
-                # NF-e found but not in saga mapping, save to "Nao processados"
+                doc_transportes_from_extracted = extracted_data.get("doc_transportes")
+                if doc_transportes_from_extracted:
+                    doc_transportes_cleaned = str(doc_transportes_from_extracted).strip()
+                    doc_transportes_cleaned = "".join(c for c in doc_transportes_cleaned if c.isalnum())
+                    if doc_transportes_cleaned:
+                        # Check if this doc_transportes folder exists (from saga data)
+                        potential_folder = self.output_dir / doc_transportes_cleaned
+                        if potential_folder.exists():
+                            doc_transportes = doc_transportes_cleaned
+                            logger.info(
+                                "Using doc_transportes '%s' extracted from PDF (folder exists from saga data)",
+                                doc_transportes
+                            )
+                        else:
+                            logger.warning(
+                                "Extracted doc_transportes '%s' from PDF, but folder does not exist in saga data. "
+                                "Will save to 'Nao processados'.",
+                                doc_transportes_cleaned
+                            )
+            
+            if not doc_transportes:
+                # Still no doc_transportes found - save to "Nao processados" but keep nf_e in name
                 nao_processados_dir = self.output_dir / "Nao processados"
-                final_path = nao_processados_dir / service_output_path.name
+                nao_processados_dir.mkdir(parents=True, exist_ok=True)
+                final_filename = f"nf_e_{nf_key}.pdf"
+                final_path = nao_processados_dir / final_filename
                 logger.warning(
-                    "NF-e %s not found in saga doc_transportes_list, saving to 'Nao processados': %s",
+                    "NF-e %s found but not found in saga doc_transportes_list mapping. "
+                    "Saving to 'Nao processados' as: %s",
                     nf_key,
                     final_path
                 )
             else:
-                # NF-e found and mapped to doc_transportes, save with name: doc_transportes_nf_e.pdf
-                doc_folder = self.output_dir / doc_transportes
-                final_filename = f"{doc_transportes}_{nf_key}.pdf"
-                final_path = doc_folder / final_filename
-                logger.info(
-                    "NF-e %s mapped to doc_transportes %s, saving as: %s",
-                    nf_key,
-                    doc_transportes,
-                    final_path
-                )
+                # Found doc_transportes from saga mapping, save to proper folder
+                # CRITICAL: doc_folder must already exist from _setup_output_folders (saga doc_transportes_list)
+                doc_folder = self.output_dir / str(doc_transportes)
+                if not doc_folder.exists():
+                    logger.error(
+                        "CRITICAL: Folder %s does not exist in saga doc_transportes_list. "
+                        "This should not happen - folder should be created from saga data only.",
+                        doc_folder
+                    )
+                    # Fallback: save to "Nao processados" instead of creating wrong folder
+                    nao_processados_dir = self.output_dir / "Nao processados"
+                    nao_processados_dir.mkdir(parents=True, exist_ok=True)
+                    final_filename = f"nf_e_{nf_key}.pdf"
+                    final_path = nao_processados_dir / final_filename
+                    logger.warning(
+                        "NF-e %s mapped to doc_transportes %s, but folder not in saga list. "
+                        "Saving to 'Nao processados' as: %s",
+                        nf_key,
+                        doc_transportes,
+                        final_path
+                    )
+                else:
+                    final_filename = f"{doc_transportes}_{nf_key}.pdf"
+                    final_path = doc_folder / final_filename
+                    logger.info(
+                        "NF-e %s mapped to doc_transportes %s (from saga), saving as: %s",
+                        nf_key,
+                        doc_transportes,
+                        final_path
+                    )
         
-        # Move/rename file if needed
+        # Move/rename rotated file to final location
+        # CRITICAL: Always use the rotated file from service (it's already rotated)
         if service_output_path.exists() and service_output_path != final_path:
             final_path.parent.mkdir(parents=True, exist_ok=True)
             if final_path.exists():
                 logger.warning("Target file already exists, overwriting: %s", final_path)
+                final_path.unlink()
+            # Move the rotated PDF file to final location
             shutil.move(str(service_output_path), str(final_path))
-            logger.info("Moved file from %s to %s", service_output_path, final_path)
-        elif not service_output_path.exists():
-            logger.warning("Service output file does not exist: %s", service_output_path)
+            logger.info("Moved rotated PDF file from %s to %s", service_output_path, final_path)
+            
+            # Verify the rotated file exists at final location
+            if not final_path.exists():
+                raise RuntimeError(f"Failed to move rotated file to {final_path}")
+            if final_path.stat().st_size == 0:
+                raise RuntimeError(f"Rotated file is empty at {final_path}")
+            logger.info("Rotated PDF file verified at final location: %s (%d bytes)", final_path, final_path.stat().st_size)
+        elif service_output_path == final_path:
+            logger.info("Rotated file already at final location: %s", final_path)
+        else:
+            logger.error("Service output file does not exist: %s", service_output_path)
+            raise RuntimeError(f"Rotated PDF file not found at {service_output_path}. Rotation may have failed.")
         
         return final_path
 

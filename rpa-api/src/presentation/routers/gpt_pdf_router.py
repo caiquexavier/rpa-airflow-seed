@@ -1,11 +1,13 @@
-"""GPT PDF router - GPT Vision extraction endpoint."""
+"""GPT PDF router - GPT Vision extraction and rotation endpoints."""
 import logging
 
 from fastapi import APIRouter
 
 from ..controllers.gpt_pdf_controller import handle_extract_pdf_fields, handle_detect_rotation
 from ..dtos.gpt_pdf_extraction_models import (
-    GptPdfExtractionInput, GptPdfExtractionOutput,
+    GptPdfExtractionInput, GptPdfExtractionOutput
+)
+from ..dtos.gpt_pdf_rotation_models import (
     GptPdfRotationInput, GptPdfRotationOutput
 )
 
@@ -30,7 +32,7 @@ async def extract_pdf_fields_endpoint(payload: GptPdfExtractionInput) -> GptPdfE
 
 @router.post("/detect-rotation", response_model=GptPdfRotationOutput, status_code=200)
 async def detect_rotation_endpoint(payload: GptPdfRotationInput) -> GptPdfRotationOutput:
-    """Detect PDF page rotation/orientation using GPT Vision."""
+    """Detect PDF page rotation/orientation using GPT Vision. Prefers landscape orientation."""
     try:
         result = handle_detect_rotation(payload)
         return GptPdfRotationOutput(**result)

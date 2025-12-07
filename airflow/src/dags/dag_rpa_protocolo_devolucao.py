@@ -6,12 +6,13 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 
 from operators.robot_framework_operator import RobotFrameworkOperator
-from operators.pdf_functions_operator import PdfFunctionsOperator
+from operators.pdf_split_operator import PdfSplitOperator
 from operators.saga_operator import SagaOperator
 from operators.gpt_pdf_extractor_operator import GptPdfExtractorOperator
 from services.webhook import WebhookSensor
 from tasks.tasks_rpa_protocolo_devolucao import (
     convert_xls_to_json_task,
+    generate_protocolo_pdf_task,
 )
 
 logger = logging.getLogger(__name__)
@@ -70,13 +71,12 @@ wait_for_protocolo_devolucao_webhook = WebhookSensor(
 )
 
 # Split PDF files task that executes after webhook is validated
-split_files_task = PdfFunctionsOperator(
+split_files_task = PdfSplitOperator(
     task_id="split_pdf_files",
     folder_path="/opt/airflow/downloads",
     output_dir="/opt/airflow/data/processar",
-    # Split documents, then rotate them. OCR-based NF-e rename is available as 'ocr_nf'.
-    functions=["split", "rotate"],
     overwrite=True,  # Always overwrite existing files
+    include_single_page=True,
     dag=dag,
 )
 
@@ -87,6 +87,12 @@ gpt_pdf_extractor_task = GptPdfExtractorOperator(
     rpa_api_conn_id="rpa_api",
     timeout=300,
     save_extracted_data=True,
+    dag=dag,
+)
+
+generate_protocolo_pdf_task = PythonOperator(
+    task_id="generate_protocolo_pdf",
+    python_callable=generate_protocolo_pdf_task,
     dag=dag,
 )
 
@@ -145,6 +151,7 @@ complete_saga_task_op = SagaOperator(
  >> wait_for_protocolo_devolucao_webhook
  >> split_files_task
  >> gpt_pdf_extractor_task
+ >> generate_protocolo_pdf_task
  >> robot_upload_multi_cte_task
  >> wait_for_upload_multi_cte_webhook
  >> robot_download_multi_cte_reports_task

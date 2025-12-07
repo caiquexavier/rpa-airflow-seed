@@ -1,10 +1,11 @@
-"""GPT PDF controller - Handles GPT Vision extraction."""
+"""GPT PDF controller - Handles GPT Vision extraction and rotation."""
 import logging
 from typing import Any, Dict
 
-from ...application.services.gpt_pdf_service import gpt_pdf_extractor
-from ...infrastructure.llm.pdf_extractor import detect_rotation_with_vision
-from ..dtos.gpt_pdf_extraction_models import GptPdfExtractionInput, GptPdfRotationInput
+from ...application.services.gpt_pdf_extraction_service import extract_pdf_data
+from ...application.services.gpt_pdf_rotation_service import detect_pdf_rotation
+from ..dtos.gpt_pdf_extraction_models import GptPdfExtractionInput
+from ..dtos.gpt_pdf_rotation_models import GptPdfRotationInput
 
 logger = logging.getLogger(__name__)
 
@@ -20,11 +21,14 @@ def handle_extract_pdf_fields(payload: GptPdfExtractionInput) -> Dict[str, Any]:
     )
 
     try:
-        organized_file_path, extracted_data = gpt_pdf_extractor(
-            file_path=payload.file_path,
-            output_path=payload.output_path,
+        # Extract data from PDF (assumes PDF is already rotated)
+        extracted_data = extract_pdf_data(
+            rotated_file_path=payload.file_path,
             field_map=payload.field_map,
         )
+        
+        # Use output_path if provided, otherwise use input file_path
+        organized_file_path = payload.output_path or payload.file_path
 
         # Handle response format (may include suggested_fields if no field_map was provided)
         if isinstance(extracted_data, dict) and "extracted_data" in extracted_data:
@@ -78,14 +82,15 @@ def handle_extract_pdf_fields(payload: GptPdfExtractionInput) -> Dict[str, Any]:
 
 
 def handle_detect_rotation(payload: GptPdfRotationInput) -> Dict[str, Any]:
-    """
-    Handle GPT PDF rotation detection.
-    """
+    """Handle GPT PDF rotation detection."""
     logger.info("Detecting PDF rotation using GPT Vision")
     
     try:
-        result = detect_rotation_with_vision(payload.page_image_base64)
+        result = detect_pdf_rotation(payload.page_image_base64)
         return result
+    except RuntimeError as exc:
+        logger.error("Rotation detection error: %s", exc)
+        raise ValueError(f"Rotation detection failed: {exc}") from exc
     except Exception as exc:
         logger.error("Unexpected error detecting rotation: %s", exc)
         raise ValueError(f"Failed to detect rotation: {exc}") from exc

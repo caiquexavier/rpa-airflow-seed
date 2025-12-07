@@ -34,7 +34,14 @@ Start Browser
     Call Method    ${options}    add_argument    --enable-automation
     Call Method    ${options}    add_argument    --password-store\=basic
     Call Method    ${options}    add_argument    --use-mock-keychain
-    ${prefs}=    Create Dictionary    download.default_directory=${download_dir}    download.prompt_for_download=${False}    download.directory_upgrade=${True}
+    ${prefs}=    Create Dictionary
+    ...    download.default_directory=${download_dir}
+    ...    download.prompt_for_download=${False}
+    ...    download.directory_upgrade=${True}
+    ...    profile.default_content_setting_values.automatic_downloads=${1}
+    ...    profile.content_settings.exceptions.automatic_downloads.*.setting=${1}
+    ...    safebrowsing.enabled=${False}
+    ...    safebrowsing.disable_download_protection=${True}
     Call Method    ${options}    add_experimental_option    prefs    ${prefs}
     ${exclude_switches}=    Evaluate    ['enable-logging', 'enable-automation']
     Call Method    ${options}    add_experimental_option    excludeSwitches    ${exclude_switches}
