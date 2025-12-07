@@ -69,55 +69,63 @@ def detect_rotation_osd(image: Image.Image) -> tuple[int, float]:
 def check_document_orientation(image: Image.Image) -> dict:
     """Check if document is correctly oriented by analyzing header/footer positions.
     
-    Returns a dict with orientation indicators.
+    Returns a dict with orientation indicators including aspect ratio check.
     """
     if not TESSERACT_AVAILABLE:
-        return {"is_correct": True, "headers_at_top": 0, "footers_at_top": 0, "headers_at_end": 0}
+        return {"is_correct": True, "headers_at_top": 0, "footers_at_top": 0, "headers_at_end": 0, "is_landscape": True}
     
     try:
+        # Check aspect ratio - documents should be landscape (width > height)
+        width, height = image.size
+        is_landscape = width > height
+        
         text = pytesseract.image_to_string(image, lang="por+eng", config="--oem 3 --psm 6")
         text_lower = text.strip().lower()
         words = text_lower.split()
         
         if len(words) < 10:
-            return {"is_correct": True, "headers_at_top": 0, "footers_at_top": 0, "headers_at_end": 0}
+            return {"is_correct": True, "headers_at_top": 0, "footers_at_top": 0, "headers_at_end": 0, "is_landscape": is_landscape}
         
-        header_keywords = ['comprovante', 'entrega', 'unilever', 'transportadora', 'dados', 'nf-e']
-        footer_keywords = ['conferente', 'assinatura', 'nome', 'telefone', 'retorno', 'mercadorias']
+        header_keywords = ['comprovante', 'entrega', 'unilever', 'transportadora', 'dados', 'nf-e', 'nota', 'fiscal']
+        footer_keywords = ['conferente', 'assinatura', 'nome', 'telefone', 'retorno', 'mercadorias', 'não', 'entregues']
         
-        # Check first 30 words
-        first_words = ' '.join(words[:30])
+        # Check first 40 words (more for better detection)
+        first_words = ' '.join(words[:40])
         headers_at_top = sum(1 for kw in header_keywords if kw in first_words)
         footers_at_top = sum(1 for kw in footer_keywords if kw in first_words)
         
-        # Check last 30 words
+        # Check last 40 words
         headers_at_end = 0
-        if len(words) >= 30:
-            last_words = ' '.join(words[-30:])
+        if len(words) >= 40:
+            last_words = ' '.join(words[-40:])
             headers_at_end = sum(1 for kw in header_keywords if kw in last_words)
         
-        # Document is correct if headers are at top and footers are NOT at top
-        is_correct = headers_at_top >= 2 and footers_at_top == 0
+        # Document is correct if:
+        # 1. Headers are at top (>= 2)
+        # 2. Footers are NOT at top
+        # 3. Document is landscape orientation (width > height)
+        is_correct = headers_at_top >= 2 and footers_at_top == 0 and is_landscape
         
         return {
             "is_correct": is_correct,
             "headers_at_top": headers_at_top,
             "footers_at_top": footers_at_top,
-            "headers_at_end": headers_at_end
+            "headers_at_end": headers_at_end,
+            "is_landscape": is_landscape
         }
     except Exception as e:
         logger.debug("Orientation check failed: %s", e)
-        return {"is_correct": True, "headers_at_top": 0, "footers_at_top": 0, "headers_at_end": 0}
+        return {"is_correct": True, "headers_at_top": 0, "footers_at_top": 0, "headers_at_end": 0, "is_landscape": True}
 
 
 def detect_rotation_best_of_four(image: Image.Image) -> int:
-    """Detect rotation using a different approach: check original first, then test rotations.
+    """Detect rotation ensuring all documents end up in same correct position.
     
     Strategy:
-    1. Check if original (0°) is already correct
+    1. Check if original (0°) is already correct (landscape + headers at top)
     2. If correct, return 0°
-    3. If not, test other rotations and pick best
-    4. Never select 180° unless absolutely necessary
+    3. Test 90° and 270° (portrait rotations) - prefer the one that makes it landscape
+    4. Only use 180° as absolute last resort
     
     Args:
         image: PIL Image to analyze
@@ -131,18 +139,19 @@ def detect_rotation_best_of_four(image: Image.Image) -> int:
     # STEP 1: Check if original image (0°) is already correctly oriented
     orientation_0 = check_document_orientation(image)
     if orientation_0["is_correct"]:
-        logger.info("Document at 0° is already correctly oriented (headers at top: %d, footers at top: %d)", 
-                   orientation_0["headers_at_top"], orientation_0["footers_at_top"])
+        logger.info("Document at 0° is already correctly oriented (landscape, headers at top: %d)", 
+                   orientation_0["headers_at_top"])
         return 0
     
-    # STEP 2: Original is not correct, test other rotations
-    logger.info("Document at 0° is not correctly oriented, testing rotations")
+    # STEP 2: Original is not correct, test rotations
+    logger.info("Document at 0° is not correctly oriented (landscape: %s, headers at top: %d), testing rotations", 
+               orientation_0["is_landscape"], orientation_0["headers_at_top"])
     
     best_rotation = 0
     best_score = -1.0
     rotation_results = {}
     
-    # Test rotations in order: 90, 270, then 180 (last resort)
+    # Test rotations: 90, 270 first (portrait rotations), then 180 (last resort)
     for rotation in [90, 270, 180]:
         try:
             test_image = image.rotate(-rotation, expand=True, fillcolor='white')
@@ -161,21 +170,32 @@ def detect_rotation_best_of_four(image: Image.Image) -> int:
             # Score based on orientation correctness
             score = 0.0
             
-            # High score if headers at top and no footers at top
-            if orientation["headers_at_top"] >= 2 and orientation["footers_at_top"] == 0:
-                score = 100.0 + (orientation["headers_at_top"] * 20.0) + avg_confidence
-                logger.info("Rotation %d°: CORRECT orientation (headers at top: %d, footers at top: %d, confidence: %.1f)", 
+            # CRITICAL: Must be landscape AND have headers at top AND no footers at top
+            if orientation["is_landscape"] and orientation["headers_at_top"] >= 2 and orientation["footers_at_top"] == 0:
+                # Perfect score for correct orientation
+                score = 200.0 + (orientation["headers_at_top"] * 30.0) + avg_confidence
+                logger.info("Rotation %d°: CORRECT orientation (landscape, headers at top: %d, footers at top: %d, confidence: %.1f)", 
                            rotation, orientation["headers_at_top"], orientation["footers_at_top"], avg_confidence)
+            elif orientation["is_landscape"] and orientation["headers_at_top"] >= 1:
+                # Partial score if landscape with some headers
+                score = 50.0 + (orientation["headers_at_top"] * 10.0) + avg_confidence * 0.5
+                logger.debug("Rotation %d°: PARTIAL (landscape, headers at top: %d)", 
+                            rotation, orientation["headers_at_top"])
             else:
                 # Low score if not correct
-                score = avg_confidence * 0.5
-                logger.debug("Rotation %d°: INCORRECT orientation (headers at top: %d, footers at top: %d)", 
-                            rotation, orientation["headers_at_top"], orientation["footers_at_top"])
+                score = avg_confidence * 0.3
+                logger.debug("Rotation %d°: INCORRECT (landscape: %s, headers at top: %d, footers at top: %d)", 
+                            rotation, orientation["is_landscape"], orientation["headers_at_top"], orientation["footers_at_top"])
             
             # HEAVY penalty for 180° - only use if others don't work
             if rotation == 180:
-                score = score * 0.3  # Reduce score by 70%
+                score = score * 0.2  # Reduce score by 80%
                 logger.warning("Rotation 180°: Applying heavy penalty (score reduced to %.1f)", score)
+            
+            # Penalty if portrait (not landscape)
+            if not orientation["is_landscape"]:
+                score = score * 0.1  # Heavy penalty for portrait
+                logger.debug("Rotation %d°: Portrait orientation penalty applied", rotation)
             
             rotation_results[rotation] = {
                 "score": score,
@@ -191,17 +211,22 @@ def detect_rotation_best_of_four(image: Image.Image) -> int:
             logger.debug("Rotation %d° test failed: %s", rotation, e)
             continue
     
-    # STEP 3: Final decision
-    # If best rotation has correct orientation, use it
+    # STEP 3: Final decision - ensure we get correct orientation
     if best_rotation != 0:
         best_result = rotation_results[best_rotation]
+        # Only accept if it produces correct orientation (landscape + headers at top)
         if best_result["orientation"]["is_correct"]:
-            logger.info("Best rotation: %d° (correct orientation, score: %.1f)", best_rotation, best_score)
+            logger.info("Best rotation: %d° (correct orientation: landscape, headers at top, score: %.1f)", 
+                       best_rotation, best_score)
             return best_rotation
         else:
-            # Best rotation doesn't have correct orientation - check if 0° is better
-            if orientation_0["headers_at_top"] > 0:
-                logger.warning("Best rotation %d° doesn't have correct orientation. Preferring 0° (no rotation)", best_rotation)
+            # Best rotation doesn't produce correct orientation
+            logger.warning("Best rotation %d° doesn't produce correct orientation (landscape: %s, headers: %d). Checking 0°", 
+                          best_rotation, best_result["orientation"]["is_landscape"], best_result["orientation"]["headers_at_top"])
+            
+            # If 0° is landscape (even if headers not perfect), prefer it
+            if orientation_0["is_landscape"]:
+                logger.info("Preferring 0° (landscape orientation) over incorrect rotation %d°", best_rotation)
                 return 0
     
     # If no good rotation found, return 0° (no rotation)
@@ -262,16 +287,18 @@ def detect_rotation(image: Image.Image) -> int:
             logger.warning("OSD detected 180° rotation - REJECTING to avoid upside-down documents")
             rotation = 0
         else:
-            # For 90/270, check if rotation improves orientation
+            # For 90/270, check if rotation produces correct orientation (landscape + headers at top)
             try:
                 test_image = image.rotate(-rotation, expand=True, fillcolor='white')
                 orientation = check_document_orientation(test_image)
                 
+                # Must be landscape AND have headers at top
                 if orientation["is_correct"]:
-                    logger.info("OSD rotation %d° produces correct orientation, accepting", rotation)
+                    logger.info("OSD rotation %d° produces correct orientation (landscape, headers at top), accepting", rotation)
                     return rotation
                 else:
-                    logger.warning("OSD rotation %d° does not produce correct orientation, rejecting", rotation)
+                    logger.warning("OSD rotation %d° does not produce correct orientation (landscape: %s, headers: %d), rejecting", 
+                                  rotation, orientation["is_landscape"], orientation["headers_at_top"])
                     rotation = 0
             except Exception as e:
                 logger.debug("OSD rotation validation failed: %s, rejecting", e)
@@ -415,7 +442,15 @@ class PdfRotateOperator(BaseOperator):
         if not image_path.exists():
             raise FileNotFoundError(f"PNG image not found: {image_path}")
 
-        output_filename = f"rotate_{image_path.name}"
+        # Clean filename: remove _split or split_ patterns
+        original_name = image_path.name
+        # Remove _split pattern (e.g., "split_471586.png" -> "471586.png")
+        cleaned_name = original_name.replace("_split", "").replace("split_", "")
+        # Also handle cases where rotate_ prefix already exists
+        if cleaned_name.startswith("rotate_"):
+            cleaned_name = cleaned_name.replace("rotate_", "", 1)
+        
+        output_filename = f"rotate_{cleaned_name}"
         output_path = self.output_dir / output_filename
 
         # Load image
