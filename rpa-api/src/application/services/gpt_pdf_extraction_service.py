@@ -1,4 +1,4 @@
-"""GPT PDF extraction service - Extract PDF data with GPT Vision."""
+"""GPT PDF/PNG extraction service - Extract data from PDF or PNG files with GPT Vision."""
 import logging
 import base64
 import io
@@ -23,6 +23,82 @@ logger = logging.getLogger(__name__)
 
 # Higher DPI for better GPT Vision quality
 DPI_SCALE = 3.0  # 3x zoom = ~216 DPI
+
+
+def extract_png_data(
+    png_file_path: str,
+    field_map: Optional[Dict[str, str]] = None,
+) -> Dict[str, Any]:
+    """
+    Extract data from already rotated PNG image file using GPT Vision.
+    
+    This function:
+    1. Reads PNG image directly (assumes already correctly rotated)
+    2. Converts to base64 for GPT Vision API
+    3. Extracts data from image using GPT Vision
+    
+    IMPORTANT: This function assumes the PNG is already correctly rotated.
+    
+    Args:
+        png_file_path: Path to the rotated PNG image file
+        field_map: Optional dictionary mapping field names to descriptions/instructions.
+                   If provided, GPT uses this as a guide to extract specific fields.
+                   If None or empty, GPT will identify and suggest all fields it finds.
+    
+    Returns:
+        Dictionary with extracted data
+    
+    Raises:
+        RuntimeError: If required libraries are not available or extraction fails
+        FileNotFoundError: If PNG file does not exist
+    """
+    if not PIL_AVAILABLE:
+        raise RuntimeError("PIL/Pillow not available. Install Pillow to process PNG images.")
+
+    if not Path(png_file_path).exists():
+        raise FileNotFoundError(f"PNG file not found: {png_file_path}")
+
+    logger.info("Extracting data from rotated PNG: %s", png_file_path)
+
+    try:
+        # Read PNG image and convert to base64
+        image = Image.open(png_file_path)
+        
+        # Convert to RGB if necessary (for consistency)
+        if image.mode == 'RGBA':
+            # Create white background for RGBA images
+            rgb_image = Image.new('RGB', image.size, (255, 255, 255))
+            rgb_image.paste(image, mask=image.split()[3])  # Use alpha channel as mask
+            image = rgb_image
+        elif image.mode != 'RGB':
+            image = image.convert('RGB')
+        
+        # Convert image to base64
+        img_buffer = io.BytesIO()
+        image.save(img_buffer, format='PNG')
+        img_data = img_buffer.getvalue()
+        base64_image = base64.b64encode(img_data).decode('utf-8')
+        
+        # Close image
+        image.close()
+        
+        logger.info("Converted PNG to base64 for GPT Vision extraction")
+        
+        # Extract data from image using GPT Vision
+        logger.info("Calling GPT Vision API with PNG image")
+        if field_map:
+            logger.info("Using field_map with %s predefined fields", len(field_map))
+        else:
+            logger.info("No field_map provided - GPT will identify and suggest all fields found")
+        
+        extracted_data = extract_fields_with_vision([base64_image], field_map=field_map)
+        
+        logger.info("Successfully extracted data from PNG")
+        return extracted_data
+
+    except Exception as e:
+        logger.error(f"Failed to process PNG image: {e}")
+        raise RuntimeError(f"Failed to extract data from PNG: {e}") from e
 
 
 def extract_pdf_data(
@@ -114,6 +190,43 @@ def extract_pdf_data(
 
     finally:
         doc.close()
+
+
+def extract_data_from_file(
+    file_path: str,
+    field_map: Optional[Dict[str, str]] = None,
+) -> Dict[str, Any]:
+    """
+    Extract data from file (PDF or PNG) using GPT Vision.
+    Automatically detects file type and uses appropriate extraction method.
+    
+    Args:
+        file_path: Path to the file (PDF or PNG)
+        field_map: Optional dictionary mapping field names to descriptions/instructions.
+    
+    Returns:
+        Dictionary with extracted data
+    
+    Raises:
+        RuntimeError: If file type is not supported or extraction fails
+        FileNotFoundError: If file does not exist
+    """
+    file_path_obj = Path(file_path)
+    
+    if not file_path_obj.exists():
+        raise FileNotFoundError(f"File not found: {file_path}")
+    
+    # Detect file type by extension
+    file_ext = file_path_obj.suffix.lower()
+    
+    if file_ext == '.png':
+        logger.info("Detected PNG file, using PNG extraction")
+        return extract_png_data(file_path, field_map=field_map)
+    elif file_ext == '.pdf':
+        logger.info("Detected PDF file, using PDF extraction")
+        return extract_pdf_data(file_path, field_map=field_map)
+    else:
+        raise RuntimeError(f"Unsupported file type: {file_ext}. Only .png and .pdf are supported.")
 
 
 def _render_page_to_base64_image(page, image_rotation: int = 0) -> Optional[str]:

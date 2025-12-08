@@ -2,7 +2,7 @@
 import logging
 from typing import Any, Dict
 
-from ...application.services.gpt_pdf_extraction_service import extract_pdf_data
+from ...application.services.gpt_pdf_extraction_service import extract_data_from_file
 from ...application.services.gpt_pdf_rotation_service import detect_pdf_rotation
 from ..dtos.gpt_pdf_extraction_models import GptPdfExtractionInput
 from ..dtos.gpt_pdf_rotation_models import GptPdfRotationInput
@@ -21,9 +21,10 @@ def handle_extract_pdf_fields(payload: GptPdfExtractionInput) -> Dict[str, Any]:
     )
 
     try:
-        # Extract data from PDF (assumes PDF is already rotated)
-        extracted_data = extract_pdf_data(
-            rotated_file_path=payload.file_path,
+        # Extract data from file (PDF or PNG, automatically detected)
+        # Assumes file is already correctly rotated
+        extracted_data = extract_data_from_file(
+            file_path=payload.file_path,
             field_map=payload.field_map,
         )
         

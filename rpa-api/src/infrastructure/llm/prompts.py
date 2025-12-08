@@ -141,8 +141,8 @@ def build_vision_user_content(
         {
             "type": "text",
             "text": (
-                "You are analyzing a PDF document that has been rotated to the correct orientation "
-                "(readable left to right, top to bottom). "
+                "You are analyzing a document image (PNG format) that has been PRE-ROTATED to the correct orientation "
+                "(readable left to right, top to bottom). The image is already properly oriented and ready for extraction. "
                 f"Extract all identifiable data from the document images below with HIGH ACCURACY.\n\n"
                 f"{extraction_instruction}\n\n"
                 "CRITICAL EXTRACTION RULES:\n"

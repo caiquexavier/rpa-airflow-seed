@@ -7,7 +7,7 @@ class GptPdfExtractionInput(BaseModel):
     """Request model for GPT PDF extraction."""
 
     file_path: constr(strip_whitespace=True, min_length=1) = Field(
-        ..., description="Absolute path to the PDF file to process"
+        ..., description="Absolute path to the PDF or PNG file to process (PNG files should already be correctly rotated)"
     )
     output_path: Optional[constr(strip_whitespace=True, min_length=1)] = Field(
         None,

@@ -1,6 +1,7 @@
-"""GPT PDF Extractor operator - Processes PDF files using GPT extraction API."""
+"""GPT PDF Extractor operator - Processes PNG files (rotated images) using GPT extraction API."""
 import json
 import logging
+import tempfile
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -10,25 +11,83 @@ from airflow.hooks.base import BaseHook
 from airflow.models import BaseOperator
 from airflow.utils.context import Context
 
+try:
+    from PIL import Image
+    PIL_AVAILABLE = True
+except ImportError:
+    PIL_AVAILABLE = False
+
+try:
+    import fitz  # PyMuPDF
+    FITZ_AVAILABLE = True
+except ImportError:
+    FITZ_AVAILABLE = False
+
 from services.saga import get_saga_from_context, build_saga_event, send_saga_event_to_api, log_saga
 from libs.rpa_robot_executor import build_api_url
 from libs.pdf_field_map import get_pdf_field_map
 
 logger = logging.getLogger(__name__)
 
+# Default fallback doc_transportes_list when saga is not available
+DEFAULT_DOC_TRANSPORTES_LIST = [
+    {
+        "doc_transportes": "96722724",
+        "nf_e": [
+            "4921184",
+            "4921183",
+            "4921190",
+            "4921192",
+            "4920188",
+            "4941272",
+            "4941187",
+            "4941186",
+            "4941177"
+        ]
+    },
+    {
+        "doc_transportes": "96802793",
+        "nf_e": [
+            "1301229",
+            "1301232",
+            "1301236",
+            "1303468",
+            "1301233",
+            "1301231",
+            "1301230",
+            "1301234",
+            "1301235",
+            "1301228"
+        ]
+    },
+    {
+        "doc_transportes": "97542262",
+        "nf_e": [
+            "1319786",
+            "1320038",
+            "1329928",
+            "1328276",
+            "1328274",
+            "1328260"
+        ]
+    }
+]
+
 
 class GptPdfExtractorOperator(BaseOperator):
     """
-    Operator for processing PDF files using unified GPT service with integrated rotation detection.
+    Operator for processing PNG files (rotated images) using unified GPT service with extraction.
     
     This operator:
-    1. Converts PDF pages to PNG images
-    2. Detects and rotates PDFs to best readable position using GPT Vision
-    3. Extracts data from rotated images using GPT Vision
-    4. Saves renamed files with doc_transporte_nf_e.pdf naming convention
+    1. Reads PNG files from the rotated folder
+    2. Extracts data from rotated images using GPT Vision
+    3. Saves renamed files with doc_transporte_nf_e.pdf naming convention
+    
+    The operator can run with or without saga data. If saga is not available, it uses a default
+    fallback doc_transportes_list for file organization.
     
     Args:
-        folder_path: Path to directory containing PDF files to process
+        folder_path: Path to directory containing PNG files (rotated images) to process
         output_dir: Path to directory where processed PDFs will be saved
         field_map: Optional dictionary mapping field names to descriptions/instructions.
                   If None, uses the default PDF field map. If empty dict, GPT will identify all fields.
@@ -61,7 +120,7 @@ class GptPdfExtractorOperator(BaseOperator):
         self.save_extracted_data = save_extracted_data
 
     def execute(self, context: Context) -> Dict[str, Any]:
-        """Process PDF files using unified GPT service with integrated rotation detection and extraction."""
+        """Process PNG files (rotated images) using unified GPT service with extraction."""
         logger.info("Starting GptPdfExtractorOperator for folder: %s", self.folder_path)
         
         # Get SAGA from context
@@ -76,10 +135,10 @@ class GptPdfExtractorOperator(BaseOperator):
         # Read saga data and create folders for each doc_transportes
         doc_transportes_map = self._setup_output_folders(saga)
         
-        # Find all PDF files
-        pdf_files = sorted(self.folder_path.glob("*.pdf"))
-        if not pdf_files:
-            logger.warning("No PDF files found at %s", self.folder_path)
+        # Find all PNG files (rotated images)
+        png_files = sorted(self.folder_path.glob("*.png"))
+        if not png_files:
+            logger.warning("No PNG files found at %s", self.folder_path)
             if saga:
                 self._update_saga_with_event(saga, context, success=True, files_processed=0)
             return {"files_processed": 0, "results": []}
@@ -88,17 +147,17 @@ class GptPdfExtractorOperator(BaseOperator):
         conn = BaseHook.get_connection(self.rpa_api_conn_id)
         api_url = build_api_url(conn.schema, conn.host, conn.port, self.endpoint)
         
-        # Process each PDF file
+        # Process each PNG file
         results = []
         processed_count = 0
         failed_count = 0
         
-        for pdf_file in pdf_files:
+        for png_file in png_files:
             try:
-                result = self._process_pdf(pdf_file, api_url, doc_transportes_map)
+                result = self._process_pdf(png_file, api_url, doc_transportes_map)
                 results.append(result)
                 processed_count += 1
-                logger.info("Successfully processed PDF: %s", pdf_file.name)
+                logger.info("Successfully processed PNG: %s", png_file.name)
                 if saga and result.get("success") and result.get("extracted_data"):
                     self._store_extracted_data_in_saga(saga, result["extracted_data"])
                     # Save to rpa_extracted_data table if enabled
@@ -106,9 +165,9 @@ class GptPdfExtractorOperator(BaseOperator):
                         self._save_extracted_data_to_api(saga, result["extracted_data"])
             except Exception as e:
                 failed_count += 1
-                logger.error("Failed to process PDF %s: %s", pdf_file.name, e)
+                logger.error("Failed to process PNG %s: %s", png_file.name, e)
                 results.append({
-                    "file_path": str(pdf_file),
+                    "file_path": str(png_file),
                     "error": str(e),
                     "success": False
                 })
@@ -134,9 +193,10 @@ class GptPdfExtractorOperator(BaseOperator):
         """
         Read saga data and create folders for each doc_transportes.
         Also creates "Nao processados" folder for unprocessed files.
+        Uses default fallback doc_transportes_list if saga is not available.
         
         Args:
-            saga: Saga dictionary with data.doc_transportes_list
+            saga: Saga dictionary with data.doc_transportes_list (optional)
             
         Returns:
             Dictionary mapping nf_e values to doc_transportes values
@@ -148,14 +208,17 @@ class GptPdfExtractorOperator(BaseOperator):
         nao_processados_dir.mkdir(parents=True, exist_ok=True)
         logger.info("Created 'Nao processados' folder: %s", nao_processados_dir)
         
-        if not saga or not saga.get("data"):
-            logger.warning("Saga data not available, will save all files to 'Nao processados'")
-            return nf_to_doc_map
-        
-        doc_transportes_list = saga["data"].get("doc_transportes_list", [])
-        if not doc_transportes_list:
-            logger.warning("doc_transportes_list not found in saga data")
-            return nf_to_doc_map
+        # Get doc_transportes_list from saga or use default fallback
+        if saga and saga.get("data"):
+            doc_transportes_list = saga["data"].get("doc_transportes_list", [])
+            if not doc_transportes_list:
+                logger.info("doc_transportes_list not found in saga data, using default fallback")
+                doc_transportes_list = DEFAULT_DOC_TRANSPORTES_LIST
+            else:
+                logger.info("Using doc_transportes_list from saga data")
+        else:
+            logger.info("Saga data not available, using default fallback doc_transportes_list")
+            doc_transportes_list = DEFAULT_DOC_TRANSPORTES_LIST
         
         logger.info("Setting up output folders for %d doc_transportes entries", len(doc_transportes_list))
         
@@ -184,33 +247,90 @@ class GptPdfExtractorOperator(BaseOperator):
         logger.info("Created %d folder mappings (nf_e -> doc_transportes)", len(nf_to_doc_map))
         return nf_to_doc_map
     
+    def _convert_png_to_pdf(self, png_file: Path) -> Path:
+        """
+        Convert PNG image to PDF file for API compatibility.
+        
+        Args:
+            png_file: Path to PNG image file
+            
+        Returns:
+            Path to temporary PDF file
+        """
+        if not PIL_AVAILABLE:
+            raise AirflowException("PIL/Pillow not available. Install Pillow to convert PNG to PDF.")
+        
+        # Create temporary PDF file
+        temp_pdf = tempfile.NamedTemporaryFile(suffix='.pdf', delete=False)
+        temp_pdf_path = Path(temp_pdf.name)
+        temp_pdf.close()
+        
+        image = None
+        try:
+            # Open PNG image
+            image = Image.open(png_file)
+            
+            # Convert to RGB if necessary (PDF doesn't support RGBA)
+            if image.mode == 'RGBA':
+                # Create white background
+                rgb_image = Image.new('RGB', image.size, (255, 255, 255))
+                rgb_image.paste(image, mask=image.split()[3])  # Use alpha channel as mask
+                image.close()
+                image = rgb_image
+            elif image.mode != 'RGB':
+                image = image.convert('RGB')
+            
+            # Save as PDF using PIL's built-in PDF support
+            # PIL can save images directly as PDF
+            image.save(str(temp_pdf_path), 'PDF', resolution=100.0)
+            
+            logger.info("Converted PNG %s to temporary PDF: %s", png_file.name, temp_pdf_path)
+            return temp_pdf_path
+        except Exception as e:
+            # Clean up temp file on error
+            if temp_pdf_path.exists():
+                try:
+                    temp_pdf_path.unlink()
+                except Exception:
+                    pass
+            logger.error("Failed to convert PNG %s to PDF: %s", png_file.name, e)
+            raise AirflowException(f"Failed to convert PNG to PDF: {e}") from e
+        finally:
+            if image:
+                image.close()
+    
     def _process_pdf(self, pdf_file: Path, api_url: str, doc_transportes_map: Dict[str, str]) -> Dict[str, Any]:
         """
-        Process a single PDF file using GPT extraction service.
+        Process a single PNG file (rotated image) using GPT extraction service.
 
         Args:
-            pdf_file: Path to PDF file
+            pdf_file: Path to PNG file (rotated image)
             api_url: Full API URL for extraction endpoint
             doc_transportes_map: Dictionary mapping nf_e values to doc_transportes values
 
         Returns:
             Dictionary with extraction results
         """
-        file_path = str(pdf_file.absolute())
-        # Temporary output path (will be renamed after extraction)
-        temp_output_file_path = str(self.output_dir / pdf_file.name)
+        # Use PNG file directly - API now supports PNG files
+        png_file_path = str(pdf_file.absolute())
         
-        logger.info("Processing PDF %s with GPT extraction service (endpoint: %s)", pdf_file.name, api_url)
+        # Temporary output path (will be renamed after extraction)
+        # Convert PNG to PDF extension for output (final file will be PDF)
+        output_filename = pdf_file.stem + ".pdf"
+        temp_output_file_path = str(self.output_dir / output_filename)
+        
+        logger.info("Processing PNG %s directly with GPT extraction service (endpoint: %s)", pdf_file.name, api_url)
         
         try:
+            # Send PNG file path directly to API (API now supports PNG)
             payload = {
-                "file_path": file_path,
+                "file_path": png_file_path,
                 "output_path": temp_output_file_path,
                 "field_map": self.field_map if self.field_map else None
             }
             
-            logger.debug("Request payload: file_path=%s, output_path=%s, field_map_size=%s", 
-                        file_path, temp_output_file_path, len(self.field_map) if self.field_map else 0)
+            logger.debug("Request payload: file_path=%s (PNG), output_path=%s, field_map_size=%s", 
+                        png_file_path, temp_output_file_path, len(self.field_map) if self.field_map else 0)
             
             response = requests.post(
                 api_url,
@@ -223,19 +343,24 @@ class GptPdfExtractorOperator(BaseOperator):
             
             status = result.get("status", "FAIL")
             extracted_data = result.get("extracted") or result.get("extracted_data", {})
-            service_output_path = result.get("organized_file_path") or result.get("rotated_file_path") or temp_output_file_path
             
-            # Verify rotated file exists
-            rotated_path_obj = Path(service_output_path)
-            if not rotated_path_obj.exists():
-                logger.warning(
-                    "Rotated file does not exist at %s, using temp path %s",
-                    service_output_path,
-                    temp_output_file_path
-                )
-                service_output_path = temp_output_file_path
-            else:
-                logger.info("Rotated PDF file confirmed at: %s", service_output_path)
+            # Convert PNG to PDF for final output (we save as PDF)
+            temp_pdf_path = None
+            try:
+                temp_pdf_path = self._convert_png_to_pdf(pdf_file)
+                service_output_path = str(temp_pdf_path)
+                logger.info("Converted PNG to PDF for final output: %s", service_output_path)
+            except Exception as e:
+                logger.error("Failed to convert PNG to PDF for output: %s", e)
+                raise RuntimeError(f"Failed to convert PNG to PDF: {e}") from e
+            
+            # Verify converted PDF exists
+            source_file_path = Path(service_output_path)
+            if not source_file_path.exists():
+                logger.error("Converted PDF file does not exist: %s", service_output_path)
+                raise RuntimeError(f"Converted PDF file not found at {service_output_path}")
+            
+            logger.info("Source PDF file confirmed: %s (%d bytes)", source_file_path, source_file_path.stat().st_size)
             
             # Clean nf_e value: remove all non-numeric characters
             if "nf_e" in extracted_data and extracted_data["nf_e"]:
@@ -282,11 +407,12 @@ class GptPdfExtractorOperator(BaseOperator):
             final_output_path = self._determine_output_path(
                 extracted_data, 
                 doc_transportes_map, 
-                Path(service_output_path)
+                Path(service_output_path),
+                original_png_path=pdf_file  # Pass original PNG path for filename fallback
             )
             
             return {
-                "file_path": file_path,
+                "file_path": str(pdf_file.absolute()),  # Return original PNG path
                 "output_file_path": str(final_output_path),
                 "success": success,
                 "status": status,
@@ -294,17 +420,28 @@ class GptPdfExtractorOperator(BaseOperator):
             }
             
         except requests.exceptions.HTTPError as e:
-            error_msg = f"HTTP error processing PDF {pdf_file.name}"
+            error_msg = f"HTTP error processing PNG {pdf_file.name}"
             if hasattr(e.response, 'text'):
                 error_msg += f": {e.response.text}"
             logger.error("%s: %s", error_msg, e)
             raise AirflowException(f"{error_msg}: {e}") from e
         except requests.exceptions.RequestException as e:
-            logger.error("Request error processing PDF %s: %s", pdf_file.name, e)
-            raise AirflowException(f"Failed to process PDF {pdf_file.name}: {e}") from e
+            logger.error("Request error processing PNG %s: %s", pdf_file.name, e)
+            raise AirflowException(f"Failed to process PNG {pdf_file.name}: {e}") from e
         except KeyError as e:
-            logger.error("Missing expected field in response for PDF %s: %s", pdf_file.name, e)
-            raise AirflowException(f"Invalid response structure for PDF {pdf_file.name}: missing {e}") from e
+            logger.error("Missing expected field in response for PNG %s: %s", pdf_file.name, e)
+            raise AirflowException(f"Invalid response structure for PNG {pdf_file.name}: missing {e}") from e
+        finally:
+            # Clean up temporary PDF file only if it wasn't moved to final location
+            # The file will be moved/copied in _determine_output_path, so we check if it still exists
+            if 'temp_pdf_path' in locals() and temp_pdf_path and temp_pdf_path.exists():
+                try:
+                    # Only delete if it's still a temporary file (in /tmp)
+                    if str(temp_pdf_path).startswith('/tmp'):
+                        temp_pdf_path.unlink()
+                        logger.debug("Cleaned up temporary PDF file: %s", temp_pdf_path)
+                except Exception as e:
+                    logger.warning("Failed to clean up temporary PDF file %s: %s", temp_pdf_path, e)
     
     def _update_saga_with_event(
         self, 
@@ -545,7 +682,8 @@ class GptPdfExtractorOperator(BaseOperator):
         self, 
         extracted_data: Dict[str, Any], 
         doc_transportes_map: Dict[str, str],
-        service_output_path: Path
+        service_output_path: Path,
+        original_png_path: Optional[Path] = None
     ) -> Path:
         """
         Determine final output path based on extracted nf_e and saga data.
@@ -554,7 +692,8 @@ class GptPdfExtractorOperator(BaseOperator):
         Args:
             extracted_data: Extracted data dictionary (should contain nf_e)
             doc_transportes_map: Dictionary mapping nf_e values to doc_transportes values
-            service_output_path: Path where GPT service saved the rotated file
+            service_output_path: Path to source file (converted PDF from PNG)
+            original_png_path: Optional original PNG path for filename fallback
             
         Returns:
             Final Path where file should be saved (with proper name and folder)
@@ -572,15 +711,16 @@ class GptPdfExtractorOperator(BaseOperator):
         if not nf_e_value:
             # NF-e not identified - try to extract from filename or use fallback
             # Check if filename contains a number that might be nf_e
-            filename_stem = service_output_path.stem
+            # Prefer original PNG filename over converted PDF filename
+            filename_stem = (original_png_path.stem if original_png_path else service_output_path.stem)
             logger.warning(
                 "NF-e not identified in extracted data for %s. "
                 "Available fields: %s. Checking filename for fallback.",
-                service_output_path.name,
+                filename_stem,
                 list(extracted_data.keys())
             )
             
-            # Try to find nf_e in filename (common patterns: _123456.pdf, 123456.pdf, etc.)
+            # Try to find nf_e in filename (common patterns: rotate_123456.png, 123456.png, etc.)
             import re
             numbers_in_filename = re.findall(r'\d+', filename_stem)
             if numbers_in_filename:

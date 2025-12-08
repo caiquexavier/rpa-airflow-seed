@@ -13,3 +13,584 @@ File Path                                               PID  Runtime      # DAGs
 /opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py     50  0.09s             0           0
 /opt/airflow/src/dags/__init__.py                                              0           0
 ================================================================================
+[2025-12-08T11:16:25.827+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  2.55s           2025-12-08T11:15:57
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  2.41s           2025-12-08T11:15:57
+/opt/airflow/src/dags/__init__.py                                              0           0  0.07s           2025-12-08T11:15:57
+================================================================================
+[2025-12-08T11:16:56.213+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.27s           2025-12-08T11:16:29
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  1.07s           2025-12-08T11:16:28
+/opt/airflow/src/dags/__init__.py                                              0           0  0.08s           2025-12-08T11:16:29
+================================================================================
+[2025-12-08T11:17:26.398+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.18s           2025-12-08T11:17:00
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.85s           2025-12-08T11:17:00
+/opt/airflow/src/dags/__init__.py                                              0           0  0.09s           2025-12-08T11:17:00
+================================================================================
+[2025-12-08T11:17:56.469+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  3.84s           2025-12-08T11:17:34
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  3.42s           2025-12-08T11:17:33
+/opt/airflow/src/dags/__init__.py                                              0           0  0.13s           2025-12-08T11:17:34
+================================================================================
+[2025-12-08T11:18:26.687+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.39s           2025-12-08T11:18:05
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  1.25s           2025-12-08T11:18:05
+/opt/airflow/src/dags/__init__.py                                              0           0  0.08s           2025-12-08T11:18:04
+================================================================================
+[2025-12-08T11:18:57.022+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.10s           2025-12-08T11:18:36
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.98s           2025-12-08T11:18:36
+/opt/airflow/src/dags/__init__.py                                              0           0  0.09s           2025-12-08T11:18:34
+================================================================================
+[2025-12-08T11:19:27.319+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.24s           2025-12-08T11:19:08
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  1.00s           2025-12-08T11:19:08
+/opt/airflow/src/dags/__init__.py                                              0           0  0.07s           2025-12-08T11:19:05
+================================================================================
+[2025-12-08T11:19:57.437+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  3.78s           2025-12-08T11:19:42
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  3.62s           2025-12-08T11:19:42
+/opt/airflow/src/dags/__init__.py                                              0           0  0.10s           2025-12-08T11:19:35
+================================================================================
+[2025-12-08T11:20:27.709+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.20s           2025-12-08T11:20:13
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.97s           2025-12-08T11:20:13
+/opt/airflow/src/dags/__init__.py                                              0           0  0.07s           2025-12-08T11:20:05
+================================================================================
+[2025-12-08T11:20:55.555+0000] {manager.py:737} INFO - Searching for files in /opt/airflow/src/dags
+[2025-12-08T11:20:55.621+0000] {manager.py:740} INFO - There are 3 files in /opt/airflow/src/dags
+[2025-12-08T11:20:57.877+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.93s           2025-12-08T11:20:45
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  1.60s           2025-12-08T11:20:45
+/opt/airflow/src/dags/__init__.py                                              0           0  0.07s           2025-12-08T11:20:35
+================================================================================
+[2025-12-08T11:21:28.203+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.28s           2025-12-08T11:21:17
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  1.07s           2025-12-08T11:21:17
+/opt/airflow/src/dags/__init__.py                                              0           0  0.15s           2025-12-08T11:21:06
+================================================================================
+[2025-12-08T11:21:58.545+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.46s           2025-12-08T11:21:48
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  1.09s           2025-12-08T11:21:48
+/opt/airflow/src/dags/__init__.py                                              0           0  0.10s           2025-12-08T11:21:36
+================================================================================
+[2025-12-08T11:22:28.872+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.55s           2025-12-08T11:22:21
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  1.00s           2025-12-08T11:22:19
+/opt/airflow/src/dags/__init__.py                                              0           0  0.10s           2025-12-08T11:22:06
+================================================================================
+[2025-12-08T11:22:58.873+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  1.49s           2025-12-08T11:22:51
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.26s           2025-12-08T11:22:52
+/opt/airflow/src/dags/__init__.py                                              0           0  0.09s           2025-12-08T11:22:37
+================================================================================
+[2025-12-08T11:23:29.050+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  0.99s           2025-12-08T11:23:24
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.76s           2025-12-08T11:23:22
+/opt/airflow/src/dags/__init__.py                                              0           0  0.09s           2025-12-08T11:23:07
+================================================================================
+[2025-12-08T11:23:59.121+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.00s           2025-12-08T11:23:55
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.74s           2025-12-08T11:23:53
+/opt/airflow/src/dags/__init__.py                                              0           0  0.08s           2025-12-08T11:23:37
+================================================================================
+[2025-12-08T11:24:29.403+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.07s           2025-12-08T11:24:26
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.78s           2025-12-08T11:24:25
+/opt/airflow/src/dags/__init__.py                                              0           0  0.07s           2025-12-08T11:24:08
+================================================================================
+[2025-12-08T11:24:59.427+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  0.95s           2025-12-08T11:24:57
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.75s           2025-12-08T11:24:56
+/opt/airflow/src/dags/__init__.py                                              0           0  0.07s           2025-12-08T11:24:38
+================================================================================
+[2025-12-08T11:25:29.590+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.02s           2025-12-08T11:25:28
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.72s           2025-12-08T11:25:27
+/opt/airflow/src/dags/__init__.py                                              0           0  0.07s           2025-12-08T11:25:08
+================================================================================
+[2025-12-08T11:25:56.200+0000] {manager.py:737} INFO - Searching for files in /opt/airflow/src/dags
+[2025-12-08T11:25:56.251+0000] {manager.py:740} INFO - There are 3 files in /opt/airflow/src/dags
+[2025-12-08T11:26:00.133+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                               PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py    684  1.01s             1           0  1.02s           2025-12-08T11:25:28
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.82s           2025-12-08T11:25:59
+/opt/airflow/src/dags/__init__.py                                              0           0  0.08s           2025-12-08T11:25:39
+================================================================================
+[2025-12-08T11:26:30.280+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                               PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py    726  0.01s             1           0  1.03s           2025-12-08T11:26:00
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.90s           2025-12-08T11:26:30
+/opt/airflow/src/dags/__init__.py                                              0           0  0.07s           2025-12-08T11:26:09
+================================================================================
+[2025-12-08T11:27:00.645+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                               PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.68s           2025-12-08T11:26:31
+/opt/airflow/src/dags/dag_pdf_split_rotate.py           758  0.01s             1           0  0.90s           2025-12-08T11:26:30
+/opt/airflow/src/dags/__init__.py                                              0           0  0.08s           2025-12-08T11:26:39
+================================================================================
+[2025-12-08T11:27:30.899+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  1.34s           2025-12-08T11:27:01
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  0.98s           2025-12-08T11:27:02
+/opt/airflow/src/dags/__init__.py                                              0           0  0.09s           2025-12-08T11:27:09
+================================================================================
+[2025-12-08T11:28:01.367+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.69s           2025-12-08T11:27:34
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.81s           2025-12-08T11:27:32
+/opt/airflow/src/dags/__init__.py                                              0           0  0.09s           2025-12-08T11:27:40
+================================================================================
+[2025-12-08T11:28:31.462+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.08s           2025-12-08T11:28:06
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.85s           2025-12-08T11:28:04
+/opt/airflow/src/dags/__init__.py                                              0           0  0.07s           2025-12-08T11:28:10
+================================================================================
+[2025-12-08T11:29:01.736+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.34s           2025-12-08T11:28:37
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.89s           2025-12-08T11:28:35
+/opt/airflow/src/dags/__init__.py                                              0           0  0.08s           2025-12-08T11:28:40
+================================================================================
+[2025-12-08T11:29:32.108+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.51s           2025-12-08T11:29:09
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.86s           2025-12-08T11:29:06
+/opt/airflow/src/dags/__init__.py                                              0           0  0.19s           2025-12-08T11:29:11
+================================================================================
+[2025-12-08T11:30:02.533+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  0.94s           2025-12-08T11:29:40
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.82s           2025-12-08T11:29:37
+/opt/airflow/src/dags/__init__.py                                              0           0  0.13s           2025-12-08T11:29:41
+================================================================================
+[2025-12-08T11:30:33.034+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.88s           2025-12-08T11:30:12
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.77s           2025-12-08T11:30:09
+/opt/airflow/src/dags/__init__.py                                              0           0  0.17s           2025-12-08T11:30:11
+================================================================================
+[2025-12-08T11:30:56.384+0000] {manager.py:737} INFO - Searching for files in /opt/airflow/src/dags
+[2025-12-08T11:30:56.434+0000] {manager.py:740} INFO - There are 3 files in /opt/airflow/src/dags
+[2025-12-08T11:31:03.493+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.32s           2025-12-08T11:30:43
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  1.00s           2025-12-08T11:30:40
+/opt/airflow/src/dags/__init__.py                                              0           0  0.09s           2025-12-08T11:30:42
+================================================================================
+[2025-12-08T11:31:34.015+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  1.27s           2025-12-08T11:31:11
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.13s           2025-12-08T11:31:14
+/opt/airflow/src/dags/__init__.py                                              0           0  0.08s           2025-12-08T11:31:12
+================================================================================
+[2025-12-08T11:32:04.177+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.06s           2025-12-08T11:31:46
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.86s           2025-12-08T11:31:42
+/opt/airflow/src/dags/__init__.py                                              0           0  0.09s           2025-12-08T11:31:43
+================================================================================
+[2025-12-08T11:32:34.594+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.18s           2025-12-08T11:32:17
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.97s           2025-12-08T11:32:14
+/opt/airflow/src/dags/__init__.py                                              0           0  0.09s           2025-12-08T11:32:13
+================================================================================
+[2025-12-08T11:33:04.896+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.18s           2025-12-08T11:32:48
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  1.05s           2025-12-08T11:32:45
+/opt/airflow/src/dags/__init__.py                                              0           0  0.14s           2025-12-08T11:32:43
+================================================================================
+[2025-12-08T11:33:35.220+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.20s           2025-12-08T11:33:20
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.83s           2025-12-08T11:33:16
+/opt/airflow/src/dags/__init__.py                                              0           0  0.07s           2025-12-08T11:33:14
+================================================================================
+[2025-12-08T11:34:05.535+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.22s           2025-12-08T11:33:51
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.67s           2025-12-08T11:33:48
+/opt/airflow/src/dags/__init__.py                                              0           0  0.07s           2025-12-08T11:33:44
+================================================================================
+[2025-12-08T11:34:35.745+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  0.94s           2025-12-08T11:34:22
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.67s           2025-12-08T11:34:19
+/opt/airflow/src/dags/__init__.py                                              0           0  0.07s           2025-12-08T11:34:14
+================================================================================
+[2025-12-08T11:35:05.951+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  0.95s           2025-12-08T11:34:53
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.68s           2025-12-08T11:34:50
+/opt/airflow/src/dags/__init__.py                                              0           0  0.07s           2025-12-08T11:34:44
+================================================================================
+[2025-12-08T11:35:36.209+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  1.13s           2025-12-08T11:35:22
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  0.99s           2025-12-08T11:35:25
+/opt/airflow/src/dags/__init__.py                                              0           0  0.07s           2025-12-08T11:35:15
+================================================================================
+[2025-12-08T11:35:56.456+0000] {manager.py:737} INFO - Searching for files in /opt/airflow/src/dags
+[2025-12-08T11:35:56.506+0000] {manager.py:740} INFO - There are 3 files in /opt/airflow/src/dags
+[2025-12-08T11:36:06.219+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  0.99s           2025-12-08T11:35:56
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.75s           2025-12-08T11:35:53
+/opt/airflow/src/dags/__init__.py                                              0           0  0.07s           2025-12-08T11:35:45
+================================================================================
+[2025-12-08T11:36:36.664+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.08s           2025-12-08T11:36:27
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.82s           2025-12-08T11:36:24
+/opt/airflow/src/dags/__init__.py                                              0           0  0.08s           2025-12-08T11:36:15
+================================================================================
+[2025-12-08T11:37:07.027+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.04s           2025-12-08T11:36:58
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.73s           2025-12-08T11:36:55
+/opt/airflow/src/dags/__init__.py                                              0           0  0.09s           2025-12-08T11:36:45
+================================================================================
+[2025-12-08T11:37:37.406+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.01s           2025-12-08T11:37:30
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.74s           2025-12-08T11:37:26
+/opt/airflow/src/dags/__init__.py                                              0           0  0.10s           2025-12-08T11:37:16
+================================================================================
+[2025-12-08T11:38:07.690+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.30s           2025-12-08T11:38:01
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.71s           2025-12-08T11:37:58
+/opt/airflow/src/dags/__init__.py                                              0           0  0.06s           2025-12-08T11:37:46
+================================================================================
+[2025-12-08T11:38:37.957+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.19s           2025-12-08T11:38:33
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.91s           2025-12-08T11:38:29
+/opt/airflow/src/dags/__init__.py                                              0           0  0.06s           2025-12-08T11:38:16
+================================================================================
+[2025-12-08T11:39:07.986+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  0.89s           2025-12-08T11:39:05
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.79s           2025-12-08T11:39:00
+/opt/airflow/src/dags/__init__.py                                              0           0  0.09s           2025-12-08T11:38:47
+================================================================================
+[2025-12-08T11:39:38.424+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  1.41s           2025-12-08T11:39:32
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.09s           2025-12-08T11:39:36
+/opt/airflow/src/dags/__init__.py                                              0           0  0.07s           2025-12-08T11:39:17
+================================================================================
+[2025-12-08T11:40:08.786+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.21s           2025-12-08T11:40:07
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  1.06s           2025-12-08T11:40:04
+/opt/airflow/src/dags/__init__.py                                              0           0  0.08s           2025-12-08T11:39:47
+================================================================================
+[2025-12-08T11:40:39.032+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                               PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py   1718  1.01s             1           0  1.21s           2025-12-08T11:40:07
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.99s           2025-12-08T11:40:35
+/opt/airflow/src/dags/__init__.py                                              0           0  0.08s           2025-12-08T11:40:17
+================================================================================
+[2025-12-08T11:40:57.221+0000] {manager.py:737} INFO - Searching for files in /opt/airflow/src/dags
+[2025-12-08T11:40:57.272+0000] {manager.py:740} INFO - There are 3 files in /opt/airflow/src/dags
+[2025-12-08T11:41:09.188+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.21s           2025-12-08T11:40:39
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.82s           2025-12-08T11:41:07
+/opt/airflow/src/dags/__init__.py                                              0           0  0.07s           2025-12-08T11:40:48
+================================================================================
+[2025-12-08T11:41:39.443+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  0.95s           2025-12-08T11:41:10
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.73s           2025-12-08T11:41:38
+/opt/airflow/src/dags/__init__.py                                              0           0  0.06s           2025-12-08T11:41:18
+================================================================================
+[2025-12-08T11:42:09.614+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  0.86s           2025-12-08T11:41:41
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.85s           2025-12-08T11:42:09
+/opt/airflow/src/dags/__init__.py                                              0           0  0.07s           2025-12-08T11:41:48
+================================================================================
+[2025-12-08T11:42:39.871+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                               PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.49s           2025-12-08T11:42:12
+/opt/airflow/src/dags/dag_pdf_split_rotate.py          1780  0.01s             1           0  0.85s           2025-12-08T11:42:09
+/opt/airflow/src/dags/__init__.py                                              0           0  0.07s           2025-12-08T11:42:18
+================================================================================
+[2025-12-08T11:43:10.149+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.31s           2025-12-08T11:42:44
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.98s           2025-12-08T11:42:40
+/opt/airflow/src/dags/__init__.py                                              0           0  0.08s           2025-12-08T11:42:49
+================================================================================
+[2025-12-08T11:43:40.429+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  1.29s           2025-12-08T11:43:12
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.20s           2025-12-08T11:43:15
+/opt/airflow/src/dags/__init__.py                                              0           0  0.06s           2025-12-08T11:43:19
+================================================================================
+[2025-12-08T11:44:10.723+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.52s           2025-12-08T11:43:47
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.73s           2025-12-08T11:43:43
+/opt/airflow/src/dags/__init__.py                                              0           0  0.09s           2025-12-08T11:43:49
+================================================================================
+[2025-12-08T11:44:40.921+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                             PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/src/dags/dag_rpa_protocolo_devolucao.py                           1           0  1.23s           2025-12-08T11:44:18
+/opt/airflow/src/dags/dag_pdf_split_rotate.py                                  1           0  0.71s           2025-12-08T11:44:14
+/opt/airflow/src/dags/__init__.py                                              0           0  0.07s           2025-12-08T11:44:19
+================================================================================
+[2025-12-08T11:45:05.177+0000] {manager.py:452} INFO - Exiting gracefully upon receiving signal 15
