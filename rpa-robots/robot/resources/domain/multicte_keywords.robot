@@ -1,7 +1,7 @@
 *** Settings ***
 Library           SeleniumLibrary
 Resource    ${CURDIR}/../infra/ui_keywords.robot
-Variables        ${CURDIR}/../../variables/env_vars.py
+Variables        ${CURDIR}/../../config/env_vars.py
 
 *** Keywords ***
 Login To MultiCTE
