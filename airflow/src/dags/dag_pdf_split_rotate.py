@@ -8,6 +8,7 @@ from airflow.operators.python import PythonOperator
 
 from operators.pdf_split_operator import PdfSplitOperator
 from operators.pdf_rotate_operator import PdfRotateOperator
+from operators.pdf_ocr_nf_extractor_operator import PdfOcrNfExtractorOperator
 
 logger = logging.getLogger(__name__)
 
@@ -110,5 +111,13 @@ rotate_task = PdfRotateOperator(
     dag=dag,
 )
 
-clean_processar_task >> split_task >> rotate_task
+extract_nf_e_task = PdfOcrNfExtractorOperator(
+    task_id="extract_nf_e",
+    rotated_folder_path="/opt/airflow/data/processar/rotated",  # Read from rotated subdirectory
+    processado_folder_path="/opt/airflow/data/processado",  # Copy to processado folder
+    overwrite=True,
+    dag=dag,
+)
+
+clean_processar_task >> split_task >> rotate_task >> extract_nf_e_task
 

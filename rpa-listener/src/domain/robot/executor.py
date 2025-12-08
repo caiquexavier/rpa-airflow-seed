@@ -38,7 +38,7 @@ def execute_robot_tests(
                 print(f"Robot execution saga_id: {saga_id}", flush=True)
         
         # Validate required files exist
-        env_var_file = project_path / 'robot' / 'variables' / 'env_vars.py'
+        env_var_file = project_path / 'robot' / 'config' / 'env_vars.py'
         if not env_var_file.exists():
             raise FileNotFoundError(
                 f"Required env_vars.py not found at: {env_var_file}\n"
@@ -107,7 +107,7 @@ def _build_robot_command(
     cmd = [str(robot_exe), "--outputdir", str(results_dir)]
     
     # Load environment variable file (env_vars.py) - REQUIRED, must be first
-    env_var_file = (project_path / 'robot' / 'variables' / 'env_vars.py').resolve()
+    env_var_file = (project_path / 'robot' / 'config' / 'env_vars.py').resolve()
     if not env_var_file.exists():
         raise FileNotFoundError(
             f"Required env_vars.py not found at: {env_var_file}\n"

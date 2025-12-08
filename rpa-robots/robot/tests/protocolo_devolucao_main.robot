@@ -38,35 +38,40 @@ Process Doc Transportes List
     [Arguments]    ${doc_transportes_list}
     ${response_list}=    Create List
     Open Operacional Menu
+    ${is_first_doc}=    Set Variable    ${True}
     FOR    ${doc_entry}    IN    @{doc_transportes_list}
-        ${doc_response}=    Process Single Doc Transportes    ${doc_entry}
+        ${doc_response}=    Process Single Doc Transportes    ${doc_entry}    ${is_first_doc}
         Append To List    ${response_list}    ${doc_response}
         Sleep    1s
         ${doc_id}=    Get From Dictionary    ${doc_response}    doc_transportes
         Log    DOC ${doc_id} concluído    level=INFO
+        ${is_first_doc}=    Set Variable    ${False}
     END
     RETURN    ${response_list}
 
 Process Single Doc Transportes
-    [Arguments]    ${doc_entry}
+    [Arguments]    ${doc_entry}    ${is_first_doc}=${True}
     ${doc_id}=    Get From Dictionary    ${doc_entry}    doc_transportes
     ${nf_list}=    Get From Dictionary    ${doc_entry}    nf_e
     ${nf_count}=    Get Length    ${nf_list}
     IF    ${nf_count} == 0
         Fail    Nenhuma NF encontrada para doc_transportes ${doc_id}
     END
+    # Process only the first NF-e value for each doc_transportes
     ${nota_fiscal}=    Get From List    ${nf_list}    0
-    ${nf_result}=    Process Nota Fiscal    ${doc_id}    ${nota_fiscal}
+    ${nf_result}=    Process Nota Fiscal    ${doc_id}    ${nota_fiscal}    ${is_first_doc}
     ${nf_e_results}=    Create List    ${nf_result}
     ${doc_response}=    Create Dictionary    doc_transportes=${doc_id}    nf_e=${nf_e_results}
     RETURN    ${doc_response}
 
 Process Nota Fiscal
-    [Arguments]    ${doc_id}    ${nota_fiscal}
+    [Arguments]    ${doc_id}    ${nota_fiscal}    ${is_first_nf}=${True}
     Log    DOC ${doc_id} - processando NF ${nota_fiscal}    level=INFO
     ${nf_result}=    Create Dictionary    nf=${nota_fiscal}    status=SUCCESS    error_message=${EMPTY}
     TRY
-        Open Registro De Canhotos Submenu
+        IF    ${is_first_nf}
+            Open Registro De Canhotos Submenu
+        END
         Input Nota Fiscal    ${nota_fiscal}
         Validate Nota Fiscal Search    ${nota_fiscal}
         ${modal_result}=    Open Nota Fiscal Modal
@@ -75,9 +80,13 @@ Process Nota Fiscal
             ${error_msg}=    Get From Dictionary    ${modal_result}    error_message
             Set To Dictionary    ${nf_result}    status=FAIL    error_message=${error_msg}
             Log    Business error para DOC ${doc_id} NF ${nota_fiscal}: ${error_msg}    level=WARN
+            # Click Voltar after error to return to search page
+            Click Voltar Button
         ELSE
             Download Nota Fiscal Pdfs    ${nota_fiscal}
             Close Nota Fiscal Modal
+            # Click Voltar after closing modal to return to search page for next doc_transportes
+            Click Voltar Button
         END
     EXCEPT    AS    ${error}
         Set To Dictionary    ${nf_result}    status=FAIL    error_message=${error}

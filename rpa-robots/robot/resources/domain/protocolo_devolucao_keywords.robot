@@ -5,7 +5,7 @@ Library           Collections
 Library           OperatingSystem
 Library           ${CURDIR}/../../libs/saga_client.py
 Library           ${CURDIR}/../../libs/path_config.py
-Variables        ${CURDIR}/../../variables/env_vars.py
+Variables        ${CURDIR}/../../config/env_vars.py
 Variables        ${CURDIR}/../../libs/xpath_locators.py
 
 *** Variables ***
@@ -71,6 +71,9 @@ Input Nota Fiscal
     Wait Until Element Is Visible    css=iframe#frame    timeout=15s
     Select Frame    css=iframe#frame
     Wait Until Element Is Visible    css=input[name="txtNotaFiscal"]    timeout=15s
+    Scroll Element Into View    css=input[name="txtNotaFiscal"]
+    Set Focus To Element    css=input[name="txtNotaFiscal"]
+    # Clear existing value and replace with new one
     Clear Element Text    css=input[name="txtNotaFiscal"]
     Input Text    css=input[name="txtNotaFiscal"]    ${nota_fiscal}
 
@@ -146,6 +149,30 @@ Close Nota Fiscal Modal
         END
     END
     Cleanup Nota Fiscal Frame
+
+Click Voltar Button
+    [Documentation]    Clicks the Voltar button after closing the modal to return to the search page.
+    Wait Until Element Is Visible    css=iframe#frame    timeout=15s
+    Select Frame    css=iframe#frame
+    # Wait for modal to fully close if it's still visible
+    ${modal_visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    xpath=${XPATH_MODAL_CANHOTO}    timeout=2s
+    IF    ${modal_visible}
+        Wait Until Element Is Not Visible    xpath=${XPATH_MODAL_CANHOTO}    timeout=5s
+    END
+    Sleep    1s
+    Wait Until Element Is Visible    xpath=/html/body/div/div/div[3]/form/div[2]/div[3]/div/div[2]/button    timeout=10s
+    Scroll Element Into View    xpath=/html/body/div/div/div[3]/form/div[2]/div[3]/div/div[2]/button
+    Click Element    xpath=/html/body/div/div/div[3]/form/div[2]/div[3]/div/div[2]/button
+    Sleep    2s
+    # Unselect frame to ensure clean state for next operation
+    Unselect Frame
+    # Wait for page to reload/navigate after clicking Voltar - ensure iframe is ready
+    Wait Until Element Is Visible    css=iframe#frame    timeout=15s
+    # Verify the input field is ready by selecting frame and checking it exists
+    Select Frame    css=iframe#frame
+    Wait Until Element Is Visible    css=input[name="txtNotaFiscal"]    timeout=10s
+    # Unselect frame so Input Nota Fiscal can select it fresh
+    Unselect Frame
 
 Cleanup Nota Fiscal Frame
     Run Keyword And Ignore Error    Unselect Frame

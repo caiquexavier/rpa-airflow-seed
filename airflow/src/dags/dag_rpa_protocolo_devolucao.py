@@ -7,6 +7,7 @@ from airflow.operators.python import PythonOperator
 
 from operators.robot_framework_operator import RobotFrameworkOperator
 from operators.pdf_split_operator import PdfSplitOperator
+from operators.pdf_rotate_operator import PdfRotateOperator
 from operators.saga_operator import SagaOperator
 from operators.gpt_pdf_extractor_operator import GptPdfExtractorOperator
 from services.webhook import WebhookSensor
@@ -77,12 +78,22 @@ split_files_task = PdfSplitOperator(
     output_dir="/opt/airflow/data/processar",
     overwrite=True,  # Always overwrite existing files
     include_single_page=True,
+    subdirectory="split",  # Files will be saved to processar/split/
+    dag=dag,
+)
+
+rotate_task = PdfRotateOperator(
+    task_id="rotate_pdfs",
+    folder_path="/opt/airflow/data/processar/split",  # Read from split subdirectory
+    output_dir="/opt/airflow/data/processar",
+    overwrite=True,
+    subdirectory="rotated",  # Files will be saved to processar/rotated/
     dag=dag,
 )
 
 gpt_pdf_extractor_task = GptPdfExtractorOperator(
     task_id="extract_pdf_fields",
-    folder_path="/opt/airflow/data/processar",
+    folder_path="/opt/airflow/data/processar/rotated",  # Read from rotated subdirectory
     output_dir="/opt/airflow/data/processado",
     rpa_api_conn_id="rpa_api",
     timeout=300,
@@ -150,6 +161,7 @@ complete_saga_task_op = SagaOperator(
  >> robot_protocolo_devolucao_task
  >> wait_for_protocolo_devolucao_webhook
  >> split_files_task
+ >> rotate_task
  >> gpt_pdf_extractor_task
  >> generate_protocolo_pdf_task
  >> robot_upload_multi_cte_task
