@@ -10,10 +10,10 @@ from operators.pdf_split_operator import PdfSplitOperator
 from operators.pdf_rotate_operator import PdfRotateOperator
 from operators.saga_operator import SagaOperator
 from operators.gpt_pdf_extractor_operator import GptPdfExtractorOperator
+from operators.protocolo_pdf_generator_operator import ProtocoloPdfGeneratorOperator
 from services.webhook import WebhookSensor
 from tasks.tasks_rpa_protocolo_devolucao import (
     convert_xls_to_json_task,
-    generate_protocolo_pdf_task,
 )
 
 logger = logging.getLogger(__name__)
@@ -101,9 +101,10 @@ gpt_pdf_extractor_task = GptPdfExtractorOperator(
     dag=dag,
 )
 
-generate_protocolo_pdf_task = PythonOperator(
+generate_protocolo_pdf_task = ProtocoloPdfGeneratorOperator(
     task_id="generate_protocolo_pdf",
-    python_callable=generate_protocolo_pdf_task,
+    processado_dir="/opt/airflow/data/processado",  # Directory where doc_transportes folders are located
+    rpa_api_conn_id="rpa_api",
     dag=dag,
 )
 

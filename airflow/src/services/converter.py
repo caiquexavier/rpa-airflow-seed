@@ -69,10 +69,19 @@ def xls_to_rpa_request(xlsx_path: Union[str, Path]) -> Dict[str, Any]:
     if status_col is None:
         raise ValueError("STATUS RPA column not found")
     
+    # Find CD column (case-insensitive, trim header) - renamed to centro_distribuicao
+    cd_col = None
+    for col in df.columns:
+        if col.strip().upper() == "CD":
+            cd_col = col
+            break
+    
     # Prepare data: convert to string, strip, and filter out empty values
     df[dt_col] = df[dt_col].astype(str).str.strip()
     df[nota_fiscal_col] = df[nota_fiscal_col].astype(str).str.strip()
     df[status_col] = df[status_col].astype(str).str.strip().str.upper()
+    if cd_col:
+        df[cd_col] = df[cd_col].astype(str).str.strip()
     
     # Filter rows that have both DT and NOTA FISCAL values
     df_filtered = df[
@@ -94,13 +103,27 @@ def xls_to_rpa_request(xlsx_path: Union[str, Path]) -> Dict[str, Any]:
         nf_e_values = group[nota_fiscal_col].drop_duplicates(keep="first").tolist()
         if not nf_e_values:
             continue
-        doc_transportes_list.append(
-            {
-                "doc_transportes": doc_transportes,
-                # Keep full list of NOTA FISCAL values for this DT
-                "nf_e": nf_e_values,
-            }
-        )
+        
+        # Get centro_distribuicao from CD column (should be same for all rows with same DT)
+        centro_distribuicao = None
+        if cd_col:
+            cd_values = group[cd_col].dropna().unique()
+            if len(cd_values) > 0:
+                centro_distribuicao = str(cd_values[0]).strip()
+                if centro_distribuicao == "":
+                    centro_distribuicao = None
+        
+        doc_entry = {
+            "doc_transportes": doc_transportes,
+            # Keep full list of NOTA FISCAL values for this DT
+            "nf_e": nf_e_values,
+        }
+        
+        # Add centro_distribuicao if available
+        if centro_distribuicao:
+            doc_entry["centro_distribuicao"] = centro_distribuicao
+        
+        doc_transportes_list.append(doc_entry)
     
     # Return RPA request data (not SAGA structure)
     # Uses 'data' field (rpa_request_object was replaced)

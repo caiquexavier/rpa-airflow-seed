@@ -1,4 +1,5 @@
 # Cleanup script to remove all test artifacts (screenshots, playwright logs, traces) from results directory
+# Also cleans screenshots from root folder as a safety measure
 param(
     [string]$ResultsDir = "results"
 )
@@ -6,33 +7,55 @@ param(
 $ResultsPath = Join-Path $PSScriptRoot "..\$ResultsDir"
 $ResultsPath = [System.IO.Path]::GetFullPath($ResultsPath)
 
-if (-not (Test-Path $ResultsPath)) {
-    Write-Host "Results directory not found: $ResultsPath" -ForegroundColor Red
-    exit 1
-}
+# Root folder path (rpa-robots directory)
+$RootPath = Join-Path $PSScriptRoot ".."
+$RootPath = [System.IO.Path]::GetFullPath($RootPath)
 
 Write-Host "Cleaning up test artifacts from: $ResultsPath" -ForegroundColor Cyan
+if (Test-Path $RootPath) {
+    Write-Host "Also cleaning screenshots from root folder: $RootPath" -ForegroundColor Cyan
+}
 
 $screenshotsDeleted = 0
 $playwrightLogsDeleted = 0
 $tracesDeleted = 0
 
-# Clean up selenium screenshots
+# Clean up selenium screenshots from results directory
 $screenshotPatterns = @(
     "selenium-screenshot-*.png",
     "selenium-screenshot-*.jpg",
     "selenium-screenshot-*.jpeg"
 )
 
-foreach ($pattern in $screenshotPatterns) {
-    $files = Get-ChildItem -Path $ResultsPath -Filter $pattern -ErrorAction SilentlyContinue
-    foreach ($file in $files) {
-        try {
-            Remove-Item -Path $file.FullName -Force
-            $screenshotsDeleted++
-            Write-Host "Deleted: $($file.Name)" -ForegroundColor Gray
-        } catch {
-            Write-Host "Failed to delete $($file.Name): $_" -ForegroundColor Yellow
+if (Test-Path $ResultsPath) {
+    foreach ($pattern in $screenshotPatterns) {
+        $files = Get-ChildItem -Path $ResultsPath -Filter $pattern -ErrorAction SilentlyContinue
+        foreach ($file in $files) {
+            try {
+                Remove-Item -Path $file.FullName -Force
+                $screenshotsDeleted++
+                Write-Host "Deleted from results: $($file.Name)" -ForegroundColor Gray
+            } catch {
+                Write-Host "Failed to delete $($file.Name): $_" -ForegroundColor Yellow
+            }
+        }
+    }
+} else {
+    Write-Host "Results directory not found: $ResultsPath" -ForegroundColor Yellow
+}
+
+# Clean up selenium screenshots from root folder (safety measure - should not happen but clean anyway)
+if (Test-Path $RootPath) {
+    foreach ($pattern in $screenshotPatterns) {
+        $files = Get-ChildItem -Path $RootPath -Filter $pattern -ErrorAction SilentlyContinue
+        foreach ($file in $files) {
+            try {
+                Remove-Item -Path $file.FullName -Force
+                $screenshotsDeleted++
+                Write-Host "Deleted from root: $($file.Name)" -ForegroundColor Gray
+            } catch {
+                Write-Host "Failed to delete $($file.Name): $_" -ForegroundColor Yellow
+            }
         }
     }
 }

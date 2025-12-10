@@ -127,6 +127,16 @@ def get_data_dir() -> str:
     return get_path_as_string(get_shared_data_dir())
 
 
+def get_processado_dir() -> Path:
+    """
+    Get the shared/data/processado directory path.
+    
+    Returns:
+        Path to the shared/data/processado directory.
+    """
+    return get_shared_data_dir() / "processado"
+
+
 def list_pdf_files(download_dir: Optional[str] = None) -> set:
     """
     List all PDF files in the download directory.

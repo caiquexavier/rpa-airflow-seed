@@ -79,6 +79,7 @@ services:
       - ./airflow/src/tasks:/opt/airflow/src/tasks
       - ./shared/data:/opt/airflow/data
       - ./shared/downloads:/opt/airflow/downloads
+      - ./shared/assets:/opt/airflow/assets
     depends_on:
       postgres:
         condition: service_healthy
@@ -148,6 +149,7 @@ services:
       - ./airflow/src/tasks:/opt/airflow/src/tasks
       - ./shared/data:/opt/airflow/data
       - ./shared/downloads:/opt/airflow/downloads
+      - ./shared/assets:/opt/airflow/assets
     depends_on:
       postgres:
         condition: service_healthy
@@ -233,6 +235,7 @@ services:
       - ./airflow/src/tasks:/opt/airflow/src/tasks
       - ./shared/data:/opt/airflow/data
       - ./shared/downloads:/opt/airflow/downloads
+      - ./shared/assets:/opt/airflow/assets
     depends_on:
       postgres:
         condition: service_healthy
@@ -283,6 +286,7 @@ services:
     volumes:
       - ./shared/data:/opt/airflow/data
       - ./shared/downloads:/opt/airflow/downloads
+      - ./shared/assets:/opt/airflow/assets
     depends_on:
       postgres:
         condition: service_healthy

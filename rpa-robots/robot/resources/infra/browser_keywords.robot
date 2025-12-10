@@ -1,5 +1,7 @@
 *** Settings ***
 Library           SeleniumLibrary
+Library           OperatingSystem
+Library           Collections
 
 *** Variables ***
 ${DOWNLOAD_DIR}    ${CURDIR}/../../../../shared/downloads
@@ -67,15 +69,11 @@ Start Browser
     EXCEPT    AS    ${error}
         No Operation
     END
-    ${none_value}=    Evaluate    None
-    Set Screenshot Directory    ${none_value}
+    # Configure screenshots to be saved in results folder (OUTPUT_DIR) instead of root folder
+    # OUTPUT_DIR is automatically set by Robot Framework to the --outputdir value
+    Configure Screenshot Directory
 
 Close Browser
-    TRY
-        Set Screenshot Directory    ${None}
-    EXCEPT
-        No Operation
-    END
     TRY
         Close All Browsers
     EXCEPT    AS    ${error}
@@ -84,5 +82,61 @@ Close Browser
         EXCEPT
             No Operation
         END
+    END
+
+Configure Screenshot Directory
+    [Documentation]    Configure screenshot directory to save screenshots in results folder (OUTPUT_DIR).
+    ...                This ensures screenshots are saved in the results folder, not the root folder.
+    ${output_dir}=    Get Variable Value    ${OUTPUT_DIR}    ${EMPTY}
+    IF    '${output_dir}' == '${EMPTY}'
+        # Fallback: try to use results directory relative to current directory
+        ${results_dir}=    Evaluate    os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(r"${CURDIR}")))), "results")    os
+        ${results_dir_abs}=    Evaluate    os.path.abspath(r"${results_dir}")    os
+        Set Screenshot Directory    ${results_dir_abs}
+        Log    Screenshot directory set to: ${results_dir_abs}    level=INFO
+    ELSE
+        Set Screenshot Directory    ${output_dir}
+        Log    Screenshot directory set to: ${output_dir}    level=INFO
+    END
+
+Cleanup Screenshots
+    [Documentation]    Clean up all selenium screenshots from the results folder after test execution.
+    ...                This should be called in Suite Teardown or Test Teardown.
+    ${output_dir}=    Get Variable Value    ${OUTPUT_DIR}    ${EMPTY}
+    IF    '${output_dir}' == '${EMPTY}'
+        # Fallback: try to use results directory relative to current directory
+        ${results_dir}=    Evaluate    os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(r"${CURDIR}")))), "results")    os
+        ${results_dir_abs}=    Evaluate    os.path.abspath(r"${results_dir}")    os
+        ${cleanup_dir}=    Set Variable    ${results_dir_abs}
+    ELSE
+        ${cleanup_dir}=    Set Variable    ${output_dir}
+    END
+    
+    ${dir_exists}=    Run Keyword And Return Status    Directory Should Exist    ${cleanup_dir}
+    IF    not ${dir_exists}
+        Log    Results directory does not exist: ${cleanup_dir}. Skipping screenshot cleanup.    level=WARN
+        RETURN
+    END
+    
+    # Clean up selenium screenshots
+    ${screenshot_patterns}=    Create List    selenium-screenshot-*.png    selenium-screenshot-*.jpg    selenium-screenshot-*.jpeg
+    ${deleted_count}=    Set Variable    ${0}
+    
+    FOR    ${pattern}    IN    @{screenshot_patterns}
+        ${files}=    List Files In Directory    ${cleanup_dir}    pattern=${pattern}
+        FOR    ${file}    IN    @{files}
+            TRY
+                ${file_path}=    Evaluate    os.path.join(r"${cleanup_dir}", r"${file}")    os
+                Remove File    ${file_path}
+                ${deleted_count}=    Evaluate    ${deleted_count} + 1
+                Log    Deleted screenshot: ${file}    level=DEBUG
+            EXCEPT    AS    ${error}
+                Log    Failed to delete screenshot ${file}: ${error}    level=WARN
+            END
+        END
+    END
+    
+    IF    ${deleted_count} > 0
+        Log    Cleaned up ${deleted_count} screenshot(s) from ${cleanup_dir}    level=INFO
     END
 

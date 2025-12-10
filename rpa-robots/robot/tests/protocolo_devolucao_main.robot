@@ -6,6 +6,7 @@ Library           ${CURDIR}/../libs/saga_client.py
 Library           JSONLibrary
 
 Suite Setup    Initialize Test Suite
+Suite Teardown    Cleanup Screenshots
 
 *** Test Cases ***
 Pod Download
@@ -24,8 +25,8 @@ Pod Download
 
 *** Keywords ***
 Initialize Test Suite
-    [Documentation]    Initialize test suite: disable screenshots.
-    Set Screenshot Directory    ${None}
+    [Documentation]    Initialize test suite: configure screenshots to save in results folder.
+    Configure Screenshot Directory
 
 Get Saga Payload
     ${saga_data}=    Get Variable Value    $data    ${None}
