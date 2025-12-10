@@ -189,7 +189,10 @@ rpa-airflow-seed/
 │   ├── Dockerfile             # Custom Airflow image
 │   ├── src/
 │   │   ├── dags/              # Workflow definitions
-│   │   │   └── dag_ecargo_pod_download.py
+│   │   │   ├── dag_gpt_pdf_extractor_standalone.py
+│   │   │   ├── dag_pdf_split_rotate.py
+│   │   │   ├── dag_protocolo_devolucao_standalone.py
+│   │   │   └── dag_rpa_protocolo_devolucao.py
 │   │   ├── services/              # Shared utilities
 │   │   │   └── converter.py   # Excel to RPA request converter
 │   │   └── api/               # Airflow API
