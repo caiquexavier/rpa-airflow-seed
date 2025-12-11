@@ -72,11 +72,11 @@ class ProtocoloDeDevolucaoPDF(FPDF):
         table_width = 180
 
         # Column widths (must sum to table_width)
-        w_qtd = 15
-        w_doc = 42
+        w_qtd = 22  # Increased from 15 to better fit "Quantidade"
+        w_doc = 40  # Reduced from 42 to accommodate increased w_qtd
         w_entrega = 25
         w_nf = 28
-        w_reg = 70  # Doubled from 35 to accommodate "Regular / Irregular" text
+        w_reg = 65  # Reduced from 70 to accommodate increased w_qtd
         row_height_header = 8
         row_height = 7
 

@@ -83,7 +83,6 @@ gpt_extract_task = GptPdfExtractorOperator(
     rpa_api_conn_id="rpa_api",
     endpoint="/rpa/pdf/extract-gpt",
     timeout=300,
-    save_extracted_data=False,  # Set to True if you want to save to rpa_extracted_data table
     dag=dag,
 )
 

@@ -169,6 +169,27 @@ Wait For BlockUI Overlay To Disappear
         END
     END
 
+Wait For Toast To Disappear
+    [Documentation]    Wait for toast notifications to disappear before attempting to click elements. Handles toast-success, toast-error, and other toast types.
+    ${toast_xpath}=    Set Variable    xpath=//div[contains(@class, "toast")]
+    ${toast_visible}=    Run Keyword And Return Status    Page Should Contain Element    ${toast_xpath}    timeout=2s
+    IF    ${toast_visible}
+        # Check if toast is actually visible (not hidden)
+        ${toast_displayed}=    Run Keyword And Return Status    Element Should Be Visible    ${toast_xpath}
+        IF    ${toast_displayed}
+            ${disappeared}=    Run Keyword And Return Status    Wait Until Element Is Not Visible    ${toast_xpath}    timeout=10s
+            IF    not ${disappeared}
+                Log    Toast notification did not disappear within 10s timeout, attempting to force dismiss    level=WARN
+                TRY
+                    Execute Javascript    document.querySelectorAll('.toast').forEach(el => { el.style.display = 'none'; el.remove(); });
+                EXCEPT    AS    ${js_error}
+                    Log    Could not force dismiss toast via JavaScript: ${js_error}    level=WARN
+                END
+                Sleep    0.5s
+            END
+        END
+    END
+
 Search And Select Emissor
     [Documentation]    Search for emissor by code and select it. Ensures input is fully entered, Pesquisar is clicked, and results appear before clicking Selecionar.
     [Arguments]    ${emissor_code}=${MULTICTE_EMISSOR_CODE}
@@ -361,12 +382,11 @@ Verify Upload Completion
 Navigate To Canhotos Relatorios
     [Documentation]    Navigate to Canhotos Relatorios menu.
     Wait For Element And Click    xpath=//*[@id="js-nav-menu"]/li[6]/a
-    Sleep    0.5s
+    Wait For BlockUI Overlay To Disappear
     Wait For Element And Click    xpath=//*[@id="js-nav-menu"]/li[6]/ul/li[4]/a
-    Sleep    0.5s
+    Wait For BlockUI Overlay To Disappear
     Wait For Element And Click    xpath=//*[@id="js-nav-menu"]/li[6]/ul/li[4]/ul/li[1]/a
     Wait For BlockUI Overlay To Disappear
-    Sleep    0.5s
 
 Select Report Date
     [Documentation]    Select report date in the date picker.
@@ -398,7 +418,8 @@ Click Report Date Picker
         Set Focus To Element    ${date_picker_xpath}
         Click Element    ${date_picker_xpath}
     END
-    Sleep    0.3s
+    # Minimal sleep for date picker to open - BlockUI wait handles most timing
+    Sleep    0.1s
 
 Input Report Date
     [Documentation]    Input report date into the date picker input field.
@@ -409,14 +430,13 @@ Input Report Date
         ${alt_date_input}=    Set Variable    xpath=//div[contains(@id, "tempus-dominus-append")]/../input
         Wait Until Element Is Visible    ${alt_date_input}    timeout=5s
         Wait For Element And Input Text    ${alt_date_input}    ${report_date}
-        Sleep    0.3s
         Press Keys    ${alt_date_input}    RETURN
     ELSE
         Wait For Element And Input Text    ${date_input_xpath}    ${report_date}
-        Sleep    0.3s
         Press Keys    ${date_input_xpath}    RETURN
     END
-    Sleep    0.3s
+    # Wait for date input to process - BlockUI handles most timing
+    Wait For BlockUI Overlay To Disappear
 
 Select Report Campos
     [Documentation]    Select report campos checkboxes. Uses smart search to find checkboxes by label text. Attempts to click select campos button if needed. Closes campos selection modal after selecting all campos.
@@ -438,7 +458,6 @@ Click Select Campos Button If Needed
     Set Focus To Element    ${select_campos_xpath}
     Click Element    ${select_campos_xpath}
     Wait For BlockUI Overlay To Disappear
-    Sleep    0.3s
 
 Click Select Campos Button To Close
     [Documentation]    Click the select campos button to close campos selection modal. Uses specific ID.
@@ -449,7 +468,6 @@ Click Select Campos Button To Close
     Set Focus To Element    ${select_campos_xpath}
     Click Element    ${select_campos_xpath}
     Wait For BlockUI Overlay To Disappear
-    Sleep    0.3s
 
 Select Campo Checkbox
     [Documentation]    Select a checkbox by its label text. Finds label by exact text match, then uses label's 'for' attribute to locate and click the checkbox input element directly.
@@ -467,8 +485,7 @@ Select Campo Checkbox
                 IF    not ${is_selected}
                     ${checkbox_element}=    Get WebElement    ${checkbox_xpath}
                     Execute Javascript    arguments[0].click();    ARGUMENTS    ${checkbox_element}
-                    Sleep    0.3s
-                    ${verify_selected}=    Run Keyword And Return Status    Checkbox Should Be Selected    ${checkbox_xpath}
+                    ${verify_selected}=    Run Keyword And Return Status    Wait Until Keyword Succeeds    0.5s    0.1s    Checkbox Should Be Selected    ${checkbox_xpath}
                     IF    not ${verify_selected}
                         Scroll Element Into View    ${checkbox_xpath}
                         Set Focus To Element    ${checkbox_xpath}
@@ -498,8 +515,7 @@ Select Campo Checkbox
                     IF    not ${is_selected}
                         ${alt_checkbox_element}=    Get WebElement    ${alt_checkbox_xpath}
                         Execute Javascript    arguments[0].click();    ARGUMENTS    ${alt_checkbox_element}
-                        Sleep    0.3s
-                        ${verify_selected}=    Run Keyword And Return Status    Checkbox Should Be Selected    ${alt_checkbox_xpath}
+                        ${verify_selected}=    Run Keyword And Return Status    Wait Until Keyword Succeeds    0.5s    0.1s    Checkbox Should Be Selected    ${alt_checkbox_xpath}
                         IF    not ${verify_selected}
                             Scroll Element Into View    ${alt_checkbox_xpath}
                             Set Focus To Element    ${alt_checkbox_xpath}
@@ -524,8 +540,7 @@ Select Campo Checkbox
                 IF    not ${is_selected}
                     ${generic_checkbox_element}=    Get WebElement    ${generic_checkbox}
                     Execute Javascript    arguments[0].click();    ARGUMENTS    ${generic_checkbox_element}
-                    Sleep    0.3s
-                    ${verify_selected}=    Run Keyword And Return Status    Checkbox Should Be Selected    ${generic_checkbox}
+                    ${verify_selected}=    Run Keyword And Return Status    Wait Until Keyword Succeeds    0.5s    0.1s    Checkbox Should Be Selected    ${generic_checkbox}
                     IF    not ${verify_selected}
                         Scroll Element Into View    ${generic_checkbox}
                         Set Focus To Element    ${generic_checkbox}
@@ -537,10 +552,9 @@ Select Campo Checkbox
             END
         END
     END
-    Sleep    0.2s
 
 Generate Excel Report
-    [Documentation]    Click the Generate Excel button. Uses smart search to find button by stable attributes.
+    [Documentation]    Click the Generate Excel button. Uses smart search to find button by stable attributes. Just clicks, doesn't wait for completion.
     Wait For BlockUI Overlay To Disappear
     ${excel_button_xpath}=    Set Variable    xpath=//button[@id="a9cbbb64ad0bae8d8d3162877dd9e125f"]
     ${button_found}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${excel_button_xpath}    timeout=8s
@@ -563,11 +577,10 @@ Generate Excel Report
         Set Focus To Element    ${excel_button_xpath}
         Click Element    ${excel_button_xpath}
     END
-    Wait For BlockUI Overlay To Disappear
-    Sleep    1s
+    # Just click, don't wait - browser will close immediately
 
 Generate PDF Report
-    [Documentation]    Click the Generate PDF button. Uses smart search to find button by stable attributes.
+    [Documentation]    Click the Generate PDF button. Uses smart search to find button by stable attributes. Just clicks, doesn't wait for toast or completion.
     Wait For BlockUI Overlay To Disappear
     ${pdf_button_xpath}=    Set Variable    xpath=//button[@id="a594409f5625e099ffab6bc85fee17d93"]
     ${button_found}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${pdf_button_xpath}    timeout=8s
@@ -590,8 +603,7 @@ Generate PDF Report
         Set Focus To Element    ${pdf_button_xpath}
         Click Element    ${pdf_button_xpath}
     END
-    Wait For BlockUI Overlay To Disappear
-    Sleep    1s
+    # Just click, don't wait for toast - browser will close immediately
 
 Select Report
     [Documentation]    Click search button, select relatorio padrao from table, and filter table to show only relatorio padrao.
@@ -620,7 +632,6 @@ Click Report Search Button
         Wait For Element And Click    ${search_button_xpath}
     END
     Wait For BlockUI Overlay To Disappear
-    Sleep    0.3s
 
 Select Relatorio Padrao
     [Documentation]    Select relatorio padrao from the table using XPath.
@@ -629,7 +640,7 @@ Select Relatorio Padrao
     Wait Until Element Is Visible    ${relatorio_padrao_xpath}    timeout=12s
     Scroll Element Into View    ${relatorio_padrao_xpath}
     Wait For Element And Click    ${relatorio_padrao_xpath}
-    Sleep    0.3s
+    Wait For BlockUI Overlay To Disappear
 
 Filter Table To Relatorio Padrao
     [Documentation]    Filter table to show only rows where value equals relatorio padrao.

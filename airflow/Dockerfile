@@ -23,6 +23,7 @@ RUN pip install --no-cache-dir \
     boto3 \
     pypdf \
     pymupdf \
+    pdfplumber \
     pytesseract \
     pillow \
     fpdf2 \

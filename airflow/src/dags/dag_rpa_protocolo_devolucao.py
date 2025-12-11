@@ -12,8 +12,11 @@ from operators.saga_operator import SagaOperator
 from operators.gpt_pdf_extractor_operator import GptPdfExtractorOperator
 from operators.protocolo_pdf_generator_operator import ProtocoloPdfGeneratorOperator
 from services.webhook import WebhookSensor
-from tasks.tasks_rpa_protocolo_devolucao import (
+from tasks.protocolo_devolucao.convert_xls_to_json import (
     convert_xls_to_json_task,
+)
+from tasks.protocolo_devolucao.categorize_protocolo_devolucao import (
+    categorize_protocolo_devolucao_task,
 )
 
 logger = logging.getLogger(__name__)
@@ -97,7 +100,6 @@ gpt_pdf_extractor_task = GptPdfExtractorOperator(
     output_dir="/opt/airflow/data/processado",
     rpa_api_conn_id="rpa_api",
     timeout=300,
-    save_extracted_data=True,
     dag=dag,
 )
 
@@ -105,6 +107,12 @@ generate_protocolo_pdf_task = ProtocoloPdfGeneratorOperator(
     task_id="generate_protocolo_pdf",
     processado_dir="/opt/airflow/data/processado",  # Directory where doc_transportes folders are located
     rpa_api_conn_id="rpa_api",
+    dag=dag,
+)
+
+categorize_task = PythonOperator(
+    task_id="categorize_protocolo_devolucao",
+    python_callable=categorize_protocolo_devolucao_task,
     dag=dag,
 )
 
@@ -165,6 +173,7 @@ complete_saga_task_op = SagaOperator(
  >> rotate_task
  >> gpt_pdf_extractor_task
  >> generate_protocolo_pdf_task
+ >> categorize_task
  >> robot_upload_multi_cte_task
  >> wait_for_upload_multi_cte_webhook
  >> robot_download_multi_cte_reports_task

@@ -88,7 +88,8 @@ Configure Screenshot Directory
     [Documentation]    Configure screenshot directory to save screenshots in results folder (OUTPUT_DIR).
     ...                This ensures screenshots are saved in the results folder, not the root folder.
     ${output_dir}=    Get Variable Value    ${OUTPUT_DIR}    ${EMPTY}
-    IF    '${output_dir}' == '${EMPTY}'
+    ${is_empty}=    Run Keyword And Return Status    Should Be Equal    ${output_dir}    ${EMPTY}
+    IF    ${is_empty}
         # Fallback: try to use results directory relative to current directory
         ${results_dir}=    Evaluate    os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(r"${CURDIR}")))), "results")    os
         ${results_dir_abs}=    Evaluate    os.path.abspath(r"${results_dir}")    os
@@ -103,7 +104,8 @@ Cleanup Screenshots
     [Documentation]    Clean up all selenium screenshots from the results folder after test execution.
     ...                This should be called in Suite Teardown or Test Teardown.
     ${output_dir}=    Get Variable Value    ${OUTPUT_DIR}    ${EMPTY}
-    IF    '${output_dir}' == '${EMPTY}'
+    ${is_empty}=    Run Keyword And Return Status    Should Be Equal    ${output_dir}    ${EMPTY}
+    IF    ${is_empty}
         # Fallback: try to use results directory relative to current directory
         ${results_dir}=    Evaluate    os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(r"${CURDIR}")))), "results")    os
         ${results_dir_abs}=    Evaluate    os.path.abspath(r"${results_dir}")    os

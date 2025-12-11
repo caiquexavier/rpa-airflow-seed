@@ -3,6 +3,7 @@ Resource    ${CURDIR}/../resources/infra/browser_keywords.robot
 Resource    ${CURDIR}/../resources/domain/multicte_keywords.robot
 Resource    ${CURDIR}/../resources/saga/saga_context_keywords.robot
 Library           ${CURDIR}/../libs/saga_client.py
+Library           ${CURDIR}/../libs/file_helper.py
 Library           JSONLibrary
 Library           Collections
 Variables        ${CURDIR}/../variables/centro_access.py
@@ -17,11 +18,13 @@ Test Setup    Configure Screenshot Directory
 
 *** Test Cases ***
 Upload Multi CTE For Emissor
-    [Documentation]    Upload Multi CTE files for each emissor in doc_transportes_list.
-    ...                Uses saga data if available, otherwise falls back to DEFAULT_DOC_TRANSPORTES_LIST.
+    [Documentation]    Upload Multi CTE files for each subfolder in aprovados directory.
+    ...                Each subfolder name is treated as doc_transportes ID.
+    ...                Matches folder name with saga data to get centro_distribuicao.
     ...                Each doc_transportes entry is processed in a separate browser session.
-    ${doc_transportes_list}=    Get Doc Transportes List With Fallback
-    Should Not Be Empty    ${doc_transportes_list}    doc_transportes_list não encontrado e nenhum valor padrão disponível
+    ...                Skips rejeitados and Nao processados folders.
+    ${doc_transportes_list}=    Get Doc Transportes List From Aprovados
+    Should Not Be Empty    ${doc_transportes_list}    Nenhum subfolder encontrado em aprovados
     
     ${response_list}=    Process All Doc Transportes Entries    ${doc_transportes_list}
     ${final_response}=    Create Dictionary    doc_transportes_list=${response_list}
@@ -32,8 +35,104 @@ Initialize Test Suite
     [Documentation]    Initialize test suite: configure screenshots to save in results folder.
     Configure Screenshot Directory
 
+Get Doc Transportes List From Aprovados
+    [Documentation]    Get doc_transportes_list from aprovados subfolders, matching with saga data to get centro_distribuicao.
+    ...                Each subfolder name in aprovados is treated as doc_transportes ID.
+    ...                Uses fallback saga data if saga data is not available.
+    ${aprovados_folders}=    Get Aprovados Subfolders
+    Should Not Be Empty    ${aprovados_folders}    Nenhum subfolder encontrado em aprovados
+    
+    ${saga_data}=    Get Saga Data Variable
+    ${saga_doc_list}=    Extract Doc Transportes List From Saga    ${saga_data}
+    
+    # Use fallback if saga data is not available or empty
+    IF    ${saga_doc_list} == ${None}
+        Log    Saga data não disponível. Usando fallback DEFAULT_DOC_TRANSPORTES_LIST.    level=INFO
+        ${saga_doc_list}=    Create Default Doc Transportes List
+    ELSE
+        ${is_empty}=    Run Keyword And Return Status    Should Be Empty    ${saga_doc_list}
+        IF    ${is_empty}
+            Log    Saga data está vazia. Usando fallback DEFAULT_DOC_TRANSPORTES_LIST.    level=INFO
+            ${saga_doc_list}=    Create Default Doc Transportes List
+        END
+    END
+    
+    ${doc_transportes_list}=    Create List
+    FOR    ${folder_name}    IN    @{aprovados_folders}
+        ${doc_entry}=    Create Doc Entry From Folder Name    ${folder_name}    ${saga_doc_list}
+        IF    ${doc_entry} != ${None}
+            Append To List    ${doc_transportes_list}    ${doc_entry}
+            Log    Adicionado DOC ${folder_name} à lista de processamento    level=INFO
+        ELSE
+            Log    Não foi possível criar doc_entry para folder ${folder_name} - centro_distribuicao não encontrado na saga ou fallback    level=WARN
+        END
+    END
+    
+    RETURN    ${doc_transportes_list}
+
+Get Aprovados Subfolders
+    [Documentation]    Get list of subfolder names (doc_transportes IDs) from aprovados directory.
+    ${subfolders}=    Evaluate    file_helper.get_aprovados_subfolders()    modules=file_helper
+    ${count}=    Get Length    ${subfolders}
+    Log    Encontrados ${count} subfolders em aprovados: ${subfolders}    level=INFO
+    RETURN    ${subfolders}
+
+Create Doc Entry From Folder Name
+    [Arguments]    ${folder_name}    ${saga_doc_list}
+    [Documentation]    Create doc_entry from folder name, matching with saga data (or fallback) to get centro_distribuicao.
+    ...                Returns None if centro_distribuicao cannot be found in saga data or fallback.
+    ...                Note: saga_doc_list should already be populated with fallback data if saga data was not available.
+    IF    ${saga_doc_list} == ${None}
+        Log    saga_doc_list é None - não é possível obter centro_distribuicao para ${folder_name}    level=WARN
+        RETURN    ${None}
+    END
+    
+    ${is_empty}=    Run Keyword And Return Status    Should Be Empty    ${saga_doc_list}
+    IF    ${is_empty}
+        Log    saga_doc_list está vazio - não é possível obter centro_distribuicao para ${folder_name}    level=WARN
+        RETURN    ${None}
+    END
+    
+    # Search for matching doc_transportes in saga data (or fallback)
+    ${matched_entry}=    Find Doc Entry In Saga List    ${folder_name}    ${saga_doc_list}
+    IF    ${matched_entry} == ${None}
+        Log    DOC ${folder_name} não encontrado na saga data ou fallback - centro_distribuicao não disponível    level=WARN
+        RETURN    ${None}
+    END
+    
+    # Extract centro_distribuicao from matched entry
+    ${has_centro}=    Run Keyword And Return Status    Dictionary Should Contain Key    ${matched_entry}    centro_distribuicao
+    IF    not ${has_centro}
+        Log    centro_distribuicao não encontrado no entry da saga para DOC ${folder_name}    level=WARN
+        RETURN    ${None}
+    END
+    
+    ${centro_distribuicao}=    Get From Dictionary    ${matched_entry}    centro_distribuicao
+    ${doc_entry}=    Create Dictionary    doc_transportes=${folder_name}    centro_distribuicao=${centro_distribuicao}
+    
+    # Optionally include nf_e if available
+    ${has_nf_e}=    Run Keyword And Return Status    Dictionary Should Contain Key    ${matched_entry}    nf_e
+    IF    ${has_nf_e}
+        ${nf_e}=    Get From Dictionary    ${matched_entry}    nf_e
+        Set To Dictionary    ${doc_entry}    nf_e=${nf_e}
+    END
+    
+    RETURN    ${doc_entry}
+
+Find Doc Entry In Saga List
+    [Arguments]    ${doc_transportes_id}    ${saga_doc_list}
+    [Documentation]    Find doc_entry in saga doc_transportes_list matching the doc_transportes_id.
+    FOR    ${entry}    IN    @{saga_doc_list}
+        ${entry_doc_id}=    Get From Dictionary    ${entry}    doc_transportes
+        IF    '${entry_doc_id}' == '${doc_transportes_id}'
+            RETURN    ${entry}
+        END
+    END
+    RETURN    ${None}
+
 Get Doc Transportes List With Fallback
     [Documentation]    Get doc_transportes_list from saga data, or use default fallback if saga is not present.
+    ...                DEPRECATED: Use Get Doc Transportes List From Aprovados instead.
     ${saga_data}=    Get Saga Data Variable
     ${doc_transportes_list}=    Extract Doc Transportes List From Saga    ${saga_data}
     

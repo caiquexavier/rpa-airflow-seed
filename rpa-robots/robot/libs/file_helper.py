@@ -17,17 +17,17 @@ except ImportError:
 
 def get_pdf_files_for_doc_transportes(doc_transportes: str, exclude_pod: bool = True) -> List[str]:
     """
-    Get all PDF files for a doc_transportes from processado folder, excluding POD files.
+    Get all PDF files for a doc_transportes from aprovados/{doc_transportes} folder, excluding POD files.
     
     Args:
-        doc_transportes: The doc_transportes ID (e.g., "96722724")
+        doc_transportes: The doc_transportes ID (e.g., "96802793")
         exclude_pod: If True, exclude files containing "POD" in the name (case-insensitive)
     
     Returns:
         List of absolute file paths to PDF files
     """
     processado_dir = path_config.get_processado_dir()
-    doc_folder = processado_dir / doc_transportes
+    doc_folder = processado_dir / "aprovados" / doc_transportes
     
     if not doc_folder.exists():
         return []
@@ -47,16 +47,16 @@ def get_pdf_files_for_doc_transportes(doc_transportes: str, exclude_pod: bool = 
 
 def get_processado_folder_path(doc_transportes: str) -> str:
     """
-    Get the absolute path to the processado folder for a doc_transportes.
+    Get the absolute path to the aprovados/{doc_transportes} folder.
     
     Args:
-        doc_transportes: The doc_transportes ID (e.g., "96722724")
+        doc_transportes: The doc_transportes ID (e.g., "96802793")
     
     Returns:
-        Absolute path to the folder
+        Absolute path to the aprovados/{doc_transportes} folder
     """
     processado_dir = path_config.get_processado_dir()
-    doc_folder = processado_dir / doc_transportes
+    doc_folder = processado_dir / "aprovados" / doc_transportes
     return str(doc_folder.absolute())
 
 
@@ -72,3 +72,40 @@ def join_file_paths_for_upload(file_paths: List[str]) -> str:
     """
     return "\n".join(file_paths)
 
+
+def get_aprovados_subfolders() -> List[str]:
+    """
+    Get list of subfolder names (doc_transportes IDs) from aprovados directory.
+    
+    Returns:
+        List of doc_transportes IDs (folder names) found in aprovados directory
+    """
+    processado_dir = path_config.get_processado_dir()
+    aprovados_dir = processado_dir / "aprovados"
+    
+    if not aprovados_dir.exists():
+        return []
+    
+    subfolders = []
+    for item in aprovados_dir.iterdir():
+        if item.is_dir():
+            subfolders.append(item.name)
+    
+    # Sort for consistent ordering
+    subfolders.sort()
+    return subfolders
+
+
+def get_processado_folder_path_from_aprovados(doc_transportes: str) -> str:
+    """
+    Get the absolute path to the aprovados/{doc_transportes} folder.
+    
+    Args:
+        doc_transportes: The doc_transportes ID (e.g., "96802793")
+    
+    Returns:
+        Absolute path to the aprovados/{doc_transportes} folder
+    """
+    processado_dir = path_config.get_processado_dir()
+    doc_folder = processado_dir / "aprovados" / doc_transportes
+    return str(doc_folder.absolute())

@@ -23,6 +23,8 @@ def _extracted_data_to_dict(entity: ExtractedData) -> Dict[str, Any]:
     return {
         "id": entity.id,
         "saga_id": entity.saga_id,
+        "identifier": entity.identifier,
+        "identifier_code": entity.identifier_code,
         "metadata": entity.metadata,
         "created_at": entity.created_at.isoformat()
     }
@@ -38,7 +40,12 @@ def handle_create_extracted_data(payload: CreateExtractedDataRequest) -> Dict[st
     Returns:
         Response dictionary
     """
-    record_id = create_extracted_metadata(payload.saga_id, payload.metadata)
+    record_id = create_extracted_metadata(
+        payload.saga_id, 
+        payload.metadata,
+        payload.identifier,
+        payload.identifier_code
+    )
     
     if not record_id:
         raise Exception("Failed to create extracted data record")
@@ -51,6 +58,8 @@ def handle_create_extracted_data(payload: CreateExtractedDataRequest) -> Dict[st
     return {
         "id": created.id,
         "saga_id": created.saga_id,
+        "identifier": created.identifier,
+        "identifier_code": created.identifier_code,
         "metadata": created.metadata,
         "created_at": created.created_at.isoformat(),
         "message": "Extracted data created successfully"
@@ -118,6 +127,8 @@ def handle_update_extracted_data(id: int, payload: UpdateExtractedDataRequest) -
     return {
         "id": entity.id,
         "saga_id": entity.saga_id,
+        "identifier": entity.identifier,
+        "identifier_code": entity.identifier_code,
         "metadata": entity.metadata,
         "created_at": entity.created_at.isoformat(),
         "message": "Extracted data updated successfully"

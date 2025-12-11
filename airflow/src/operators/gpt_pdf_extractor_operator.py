@@ -82,9 +82,14 @@ class GptPdfExtractorOperator(BaseOperator):
     1. Reads PNG files from the rotated folder
     2. Extracts data from rotated images using GPT Vision
     3. Saves renamed files with doc_transporte_nf_e.pdf naming convention
+    4. Saves extracted data to rpa_extracted_data database table (identifier="NF-E", identifier_code=nf_e)
+    5. Stores only data_entrega field in saga.data.data_entrega (all other fields in database only)
     
     The operator can run with or without saga data. If saga is not available, it uses a default
     fallback doc_transportes_list for file organization.
+    
+    Extracted data is always saved to the database. Uniqueness is enforced by database constraint
+    on (saga_id, identifier_code). Only data_entrega is stored in saga for backward compatibility.
     
     Args:
         folder_path: Path to directory containing PNG files (rotated images) to process
@@ -94,7 +99,6 @@ class GptPdfExtractorOperator(BaseOperator):
         rpa_api_conn_id: Connection ID for RPA API (default: "rpa_api")
         endpoint: API endpoint for GPT extraction service (default: "/rpa/pdf/extract-gpt")
         timeout: Request timeout in seconds (default: 300)
-        save_extracted_data: If True, saves extracted JSON to rpa_extracted_data table via rpa-api (default: False)
     """
 
     def __init__(
@@ -105,7 +109,6 @@ class GptPdfExtractorOperator(BaseOperator):
         rpa_api_conn_id: str = "rpa_api",
         endpoint: str = "/rpa/pdf/extract-gpt",
         timeout: int = 300,
-        save_extracted_data: bool = False,
         task_id: Optional[str] = None,
         **kwargs
     ):
@@ -117,7 +120,6 @@ class GptPdfExtractorOperator(BaseOperator):
         self.rpa_api_conn_id = rpa_api_conn_id
         self.endpoint = endpoint
         self.timeout = timeout
-        self.save_extracted_data = save_extracted_data
 
     def execute(self, context: Context) -> Dict[str, Any]:
         """Process PNG files (rotated images) using unified GPT service with extraction."""
@@ -125,6 +127,11 @@ class GptPdfExtractorOperator(BaseOperator):
         
         # Get SAGA from context
         saga = get_saga_from_context(context)
+        if saga:
+            saga_id = saga.get("saga_id")
+            logger.info("Saga available: saga_id=%s, saga_keys=%s", saga_id, list(saga.keys()) if saga else "None")
+        else:
+            logger.warning("Saga not available in context - extracted data will not be saved to database (requires saga_id)")
         
         if not self.folder_path.exists() or not self.folder_path.is_dir():
             raise AirflowException(f"Folder path {self.folder_path} does not exist or is not a directory.")
@@ -158,11 +165,31 @@ class GptPdfExtractorOperator(BaseOperator):
                 results.append(result)
                 processed_count += 1
                 logger.info("Successfully processed PNG: %s", png_file.name)
-                if saga and result.get("success") and result.get("extracted_data"):
-                    self._store_extracted_data_in_saga(saga, result["extracted_data"])
-                    # Save to rpa_extracted_data table if enabled
-                    if self.save_extracted_data:
-                        self._save_extracted_data_to_api(saga, result["extracted_data"])
+                
+                # Always attempt to save extracted data to database if available
+                if result.get("success") and result.get("extracted_data"):
+                    extracted_data = result["extracted_data"]
+                    logger.info("Extracted data available for %s, attempting to save to database", png_file.name)
+                    
+                    if saga:
+                        # Save to database (rpa_extracted_data table)
+                        self._save_extracted_data_to_api(saga, extracted_data)
+                        # Only store data_entrega in saga (not full extracted data)
+                        self._store_data_entrega_in_saga(saga, extracted_data)
+                    else:
+                        logger.warning(
+                            "Saga not available for %s - cannot save extracted data to database (requires saga_id). "
+                            "Extracted data: %s",
+                            png_file.name,
+                            list(extracted_data.keys()) if isinstance(extracted_data, dict) else "invalid"
+                        )
+                else:
+                    logger.warning(
+                        "Cannot save extracted data for %s: success=%s, has_extracted_data=%s",
+                        png_file.name,
+                        result.get("success"),
+                        bool(result.get("extracted_data"))
+                    )
             except Exception as e:
                 failed_count += 1
                 logger.error("Failed to process PNG %s: %s", png_file.name, e)
@@ -538,93 +565,90 @@ class GptPdfExtractorOperator(BaseOperator):
         
         return cleaned
 
-    def _store_extracted_data_in_saga(self, saga: Dict[str, Any], extracted_data: Dict[str, Any]) -> None:
+    def _store_data_entrega_in_saga(self, saga: Dict[str, Any], extracted_data: Dict[str, Any]) -> None:
         """
-        Persist extracted data payloads inside saga.data.extracted_data keyed by nf_e.
-        Avoids duplicates by skipping inserts when the nf_e key already exists.
-        Removes null and empty values before storing.
+        Store only data_entrega field in saga.data.data_entrega keyed by nf_e.
+        All other extracted data is stored in database only.
+        
+        Args:
+            saga: Saga dictionary
+            extracted_data: Extracted data dictionary
         """
         if not saga or not extracted_data:
             return
 
-        # Clean extracted data: remove null and empty values
-        cleaned_data = self._clean_extracted_data(extracted_data)
-        
-        if not cleaned_data:
-            logger.warning("Extracted data is empty after cleaning; skipping saga persistence")
-            return
-
-        nf_value = cleaned_data.get("nf_e")
+        nf_value = extracted_data.get("nf_e")
         if nf_value is None:
-            logger.warning("Extracted data missing nf_e field; skipping saga persistence")
+            logger.debug("Extracted data missing nf_e field; skipping data_entrega storage in saga")
             return
 
         nf_key = str(nf_value).strip()
         if not nf_key:
-            logger.warning("Extracted data contains empty nf_e value; skipping saga persistence")
+            logger.debug("Extracted data contains empty nf_e value; skipping data_entrega storage in saga")
+            return
+
+        # Extract only data_entrega field
+        data_entrega = extracted_data.get("data_entrega")
+        if not data_entrega:
+            logger.debug("No data_entrega field found in extracted data for NF-e %s", nf_key)
             return
 
         saga.setdefault("data", {})
-        extracted_bucket = saga["data"].setdefault("extracted_data", {})
+        data_entrega_bucket = saga["data"].setdefault("data_entrega", {})
         
-        if not isinstance(extracted_bucket, dict):
+        if not isinstance(data_entrega_bucket, dict):
             logger.warning(
-                "Unexpected saga.data.extracted_data type %s; resetting to dict for keyed storage",
-                type(extracted_bucket).__name__,
+                "Unexpected saga.data.data_entrega type %s; resetting to dict",
+                type(data_entrega_bucket).__name__,
             )
-            extracted_bucket = {}
-            saga["data"]["extracted_data"] = extracted_bucket
+            data_entrega_bucket = {}
+            saga["data"]["data_entrega"] = data_entrega_bucket
 
-        if nf_key in extracted_bucket:
-            logger.info("Saga already has extracted data for NF-e %s; skipping duplicate insert", nf_key)
-            return
-
-        extracted_bucket[nf_key] = cleaned_data
-        logger.info("Stored cleaned extracted data for NF-e %s into saga.data.extracted_data", nf_key)
+        # Store data_entrega keyed by nf_e
+        data_entrega_bucket[nf_key] = data_entrega
+        logger.info("Stored data_entrega for NF-e %s into saga.data.data_entrega", nf_key)
 
     def _save_extracted_data_to_api(self, saga: Dict[str, Any], extracted_data: Dict[str, Any]) -> None:
         """
         Save extracted data to rpa_extracted_data table via rpa-api.
         
-        Only saves if save_extracted_data=True and saga has valid saga_id.
-        Preserves existing duplicate-removal logic by checking nf_e before saving.
-        """
-        if not self.save_extracted_data:
-            return
+        Always saves to database (not saga). Uses identifier="NF-E" and identifier_code=nf_e.
+        Uniqueness is enforced by database constraint on (saga_id, identifier_code).
         
+        Args:
+            saga: Saga dictionary (must have saga_id)
+            extracted_data: Extracted data dictionary (must have nf_e)
+        """
         saga_id = saga.get("saga_id")
         if not saga_id:
-            logger.warning("Cannot save extracted data: saga missing saga_id")
+            logger.error("CRITICAL: Cannot save extracted data: saga missing saga_id. Saga keys: %s", list(saga.keys()) if saga else "None")
             return
         
         if not extracted_data:
-            logger.warning("Cannot save extracted data: extracted_data is empty")
+            logger.error("CRITICAL: Cannot save extracted data: extracted_data is empty")
             return
+        
+        logger.debug("Preparing to save extracted data: saga_id=%s, extracted_data_keys=%s", saga_id, list(extracted_data.keys()))
         
         # Clean extracted data: remove null and empty values
         cleaned_data = self._clean_extracted_data(extracted_data)
         
         if not cleaned_data:
-            logger.warning("Extracted data is empty after cleaning; skipping API persistence")
+            logger.error("CRITICAL: Extracted data is empty after cleaning; skipping API persistence")
             return
         
-        # Apply same duplicate-removal logic as _store_extracted_data_in_saga
+        # Extract and clean nf_e value for identifier_code
         nf_value = cleaned_data.get("nf_e")
         if nf_value is None:
-            logger.warning("Extracted data missing nf_e field; skipping API persistence")
+            logger.error("CRITICAL: Extracted data missing nf_e field; skipping API persistence. Available fields: %s", list(cleaned_data.keys()))
             return
         
-        nf_key = str(nf_value).strip()
+        nf_key = self._clean_nf_e_value(nf_value)
         if not nf_key:
-            logger.warning("Extracted data contains empty nf_e value; skipping API persistence")
+            logger.error("CRITICAL: Extracted data contains empty nf_e value after cleaning; skipping API persistence. Original nf_e value: %s", nf_value)
             return
         
-        # Check if already saved (via saga.data.extracted_data)
-        saga.setdefault("data", {})
-        extracted_bucket = saga["data"].get("extracted_data", {})
-        if isinstance(extracted_bucket, dict) and nf_key in extracted_bucket:
-            logger.info("Extracted data for NF-e %s already exists in saga; skipping API save", nf_key)
-            return
+        logger.info("Saving extracted data to database: saga_id=%s, nf_e=%s, identifier=NF-E", saga_id, nf_key)
         
         try:
             conn = BaseHook.get_connection(self.rpa_api_conn_id)
@@ -632,6 +656,8 @@ class GptPdfExtractorOperator(BaseOperator):
             
             payload = {
                 "saga_id": saga_id,
+                "identifier": "NF-E",
+                "identifier_code": nf_key,
                 "metadata": cleaned_data
             }
             
@@ -645,12 +671,18 @@ class GptPdfExtractorOperator(BaseOperator):
             
             result = response.json()
             record_id = result.get("id")
-            logger.info("Successfully saved extracted data for NF-e %s to rpa_extracted_data (id=%s)", nf_key, record_id)
+            logger.info(
+                "✓ Successfully saved extracted data for NF-e %s to rpa_extracted_data (id=%s, identifier=NF-E, identifier_code=%s, saga_id=%s)",
+                nf_key, record_id, nf_key, saga_id
+            )
         except requests.exceptions.HTTPError as e:
             error_msg = f"HTTP error saving extracted data for NF-e {nf_key}"
             if hasattr(e.response, 'text'):
                 error_msg += f": {e.response.text}"
             logger.error("%s: %s", error_msg, e)
+            # Check if it's a duplicate (unique constraint violation)
+            if hasattr(e.response, 'status_code') and e.response.status_code == 422:
+                logger.warning("Record with saga_id=%s and identifier_code=%s already exists; skipping duplicate", saga_id, nf_key)
             # Don't raise - allow operator to continue even if API save fails
         except requests.exceptions.RequestException as e:
             logger.error("Request error saving extracted data for NF-e %s: %s", nf_key, e)

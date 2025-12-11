@@ -11,6 +11,7 @@ openpyxl
 xlrd
 pypdf
 pymupdf
+pdfplumber
 pytesseract
 pillow
 fpdf2
