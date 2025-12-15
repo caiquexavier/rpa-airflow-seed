@@ -55,13 +55,13 @@ locator.waitFor: Timeout 3000ms exceeded.
 Call log:
 [2m  - waiting for locator('xpath=/html/body/div/div/div[3]/form/div[1]/div[1]/div[2]/div[2]/input') to be visible[22m
 
-    at waitForElementState (C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\venv\Lib\site-packages\Browser\wrapper\index.js:11480:19)
-    at async PlaywrightServer.waitForElementsState (C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\venv\Lib\site-packages\Browser\wrapper\index.js:13381:28) {
+    at waitForElementState (C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\venv\Lib\site-packages\Browser\wrapper\index.js:11480:19)
+    at async PlaywrightServer.waitForElementsState (C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\venv\Lib\site-packages\Browser\wrapper\index.js:13381:28) {
   name: 'TimeoutError'
 }
 =============================================================
 {"level":30,"time":"2025-10-16T21:59:36.179Z","pid":20948,"hostname":"caiquepc","msg":"Start of node method takeScreenshot"}
-{"level":30,"time":"2025-10-16T21:59:36.179Z","pid":20948,"hostname":"caiquepc","Take screenshot with options: ":{"path":"C:\\Users\\caiqu\\Documents\\workspace\\rpa-airflow-seed\\rpa-robots\\browser\\screenshot\\fail-screenshot-1.png","fileType":"png","fullPage":false,"timeout":10000,"omitBackground":false}}
+{"level":30,"time":"2025-10-16T21:59:36.179Z","pid":20948,"hostname":"caiquepc","Take screenshot with options: ":{"path":"C:\\Users\\caiqu\\Documents\\workspace\\globalti-rpa-cma\\rpa-robots\\browser\\screenshot\\fail-screenshot-1.png","fileType":"png","fullPage":false,"timeout":10000,"omitBackground":false}}
 {"level":30,"time":"2025-10-16T21:59:36.379Z","pid":20948,"hostname":"caiquepc","msg":"End of node method takeScreenshot"}
 {"level":30,"time":"2025-10-16T21:59:36.390Z","pid":20948,"hostname":"caiquepc","msg":"Start of node method getBrowserCatalog"}
 {"level":30,"time":"2025-10-16T21:59:36.393Z","pid":20948,"hostname":"caiquepc","msg":"End of node method getBrowserCatalog"}

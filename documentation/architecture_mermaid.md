@@ -1,4 +1,4 @@
-# RPA-Airflow Seed Architecture - AWS EC2 Windows Deployment with Secrets Manager
+# GlobalTI RPA CMA Architecture - AWS EC2 Windows Deployment with Secrets Manager
 
 ```mermaid
 graph TB

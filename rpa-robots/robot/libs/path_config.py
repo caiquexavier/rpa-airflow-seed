@@ -1,8 +1,8 @@
 """
 Path configuration for RPA robots.
 
-This module provides centralized path handling for the rpa-airflow-seed project.
-It automatically detects the project root by searching for 'rpa-airflow-seed' in the path,
+This module provides centralized path handling for the globalti-rpa-cma project.
+It automatically detects the project root by searching for 'globalti-rpa-cma' in the path,
 ensuring consistent path resolution regardless of where the code is executed from.
 """
 import os
@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Optional
 
 # Project root identifier - change this if the project is renamed
-PROJECT_ROOT_NAME = "rpa-airflow-seed"
+PROJECT_ROOT_NAME = "globalti-rpa-cma"
 
 # Cached project root path (computed once on first access)
 _project_root: Optional[Path] = None

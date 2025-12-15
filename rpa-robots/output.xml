@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <robot generator="Robot 7.1.1 (Python 3.11.9 on win32)" generated="2025-12-10T21:14:24.870704" rpa="false" schemaversion="5">
-<suite id="s1" name="Download-Multi-Cte-Reports" source="C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\robot\tests\download-multi-cte-reports.robot">
+<suite id="s1" name="Download-Multi-Cte-Reports" source="C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\robot\tests\download-multi-cte-reports.robot">
 <kw name="Initialize Test Suite" type="SETUP">
 <kw name="Configure Screenshot Directory" owner="browser_keywords">
 <kw name="Get Variable Value" owner="BuiltIn">
-<msg time="2025-12-10T21:14:25.212823" level="INFO">${output_dir} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots</msg>
+<msg time="2025-12-10T21:14:25.212823" level="INFO">${output_dir} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots</msg>
 <var>${output_dir}</var>
 <arg>${OUTPUT_DIR}</arg>
 <arg>${EMPTY}</arg>
@@ -13,11 +13,11 @@
 </kw>
 <kw name="Run Keyword And Return Status" owner="BuiltIn">
 <kw name="Should Be Equal" owner="BuiltIn">
-<msg time="2025-12-10T21:14:25.217154" level="FAIL">C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots != </msg>
+<msg time="2025-12-10T21:14:25.217154" level="FAIL">C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots != </msg>
 <arg>${output_dir}</arg>
 <arg>${EMPTY}</arg>
 <doc>Fails if the given objects are unequal.</doc>
-<status status="FAIL" start="2025-12-10T21:14:25.212823" elapsed="0.004331">C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots != </status>
+<status status="FAIL" start="2025-12-10T21:14:25.212823" elapsed="0.004331">C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots != </status>
 </kw>
 <msg time="2025-12-10T21:14:25.217154" level="INFO">${is_empty} = False</msg>
 <var>${is_empty}</var>
@@ -31,7 +31,7 @@
 <branch type="IF" condition="${is_empty}">
 <kw name="Evaluate" owner="BuiltIn">
 <var>${results_dir}</var>
-<arg>os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(r"C:\\Users\\caiqu\\Documents\\workspace\\rpa-airflow-seed\\rpa-robots\\robot\\resources\\infra")))), "results")</arg>
+<arg>os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(r"C:\\Users\\caiqu\\Documents\\workspace\\globalti-rpa-cma\\rpa-robots\\robot\\resources\\infra")))), "results")</arg>
 <arg>os</arg>
 <doc>Evaluates the given expression in Python and returns the result.</doc>
 <status status="NOT RUN" start="2025-12-10T21:14:25.217154" elapsed="0.000000"/>
@@ -63,7 +63,7 @@
 <status status="PASS" start="2025-12-10T21:14:25.217154" elapsed="0.000000"/>
 </kw>
 <kw name="Log" owner="BuiltIn">
-<msg time="2025-12-10T21:14:25.217154" level="INFO">Screenshot directory set to: C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots</msg>
+<msg time="2025-12-10T21:14:25.217154" level="INFO">Screenshot directory set to: C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots</msg>
 <arg>Screenshot directory set to: ${output_dir}</arg>
 <arg>level=INFO</arg>
 <doc>Logs the given message with the given level.</doc>
@@ -83,7 +83,7 @@ This ensures screenshots are saved in the results folder, not the root folder.</
 <test id="s1-t1" name="Download Multi CTE Reports" line="20">
 <kw name="Configure Screenshot Directory" owner="browser_keywords" type="SETUP">
 <kw name="Get Variable Value" owner="BuiltIn">
-<msg time="2025-12-10T21:14:25.217154" level="INFO">${output_dir} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots</msg>
+<msg time="2025-12-10T21:14:25.217154" level="INFO">${output_dir} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots</msg>
 <var>${output_dir}</var>
 <arg>${OUTPUT_DIR}</arg>
 <arg>${EMPTY}</arg>
@@ -92,11 +92,11 @@ This ensures screenshots are saved in the results folder, not the root folder.</
 </kw>
 <kw name="Run Keyword And Return Status" owner="BuiltIn">
 <kw name="Should Be Equal" owner="BuiltIn">
-<msg time="2025-12-10T21:14:25.217154" level="FAIL">C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots != </msg>
+<msg time="2025-12-10T21:14:25.217154" level="FAIL">C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots != </msg>
 <arg>${output_dir}</arg>
 <arg>${EMPTY}</arg>
 <doc>Fails if the given objects are unequal.</doc>
-<status status="FAIL" start="2025-12-10T21:14:25.217154" elapsed="0.000000">C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots != </status>
+<status status="FAIL" start="2025-12-10T21:14:25.217154" elapsed="0.000000">C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots != </status>
 </kw>
 <msg time="2025-12-10T21:14:25.217154" level="INFO">${is_empty} = False</msg>
 <var>${is_empty}</var>
@@ -110,7 +110,7 @@ This ensures screenshots are saved in the results folder, not the root folder.</
 <branch type="IF" condition="${is_empty}">
 <kw name="Evaluate" owner="BuiltIn">
 <var>${results_dir}</var>
-<arg>os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(r"C:\\Users\\caiqu\\Documents\\workspace\\rpa-airflow-seed\\rpa-robots\\robot\\resources\\infra")))), "results")</arg>
+<arg>os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(r"C:\\Users\\caiqu\\Documents\\workspace\\globalti-rpa-cma\\rpa-robots\\robot\\resources\\infra")))), "results")</arg>
 <arg>os</arg>
 <doc>Evaluates the given expression in Python and returns the result.</doc>
 <status status="NOT RUN" start="2025-12-10T21:14:25.217154" elapsed="0.000000"/>
@@ -142,7 +142,7 @@ This ensures screenshots are saved in the results folder, not the root folder.</
 <status status="PASS" start="2025-12-10T21:14:25.217154" elapsed="0.004716"/>
 </kw>
 <kw name="Log" owner="BuiltIn">
-<msg time="2025-12-10T21:14:25.221870" level="INFO">Screenshot directory set to: C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots</msg>
+<msg time="2025-12-10T21:14:25.221870" level="INFO">Screenshot directory set to: C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots</msg>
 <arg>Screenshot directory set to: ${output_dir}</arg>
 <arg>level=INFO</arg>
 <doc>Logs the given message with the given level.</doc>
@@ -795,7 +795,7 @@ Uses fallback saga data if saga data is not available.</doc>
 <kw name="Start Browser Session">
 <kw name="Configure Screenshot Directory" owner="browser_keywords">
 <kw name="Get Variable Value" owner="BuiltIn">
-<msg time="2025-12-10T21:14:25.245180" level="INFO">${output_dir} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots</msg>
+<msg time="2025-12-10T21:14:25.245180" level="INFO">${output_dir} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots</msg>
 <var>${output_dir}</var>
 <arg>${OUTPUT_DIR}</arg>
 <arg>${EMPTY}</arg>
@@ -804,11 +804,11 @@ Uses fallback saga data if saga data is not available.</doc>
 </kw>
 <kw name="Run Keyword And Return Status" owner="BuiltIn">
 <kw name="Should Be Equal" owner="BuiltIn">
-<msg time="2025-12-10T21:14:25.245692" level="FAIL">C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots != </msg>
+<msg time="2025-12-10T21:14:25.245692" level="FAIL">C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots != </msg>
 <arg>${output_dir}</arg>
 <arg>${EMPTY}</arg>
 <doc>Fails if the given objects are unequal.</doc>
-<status status="FAIL" start="2025-12-10T21:14:25.245180" elapsed="0.000512">C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots != </status>
+<status status="FAIL" start="2025-12-10T21:14:25.245180" elapsed="0.000512">C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots != </status>
 </kw>
 <msg time="2025-12-10T21:14:25.246091" level="INFO">${is_empty} = False</msg>
 <var>${is_empty}</var>
@@ -822,7 +822,7 @@ Uses fallback saga data if saga data is not available.</doc>
 <branch type="IF" condition="${is_empty}">
 <kw name="Evaluate" owner="BuiltIn">
 <var>${results_dir}</var>
-<arg>os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(r"C:\\Users\\caiqu\\Documents\\workspace\\rpa-airflow-seed\\rpa-robots\\robot\\resources\\infra")))), "results")</arg>
+<arg>os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(r"C:\\Users\\caiqu\\Documents\\workspace\\globalti-rpa-cma\\rpa-robots\\robot\\resources\\infra")))), "results")</arg>
 <arg>os</arg>
 <doc>Evaluates the given expression in Python and returns the result.</doc>
 <status status="NOT RUN" start="2025-12-10T21:14:25.246091" elapsed="0.000000"/>
@@ -854,7 +854,7 @@ Uses fallback saga data if saga data is not available.</doc>
 <status status="PASS" start="2025-12-10T21:14:25.246091" elapsed="0.000000"/>
 </kw>
 <kw name="Log" owner="BuiltIn">
-<msg time="2025-12-10T21:14:25.247994" level="INFO">Screenshot directory set to: C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots</msg>
+<msg time="2025-12-10T21:14:25.247994" level="INFO">Screenshot directory set to: C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots</msg>
 <arg>Screenshot directory set to: ${output_dir}</arg>
 <arg>level=INFO</arg>
 <doc>Logs the given message with the given level.</doc>
@@ -870,7 +870,7 @@ This ensures screenshots are saved in the results folder, not the root folder.</
 </kw>
 <kw name="Start Browser" owner="browser_keywords">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:14:25.248545" level="INFO">${download_dir} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\shared\downloads</msg>
+<msg time="2025-12-10T21:14:25.248545" level="INFO">${download_dir} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\shared\downloads</msg>
 <var>${download_dir}</var>
 <arg>os.path.abspath(os.path.normpath(r"${DOWNLOAD_DIR}"))</arg>
 <arg>os</arg>
@@ -1068,7 +1068,7 @@ This ensures screenshots are saved in the results folder, not the root folder.</
 <status status="PASS" start="2025-12-10T21:14:25.252928" elapsed="0.000000"/>
 </kw>
 <kw name="Create Dictionary" owner="BuiltIn">
-<msg time="2025-12-10T21:14:25.253918" level="INFO">${prefs} = {'download.default_directory': 'C:\\Users\\caiqu\\Documents\\workspace\\rpa-airflow-seed\\shared\\downloads', 'download.prompt_for_download': False, 'download.directory_upgrade': True, 'profile.defaul...</msg>
+<msg time="2025-12-10T21:14:25.253918" level="INFO">${prefs} = {'download.default_directory': 'C:\\Users\\caiqu\\Documents\\workspace\\globalti-rpa-cma\\shared\\downloads', 'download.prompt_for_download': False, 'download.directory_upgrade': True, 'profile.defaul...</msg>
 <var>${prefs}</var>
 <arg>download.default_directory=${download_dir}</arg>
 <arg>download.prompt_for_download=${False}</arg>
@@ -1230,7 +1230,7 @@ This ensures screenshots are saved in the results folder, not the root folder.</
 </try>
 <kw name="Configure Screenshot Directory" owner="browser_keywords">
 <kw name="Get Variable Value" owner="BuiltIn">
-<msg time="2025-12-10T21:14:26.689598" level="INFO">${output_dir} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots</msg>
+<msg time="2025-12-10T21:14:26.689598" level="INFO">${output_dir} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots</msg>
 <var>${output_dir}</var>
 <arg>${OUTPUT_DIR}</arg>
 <arg>${EMPTY}</arg>
@@ -1239,11 +1239,11 @@ This ensures screenshots are saved in the results folder, not the root folder.</
 </kw>
 <kw name="Run Keyword And Return Status" owner="BuiltIn">
 <kw name="Should Be Equal" owner="BuiltIn">
-<msg time="2025-12-10T21:14:26.689598" level="FAIL">C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots != </msg>
+<msg time="2025-12-10T21:14:26.689598" level="FAIL">C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots != </msg>
 <arg>${output_dir}</arg>
 <arg>${EMPTY}</arg>
 <doc>Fails if the given objects are unequal.</doc>
-<status status="FAIL" start="2025-12-10T21:14:26.689598" elapsed="0.000000">C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots != </status>
+<status status="FAIL" start="2025-12-10T21:14:26.689598" elapsed="0.000000">C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots != </status>
 </kw>
 <msg time="2025-12-10T21:14:26.689598" level="INFO">${is_empty} = False</msg>
 <var>${is_empty}</var>
@@ -1257,7 +1257,7 @@ This ensures screenshots are saved in the results folder, not the root folder.</
 <branch type="IF" condition="${is_empty}">
 <kw name="Evaluate" owner="BuiltIn">
 <var>${results_dir}</var>
-<arg>os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(r"C:\\Users\\caiqu\\Documents\\workspace\\rpa-airflow-seed\\rpa-robots\\robot\\resources\\infra")))), "results")</arg>
+<arg>os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(r"C:\\Users\\caiqu\\Documents\\workspace\\globalti-rpa-cma\\rpa-robots\\robot\\resources\\infra")))), "results")</arg>
 <arg>os</arg>
 <doc>Evaluates the given expression in Python and returns the result.</doc>
 <status status="NOT RUN" start="2025-12-10T21:14:26.689598" elapsed="0.000000"/>
@@ -1289,7 +1289,7 @@ This ensures screenshots are saved in the results folder, not the root folder.</
 <status status="PASS" start="2025-12-10T21:14:26.695131" elapsed="0.000000"/>
 </kw>
 <kw name="Log" owner="BuiltIn">
-<msg time="2025-12-10T21:14:26.695131" level="INFO">Screenshot directory set to: C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots</msg>
+<msg time="2025-12-10T21:14:26.695131" level="INFO">Screenshot directory set to: C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots</msg>
 <arg>Screenshot directory set to: ${output_dir}</arg>
 <arg>level=INFO</arg>
 <doc>Logs the given message with the given level.</doc>
@@ -10732,7 +10732,7 @@ Skips rejeitados and Nao processados folders.</doc>
 </test>
 <kw name="Cleanup Screenshots" owner="browser_keywords" type="TEARDOWN">
 <kw name="Get Variable Value" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.537666" level="INFO">${output_dir} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots</msg>
+<msg time="2025-12-10T21:26:13.537666" level="INFO">${output_dir} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots</msg>
 <var>${output_dir}</var>
 <arg>${OUTPUT_DIR}</arg>
 <arg>${EMPTY}</arg>
@@ -10741,11 +10741,11 @@ Skips rejeitados and Nao processados folders.</doc>
 </kw>
 <kw name="Run Keyword And Return Status" owner="BuiltIn">
 <kw name="Should Be Equal" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.537666" level="FAIL">C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots != </msg>
+<msg time="2025-12-10T21:26:13.537666" level="FAIL">C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots != </msg>
 <arg>${output_dir}</arg>
 <arg>${EMPTY}</arg>
 <doc>Fails if the given objects are unequal.</doc>
-<status status="FAIL" start="2025-12-10T21:26:13.537666" elapsed="0.000000">C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots != </status>
+<status status="FAIL" start="2025-12-10T21:26:13.537666" elapsed="0.000000">C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots != </status>
 </kw>
 <msg time="2025-12-10T21:26:13.537666" level="INFO">${is_empty} = False</msg>
 <var>${is_empty}</var>
@@ -10759,7 +10759,7 @@ Skips rejeitados and Nao processados folders.</doc>
 <branch type="IF" condition="${is_empty}">
 <kw name="Evaluate" owner="BuiltIn">
 <var>${results_dir}</var>
-<arg>os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(r"C:\\Users\\caiqu\\Documents\\workspace\\rpa-airflow-seed\\rpa-robots\\robot\\resources\\infra")))), "results")</arg>
+<arg>os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(r"C:\\Users\\caiqu\\Documents\\workspace\\globalti-rpa-cma\\rpa-robots\\robot\\resources\\infra")))), "results")</arg>
 <arg>os</arg>
 <doc>Evaluates the given expression in Python and returns the result.</doc>
 <status status="NOT RUN" start="2025-12-10T21:26:13.537666" elapsed="0.000000"/>
@@ -10781,7 +10781,7 @@ Skips rejeitados and Nao processados folders.</doc>
 </branch>
 <branch type="ELSE">
 <kw name="Set Variable" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.537666" level="INFO">${cleanup_dir} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots</msg>
+<msg time="2025-12-10T21:26:13.537666" level="INFO">${cleanup_dir} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots</msg>
 <var>${cleanup_dir}</var>
 <arg>${output_dir}</arg>
 <doc>Returns the given values which can then be assigned to a variables.</doc>
@@ -10793,7 +10793,7 @@ Skips rejeitados and Nao processados folders.</doc>
 </if>
 <kw name="Run Keyword And Return Status" owner="BuiltIn">
 <kw name="Directory Should Exist" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.539759" level="INFO" html="true">Directory '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots&lt;/a&gt;' exists.</msg>
+<msg time="2025-12-10T21:26:13.539759" level="INFO" html="true">Directory '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots&lt;/a&gt;' exists.</msg>
 <arg>${cleanup_dir}</arg>
 <doc>Fails unless the given path points to an existing directory.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.537666" elapsed="0.002093"/>
@@ -10839,7 +10839,7 @@ Skips rejeitados and Nao processados folders.</doc>
 <for flavor="IN">
 <iter>
 <kw name="List Files In Directory" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.541266" level="INFO" html="true">Listing contents of directory '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.541266" level="INFO" html="true">Listing contents of directory '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots&lt;/a&gt;'.</msg>
 <msg time="2025-12-10T21:26:13.544121" level="INFO">54 files:
 selenium-screenshot-1.png
 selenium-screenshot-10.png
@@ -10907,7 +10907,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.544121" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-1.png</msg>
+<msg time="2025-12-10T21:26:13.544121" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-1.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -10915,7 +10915,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.544121" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.545201" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-1.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-1.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.545201" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-1.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-1.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.544121" elapsed="0.001080"/>
@@ -10953,7 +10953,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.546261" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-10.png</msg>
+<msg time="2025-12-10T21:26:13.546261" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-10.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -10961,7 +10961,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.546261" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.547278" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-10.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-10.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.547278" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-10.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-10.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.546261" elapsed="0.001017"/>
@@ -10999,7 +10999,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.548444" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-11.png</msg>
+<msg time="2025-12-10T21:26:13.548444" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-11.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -11007,7 +11007,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.548444" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.549378" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-11.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-11.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.549378" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-11.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-11.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.548444" elapsed="0.000934"/>
@@ -11045,7 +11045,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.550430" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-12.png</msg>
+<msg time="2025-12-10T21:26:13.550430" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-12.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -11053,7 +11053,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.550430" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.551428" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-12.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-12.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.551428" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-12.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-12.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.550430" elapsed="0.000998"/>
@@ -11091,7 +11091,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.552772" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-13.png</msg>
+<msg time="2025-12-10T21:26:13.552772" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-13.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -11099,7 +11099,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.552772" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.552772" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-13.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-13.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.552772" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-13.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-13.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.552772" elapsed="0.001310"/>
@@ -11137,7 +11137,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.555282" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-14.png</msg>
+<msg time="2025-12-10T21:26:13.555282" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-14.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -11145,7 +11145,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.555282" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.556196" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-14.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-14.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.556196" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-14.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-14.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.555282" elapsed="0.000914"/>
@@ -11183,7 +11183,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.557772" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-15.png</msg>
+<msg time="2025-12-10T21:26:13.557772" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-15.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -11191,7 +11191,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.556534" elapsed="0.001238"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.557772" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-15.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-15.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.557772" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-15.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-15.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.557772" elapsed="0.000000"/>
@@ -11229,7 +11229,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.559041" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-16.png</msg>
+<msg time="2025-12-10T21:26:13.559041" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-16.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -11237,7 +11237,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.559041" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.560207" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-16.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-16.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.560207" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-16.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-16.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.559041" elapsed="0.001166"/>
@@ -11275,7 +11275,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.561773" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-17.png</msg>
+<msg time="2025-12-10T21:26:13.561773" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-17.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -11283,7 +11283,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.560769" elapsed="0.001004"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.561773" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-17.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-17.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.561773" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-17.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-17.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.561773" elapsed="0.000000"/>
@@ -11321,7 +11321,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.562841" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-18.png</msg>
+<msg time="2025-12-10T21:26:13.562841" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-18.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -11329,7 +11329,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.562841" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.564008" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-18.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-18.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.564008" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-18.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-18.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.562841" elapsed="0.001167"/>
@@ -11367,7 +11367,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.565200" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-19.png</msg>
+<msg time="2025-12-10T21:26:13.565200" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-19.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -11375,7 +11375,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.565200" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.565200" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-19.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-19.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.565200" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-19.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-19.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.565200" elapsed="0.000000"/>
@@ -11413,7 +11413,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.567457" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-2.png</msg>
+<msg time="2025-12-10T21:26:13.567457" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-2.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -11421,7 +11421,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.567457" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.567457" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-2.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-2.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.567457" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-2.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-2.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.567457" elapsed="0.000000"/>
@@ -11459,7 +11459,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.567457" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-20.png</msg>
+<msg time="2025-12-10T21:26:13.567457" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-20.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -11467,7 +11467,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.567457" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.567457" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-20.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-20.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.567457" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-20.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-20.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.567457" elapsed="0.000000"/>
@@ -11505,7 +11505,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.571878" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-21.png</msg>
+<msg time="2025-12-10T21:26:13.571878" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-21.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -11513,7 +11513,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.571878" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.573285" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-21.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-21.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.573285" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-21.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-21.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.571878" elapsed="0.001407"/>
@@ -11551,7 +11551,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.574328" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-22.png</msg>
+<msg time="2025-12-10T21:26:13.574328" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-22.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -11559,7 +11559,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.574328" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.574328" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-22.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-22.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.574328" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-22.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-22.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.574328" elapsed="0.000000"/>
@@ -11597,7 +11597,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.574328" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-23.png</msg>
+<msg time="2025-12-10T21:26:13.574328" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-23.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -11605,7 +11605,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.574328" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.574328" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-23.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-23.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.574328" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-23.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-23.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.574328" elapsed="0.000000"/>
@@ -11643,7 +11643,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.577493" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-24.png</msg>
+<msg time="2025-12-10T21:26:13.577493" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-24.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -11651,7 +11651,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.577493" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.577493" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-24.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-24.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.577493" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-24.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-24.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.577493" elapsed="0.000000"/>
@@ -11689,7 +11689,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.579686" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-25.png</msg>
+<msg time="2025-12-10T21:26:13.579686" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-25.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -11697,7 +11697,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.579111" elapsed="0.000575"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.579686" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-25.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-25.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.579686" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-25.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-25.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.579686" elapsed="0.000000"/>
@@ -11735,7 +11735,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.579686" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-26.png</msg>
+<msg time="2025-12-10T21:26:13.579686" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-26.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -11743,7 +11743,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.579686" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.582204" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-26.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-26.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.582204" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-26.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-26.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.579686" elapsed="0.002518"/>
@@ -11781,7 +11781,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.582204" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-27.png</msg>
+<msg time="2025-12-10T21:26:13.582204" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-27.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -11789,7 +11789,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.582204" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.582204" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-27.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-27.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.582204" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-27.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-27.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.582204" elapsed="0.000000"/>
@@ -11827,7 +11827,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.582204" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-28.png</msg>
+<msg time="2025-12-10T21:26:13.582204" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-28.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -11835,7 +11835,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.582204" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.582204" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-28.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-28.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.582204" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-28.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-28.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.582204" elapsed="0.000000"/>
@@ -11873,7 +11873,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.585887" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-29.png</msg>
+<msg time="2025-12-10T21:26:13.585887" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-29.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -11881,7 +11881,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.585887" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.585887" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-29.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-29.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.585887" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-29.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-29.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.585887" elapsed="0.000000"/>
@@ -11919,7 +11919,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.587526" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-3.png</msg>
+<msg time="2025-12-10T21:26:13.587526" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-3.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -11927,7 +11927,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.587526" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.588563" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-3.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-3.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.588563" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-3.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-3.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.587526" elapsed="0.001037"/>
@@ -11965,7 +11965,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.588563" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-30.png</msg>
+<msg time="2025-12-10T21:26:13.588563" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-30.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -11973,7 +11973,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.588563" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.588563" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-30.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-30.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.588563" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-30.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-30.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.588563" elapsed="0.000000"/>
@@ -12011,7 +12011,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.588563" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-31.png</msg>
+<msg time="2025-12-10T21:26:13.588563" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-31.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -12019,7 +12019,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.588563" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.588563" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-31.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-31.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.588563" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-31.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-31.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.588563" elapsed="0.000000"/>
@@ -12057,7 +12057,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.592658" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-32.png</msg>
+<msg time="2025-12-10T21:26:13.592658" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-32.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -12065,7 +12065,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.592152" elapsed="0.000506"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.592658" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-32.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-32.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.592658" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-32.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-32.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.592658" elapsed="0.000000"/>
@@ -12103,7 +12103,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.594142" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-33.png</msg>
+<msg time="2025-12-10T21:26:13.594142" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-33.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -12111,7 +12111,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.594142" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.594562" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-33.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-33.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.594562" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-33.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-33.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.594562" elapsed="0.000000"/>
@@ -12149,7 +12149,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.594562" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-34.png</msg>
+<msg time="2025-12-10T21:26:13.594562" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-34.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -12157,7 +12157,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.594562" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.594562" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-34.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-34.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.594562" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-34.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-34.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.594562" elapsed="0.000000"/>
@@ -12195,7 +12195,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.597335" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-35.png</msg>
+<msg time="2025-12-10T21:26:13.597335" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-35.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -12203,7 +12203,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.597335" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.597335" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-35.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-35.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.597335" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-35.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-35.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.597335" elapsed="0.000000"/>
@@ -12241,7 +12241,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.597335" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-36.png</msg>
+<msg time="2025-12-10T21:26:13.597335" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-36.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -12249,7 +12249,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.597335" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.597335" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-36.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-36.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.597335" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-36.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-36.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.597335" elapsed="0.000000"/>
@@ -12287,7 +12287,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.600542" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-37.png</msg>
+<msg time="2025-12-10T21:26:13.600542" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-37.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -12295,7 +12295,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.600542" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.600542" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-37.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-37.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.600542" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-37.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-37.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.600542" elapsed="0.000000"/>
@@ -12333,7 +12333,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.602095" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-38.png</msg>
+<msg time="2025-12-10T21:26:13.602095" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-38.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -12341,7 +12341,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.602095" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.603101" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-38.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-38.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.603101" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-38.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-38.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.602095" elapsed="0.001006"/>
@@ -12379,7 +12379,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.603101" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-39.png</msg>
+<msg time="2025-12-10T21:26:13.603101" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-39.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -12387,7 +12387,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.603101" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.603101" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-39.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-39.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.603101" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-39.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-39.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.603101" elapsed="0.000000"/>
@@ -12425,7 +12425,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.603101" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-4.png</msg>
+<msg time="2025-12-10T21:26:13.603101" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-4.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -12433,7 +12433,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.603101" elapsed="0.003835"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.606936" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-4.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-4.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.606936" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-4.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-4.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.606936" elapsed="0.000000"/>
@@ -12471,7 +12471,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.608116" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-40.png</msg>
+<msg time="2025-12-10T21:26:13.608116" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-40.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -12479,7 +12479,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.608116" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.608116" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-40.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-40.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.608116" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-40.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-40.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.608116" elapsed="0.000000"/>
@@ -12517,7 +12517,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.610280" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-41.png</msg>
+<msg time="2025-12-10T21:26:13.610280" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-41.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -12525,7 +12525,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.610280" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.610938" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-41.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-41.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.610938" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-41.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-41.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.610280" elapsed="0.000658"/>
@@ -12563,7 +12563,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.611313" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-42.png</msg>
+<msg time="2025-12-10T21:26:13.611313" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-42.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -12571,7 +12571,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.611313" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.613287" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-42.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-42.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.613287" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-42.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-42.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.612782" elapsed="0.000505"/>
@@ -12609,7 +12609,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.613287" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-43.png</msg>
+<msg time="2025-12-10T21:26:13.613287" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-43.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -12617,7 +12617,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.613287" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.614952" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-43.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-43.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.614952" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-43.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-43.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.613287" elapsed="0.001665"/>
@@ -12655,7 +12655,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.616175" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-44.png</msg>
+<msg time="2025-12-10T21:26:13.616175" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-44.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -12663,7 +12663,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.614952" elapsed="0.001223"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.616175" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-44.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-44.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.616175" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-44.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-44.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.616175" elapsed="0.000000"/>
@@ -12701,7 +12701,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.616175" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-45.png</msg>
+<msg time="2025-12-10T21:26:13.616175" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-45.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -12709,7 +12709,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.616175" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.616175" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-45.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-45.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.616175" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-45.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-45.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.616175" elapsed="0.000000"/>
@@ -12747,7 +12747,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.618907" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-46.png</msg>
+<msg time="2025-12-10T21:26:13.618907" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-46.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -12755,7 +12755,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.618907" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.618907" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-46.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-46.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.618907" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-46.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-46.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.618907" elapsed="0.000000"/>
@@ -12793,7 +12793,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.618907" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-47.png</msg>
+<msg time="2025-12-10T21:26:13.618907" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-47.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -12801,7 +12801,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.618907" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.618907" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-47.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-47.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.618907" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-47.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-47.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.618907" elapsed="0.000000"/>
@@ -12839,7 +12839,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.622200" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-48.png</msg>
+<msg time="2025-12-10T21:26:13.622200" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-48.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -12847,7 +12847,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.622200" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.623389" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-48.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-48.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.623389" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-48.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-48.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.622200" elapsed="0.001189"/>
@@ -12885,7 +12885,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.623389" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-49.png</msg>
+<msg time="2025-12-10T21:26:13.623389" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-49.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -12893,7 +12893,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.623389" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.623389" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-49.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-49.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.623389" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-49.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-49.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.623389" elapsed="0.000000"/>
@@ -12931,7 +12931,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.623389" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-5.png</msg>
+<msg time="2025-12-10T21:26:13.623389" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-5.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -12939,7 +12939,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.623389" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.623389" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-5.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-5.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.623389" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-5.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-5.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.623389" elapsed="0.000000"/>
@@ -12977,7 +12977,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.627456" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-50.png</msg>
+<msg time="2025-12-10T21:26:13.627456" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-50.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -12985,7 +12985,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.627456" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.627456" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-50.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-50.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.627456" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-50.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-50.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.627456" elapsed="0.000000"/>
@@ -13023,7 +13023,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.629484" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-51.png</msg>
+<msg time="2025-12-10T21:26:13.629484" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-51.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -13031,7 +13031,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.628484" elapsed="0.001000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.629484" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-51.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-51.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.629484" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-51.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-51.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.629484" elapsed="0.000000"/>
@@ -13069,7 +13069,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.629484" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-52.png</msg>
+<msg time="2025-12-10T21:26:13.629484" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-52.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -13077,7 +13077,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.629484" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.629484" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-52.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-52.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.629484" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-52.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-52.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.629484" elapsed="0.000000"/>
@@ -13115,7 +13115,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.632659" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-53.png</msg>
+<msg time="2025-12-10T21:26:13.632659" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-53.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -13123,7 +13123,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.632659" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.632659" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-53.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-53.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.632659" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-53.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-53.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.632659" elapsed="0.001073"/>
@@ -13161,7 +13161,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.633732" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-54.png</msg>
+<msg time="2025-12-10T21:26:13.633732" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-54.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -13169,7 +13169,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.633732" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.633732" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-54.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-54.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.633732" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-54.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-54.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.633732" elapsed="0.000000"/>
@@ -13207,7 +13207,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.636025" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-6.png</msg>
+<msg time="2025-12-10T21:26:13.636025" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-6.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -13215,7 +13215,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.636025" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.636025" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-6.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-6.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.636025" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-6.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-6.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.636025" elapsed="0.000000"/>
@@ -13253,7 +13253,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.637139" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-7.png</msg>
+<msg time="2025-12-10T21:26:13.637139" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-7.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -13261,7 +13261,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.637139" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.637139" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-7.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-7.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.637139" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-7.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-7.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.637139" elapsed="0.000000"/>
@@ -13299,7 +13299,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.639065" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-8.png</msg>
+<msg time="2025-12-10T21:26:13.639065" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-8.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -13307,7 +13307,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.639065" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.639065" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-8.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-8.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.639065" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-8.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-8.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.639065" elapsed="0.000000"/>
@@ -13345,7 +13345,7 @@ selenium-screenshot-9.png</msg>
 <try>
 <branch type="TRY">
 <kw name="Evaluate" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.639065" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-9.png</msg>
+<msg time="2025-12-10T21:26:13.639065" level="INFO">${file_path} = C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-9.png</msg>
 <var>${file_path}</var>
 <arg>os.path.join(r"${cleanup_dir}", r"${file}")</arg>
 <arg>os</arg>
@@ -13353,7 +13353,7 @@ selenium-screenshot-9.png</msg>
 <status status="PASS" start="2025-12-10T21:26:13.639065" elapsed="0.000000"/>
 </kw>
 <kw name="Remove File" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.639065" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-9.png"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots\selenium-screenshot-9.png&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.639065" level="INFO" html="true">Removed file '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-9.png"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots\selenium-screenshot-9.png&lt;/a&gt;'.</msg>
 <arg>${file_path}</arg>
 <doc>Removes a file with the given path.</doc>
 <status status="PASS" start="2025-12-10T21:26:13.639065" elapsed="0.000000"/>
@@ -13396,7 +13396,7 @@ selenium-screenshot-9.png</msg>
 </iter>
 <iter>
 <kw name="List Files In Directory" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.642164" level="INFO" html="true">Listing contents of directory '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.642164" level="INFO" html="true">Listing contents of directory '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots&lt;/a&gt;'.</msg>
 <msg time="2025-12-10T21:26:13.642164" level="INFO">0 files:
 </msg>
 <msg time="2025-12-10T21:26:13.642164" level="INFO">${files} = []</msg>
@@ -13459,7 +13459,7 @@ selenium-screenshot-9.png</msg>
 </iter>
 <iter>
 <kw name="List Files In Directory" owner="OperatingSystem">
-<msg time="2025-12-10T21:26:13.644090" level="INFO" html="true">Listing contents of directory '&lt;a href="file://C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots"&gt;C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots&lt;/a&gt;'.</msg>
+<msg time="2025-12-10T21:26:13.644090" level="INFO" html="true">Listing contents of directory '&lt;a href="file://C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots"&gt;C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots&lt;/a&gt;'.</msg>
 <msg time="2025-12-10T21:26:13.644090" level="INFO">0 files:
 </msg>
 <msg time="2025-12-10T21:26:13.644090" level="INFO">${files} = []</msg>
@@ -13527,7 +13527,7 @@ selenium-screenshot-9.png</msg>
 <if>
 <branch type="IF" condition="${deleted_count} &gt; 0">
 <kw name="Log" owner="BuiltIn">
-<msg time="2025-12-10T21:26:13.645753" level="INFO">Cleaned up 54 screenshot(s) from C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots</msg>
+<msg time="2025-12-10T21:26:13.645753" level="INFO">Cleaned up 54 screenshot(s) from C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots</msg>
 <arg>Cleaned up ${deleted_count} screenshot(s) from ${cleanup_dir}</arg>
 <arg>level=INFO</arg>
 <doc>Logs the given message with the given level.</doc>

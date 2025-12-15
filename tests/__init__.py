@@ -1,2 +1,2 @@
-"""Test suite for rpa-airflow-seed project."""
+"""Test suite for globalti-rpa-cma project."""
 

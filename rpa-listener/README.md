@@ -38,13 +38,13 @@ pip install -r requirements.txt
 $env:AZURE_KEYVAULT_URL = "https://rpaidentity.vault.azure.net/"
 $env:RABBITMQ_HOST = "localhost"
 $env:RABBITMQ_QUEUE = "RobotOperatorQueue"
-$env:PROJECT_DIR = "C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots"
+$env:PROJECT_DIR = "C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots"
 
 # Windows CMD:
 set AZURE_KEYVAULT_URL=https://rpaidentity.vault.azure.net/
 set RABBITMQ_HOST=localhost
 set RABBITMQ_QUEUE=RobotOperatorQueue
-set PROJECT_DIR=C:\Users\caiqu\Documents\workspace\rpa-airflow-seed\rpa-robots
+set PROJECT_DIR=C:\Users\caiqu\Documents\workspace\globalti-rpa-cma\rpa-robots
 
 # Linux/Mac:
 export AZURE_KEYVAULT_URL=https://rpaidentity.vault.azure.net/

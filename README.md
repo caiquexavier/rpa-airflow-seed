@@ -1,4 +1,4 @@
-# RPA Airflow Seed — Complete RPA Orchestration Platform
+# GlobalTI RPA CMA — Complete RPA Orchestration Platform
 
 A production-ready platform for orchestrating RPA workloads with Apache Airflow, featuring a complete message queue system and browser automation capabilities.
 
@@ -168,7 +168,7 @@ robot -d results tests/
 ## 📁 Project Structure
 
 ```
-rpa-airflow-seed/
+globalti-rpa-cma/
 ├── package.json              # Helper scripts for Docker and PowerShell
 ├── docker-compose.yml        # Docker orchestration
 ├── .env                      # Environment variables (secrets)

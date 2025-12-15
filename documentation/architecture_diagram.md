@@ -1,8 +1,8 @@
-# RPA-Airflow Seed Architecture Diagram
+# GlobalTI RPA CMA Architecture Diagram
 
 ## System Overview
 
-The RPA-Airflow seed is a complete RPA orchestration platform that combines Apache Airflow for workflow orchestration, FastAPI for API services, RabbitMQ for message queuing, and Robot Framework for browser automation.
+The GlobalTI RPA CMA is a complete RPA orchestration platform that combines Apache Airflow for workflow orchestration, FastAPI for API services, RabbitMQ for message queuing, and Robot Framework for browser automation.
 
 ## Architecture Components
 

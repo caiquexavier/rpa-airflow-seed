@@ -1,6 +1,6 @@
-# Test Suite for rpa-airflow-seed
+# Test Suite for globalti-rpa-cma
 
-This directory contains the comprehensive unit test suite for the rpa-airflow-seed project.
+This directory contains the comprehensive unit test suite for the globalti-rpa-cma project.
 
 ## Structure
 
