@@ -5,28 +5,7 @@ The centro_distribuicao value comes from saga data or fallback defaults.
 """
 
 # Centro distribuição access credentials mapping
-CENTRO_DISTRIBUICAO_ACCESS = {
-    "3202": {
-        "CNPJ": "61.068.276/0007-91",
-        "usuario": "ingrid.santos-PE",
-        "senha": "cmacgm#24#24"
-    },
-    "5183": {
-        "CNPJ": "61.068.276/0159-85",
-        "usuario": "ingrid.santos-PE",
-        "senha": "cmacgm#24#24"
-    },
-    "3031": {
-        "CNPJ": "61.068.276/0307-80",
-        "usuario": "ingrid.santos-SPS",
-        "senha": "cmacgm#24#24"
-    },
-    "5197": {
-        "CNPJ": "61.068.276/0028-16",
-        "usuario": "ingrid.santos-SPS",
-        "senha": "cmacgm#24#24"
-    }
-}
+
 
 
 def get_centro_distribuicao_access(centro_distribuicao: str):
